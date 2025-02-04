@@ -44,3 +44,28 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Steps used to Create Project 
+//Create react typescript project 
+npx create-react-app arch-toolkit --template typescript --force
+
+//
+npm install --save-dev @testing-library/react --force
+
+//
+npm install --save typescript @types/node @types/react @types/react-dom @types/jest --force
+
+//
+npm i --save-dev @testing-library/jest-dom --force
+
+//
+Create .tsconfig
+
+//Include bootstrap 
+//Documentation : https://react-bootstrap-v4.netlify.app/getting-started/introduction/
+npm install react-bootstrap bootstrap@4.6.0 --force
+
+//install primereact 
+npm install primereact primeicons --force
+npm install primeflex --force
+
