@@ -16,18 +16,17 @@ import 'primeflex/primeflex.css';
 
 import Home from './pages/Home';
 import About from './pages/About';
-import Login from './pages/Login';
+import Events from './pages/Events';
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-      </BrowserRouter>
       <Navigationbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/events" element={<Events />} />
+          </Routes>
     </div>
   );
 }
