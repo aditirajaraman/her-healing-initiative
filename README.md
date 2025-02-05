@@ -69,3 +69,11 @@ npm install react-bootstrap bootstrap@4.6.0 --force
 npm install primereact primeicons --force
 npm install primeflex --force
 
+### Setup Router
+npm install -S react-router-dom --force
+
+### reactJS Folder Structure
+https://medium.com/swlh/demystifying-the-folder-structure-of-a-react-app-c60b29d90836
+https://medium.com/@sadafamininia/react-ts-folder-structure-b2378387065e
+
+
