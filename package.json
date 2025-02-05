@@ -7,7 +7,7 @@
     "@types/node": "^22.13.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "bootstrap": "^4.6.0",
+    "bootstrap": "^4.6.2",
     "cra-template-typescript": "1.2.0",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",

@@ -69,6 +69,9 @@ npm install react-bootstrap bootstrap@4.6.0 --force
 npm install primereact primeicons --force
 npm install primeflex --force
 
+//install reach-bootstrap 
+npm install react-bootstrap bootstrap
+
 ### Setup Router
 npm install -S react-router-dom --force
 

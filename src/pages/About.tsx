@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
 
 const About = () => {
   return (
     <div>
       <h1>About Page</h1>
-      <Link to="/Home">Go to Home</Link>
+      <Button variant="primary">Primary</Button>
     </div>
   );
 };

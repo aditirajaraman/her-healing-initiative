@@ -7,8 +7,16 @@ import {
 } from "react-router-dom";
 import './App.css';
 
+import Navigationbar from './pages/Navigationbar';
+
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
+
 import Home from './pages/Home';
 import About from './pages/About';
+import Login from './pages/Login';
 
 function App() {
   return (
@@ -19,20 +27,7 @@ function App() {
         <Route path="/about" element={<About />} />
       </Routes>
       </BrowserRouter>
-      <header className="App-header">
-        <img src="https://images.freeimages.com/images/large-previews/ab3/puppy-2-1404644.jpg" className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navigationbar />
     </div>
   );
 }
