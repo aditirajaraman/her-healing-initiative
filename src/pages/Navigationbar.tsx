@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Nav, Navbar, NavLink, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-
 const Navigationbar = () => {
     return (
         <Navbar collapseOnSelect expand="sm" bg="light" data-bs-theme="light">

@@ -68,7 +68,7 @@ npm install react-bootstrap bootstrap@4.6.0 --force
 //install primereact 
 npm install primereact primeicons --force
 npm install primeflex --force
-
+npm install primeicons
 //install reach-bootstrap 
 npm install react-bootstrap bootstrap
 
@@ -80,3 +80,10 @@ https://medium.com/swlh/demystifying-the-folder-structure-of-a-react-app-c60b29d
 https://medium.com/@sadafamininia/react-ts-folder-structure-b2378387065e
 
 
+# References 
+https://www.primefaces.org/primereact-v8/dropdown/
+https://primereact.org/dropdown/
+https://primeflex.org/gridsystem
+
+### Layouts
+https://www.eventbrite.com/manage/events/create
