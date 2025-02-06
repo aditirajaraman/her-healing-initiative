@@ -12,7 +12,7 @@ const Navigationbar = () => {
         <Navbar.Collapse id="navbarScroll">
             <Nav className="justify-content-center" style={{ flex: 1}}>
                 <NavLink  eventKey="1" as={Link} to="/">Home</NavLink>
-                <NavLink  eventKey="1" as={Link} to="/events">Events</NavLink>
+                <NavLink  eventKey="1" as={Link} to="/listevents">Events</NavLink>
                 <NavLink  eventKey="1" as={Link} to="/donations">Donations</NavLink>
                     <NavLink  eventKey="1" as={Link} to="/blogs">Blogs</NavLink>
                     <NavDropdown title="About" id="basic-nav-dropdown">

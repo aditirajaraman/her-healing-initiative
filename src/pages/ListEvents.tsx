@@ -15,7 +15,7 @@ const footer = (
   </span>
 );
 
-const Events = () => {
+const ListEvents = () => {
   return (
      <div className="grid">
       
@@ -86,4 +86,4 @@ const Events = () => {
   );
 };
 
-export default Events;
+export default ListEvents;
