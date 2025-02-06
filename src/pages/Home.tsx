@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -34,19 +33,21 @@ const Home = () => {
     </Row>
     <Row>
       <Col>
-      <Card style={{ width: '18rem' }}>
+      <Card style={{ textAlign:'left'}}>
         <Card.Img variant="top" src="https://t4.ftcdn.net/jpg/02/19/97/89/360_F_219978944_Q0f2jy0m9RwbIMNqIgEVRGJXdS2DwfbD.jpg" />
         <Card.Body>
           <Card.Text>
-            <ul>
-              <li>To promote financial resilience and digital inclusion amongst girls and young women</li>
-              <li>Disrupt barriers to allow women and girls of color to thrive</li>
-              <li>Foster intergenerational healing through workshops and digital storytelling</li>
-              <li>We envision an inclusive society where adolescent girls and young women have the power to choose and create opportunities for themselves and others</li>
-              <li>Item</li>
-              <li>Item</li>
-              <li>Item</li>
-            </ul>
+            <div>
+              <ul>
+                <li>To promote financial resilience and digital inclusion amongst girls and young women</li>
+                <li>Disrupt barriers to allow women and girls of color to thrive</li>
+                <li>Foster intergenerational healing through workshops and digital storytelling</li>
+                <li>We envision an inclusive society where adolescent girls and young women have the power to choose and create opportunities for themselves and others</li>
+                <li>Item</li>
+                <li>Item</li>
+                <li>Item</li>
+              </ul>
+            </div>
           </Card.Text>
         </Card.Body>
       </Card>
@@ -80,7 +81,7 @@ const Home = () => {
         </div>
       </Col>
       <Col>
-        <Card border="info">
+        <Card border="info" style={{ textAlign:'left'}}>
           <Card.Header><b>Our Impact</b></Card.Header>
           <Card.Body>
             <Card.Text>
@@ -96,7 +97,7 @@ const Home = () => {
         </Card>
         <br/>
         <br/>
-        <Card border="warning">
+        <Card border="warning" style={{ textAlign:'left'}}>
           <Card.Header><b>Our Partners</b></Card.Header>
           <Card.Body>
             <Card.Text>
