@@ -17,6 +17,7 @@ import 'primeflex/primeflex.css';
 import Home from './pages/Home';
 import About from './pages/About';
 import ListEvents from './pages/ListEvents';
+import CreateEvent from './pages/CreateEvent';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/listevents" element={<ListEvents />} />
+          <Route path="/createEvent" element={<CreateEvent />} />
+          
         </Routes>
     </div>
   );

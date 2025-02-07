@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Divider } from 'primereact/divider';
 import { Button } from 'primereact/button';
@@ -15,12 +16,19 @@ const footer = (
   </span>
 );
 
+
+
 const ListEvents = () => {
+    const navigate = useNavigate();
+    const habdleCreateEvent = () => {
+        navigate('/createEvent'); 
+    };
+    
   return (
      <div className="grid">
       
       <div className="col-12">
-        <Button style={{float: 'right'}}  label="Create Event" className="p-button-raised p-button-warning" />
+        <Button style={{float: 'right'}} label="Create Event" className="p-button-raised p-button-warning" onClick={habdleCreateEvent}/>
       </div>
       
       {/* ---------------------------Upcoming Ecents--------------------- */}
