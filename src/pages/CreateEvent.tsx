@@ -12,107 +12,160 @@ import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { Divider } from 'primereact/divider';
+import { addLocale } from 'primereact/api';
 
-const eventLogo =  require("../assets/images/audience.jpg");
+  const eventLogo =  require("../assets/images/audience.jpg");
 
-const CreateEvent = () => {
-  const eventOptions = ['Single Event', 'Recurring Event'];
-  const [value1, setEventType] = useState('Single Event');
-  
+  const CreateEvent = () => {
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventSummary, setEventSummary] = useState('');
 
-  const [date8, setDate8] = useState<Date | Date[] | undefined>(undefined);
-  
-  const locationOptions = ['Venue', 'Online Event', 'To be Announced'];
-  const [eventValue, setLocatiob] = useState('Venue');
+    const [eventDate, setEventDate] = useState<Date | null | undefined>(new Date());
+    const [startEventTime, setStartEventTime] = useState<Date | null | undefined>(new Date());
+    const [endEventTime, setEndEventTime] = useState<Date | null | undefined>(new Date());
 
-  const cities = [
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Paris', code: 'PRS' }
-  ];
-  const states = [
-    { name: 'New York', code: 'NY' },
-    { name: 'New Jersey', code: 'RM' },
-    { name: 'Utah', code: 'LDN' },
-    { name: 'California', code: 'PRS' }
-  ];
-  const countries = [
-    { name: 'Australia', code: 'AU' },
-    { name: 'Brazil', code: 'BR' },
-    { name: 'China', code: 'CN' },
-    { name: 'Egypt', code: 'EG' },
-    { name: 'France', code: 'FR' },
-    { name: 'Germany', code: 'DE' },
-    { name: 'India', code: 'IN' },
-    { name: 'Japan', code: 'JP' },
-    { name: 'Spain', code: 'ES' },
-    { name: 'United States', code: 'US' }
-  ];
+    const [address, setAddress] = useState('');
+    const [selectedCity, setSelectedCity] = useState<any>(null);
+    const [selectedState, setSelectedState] = useState<any>(null);
+    const [selectedCountry, setSelectedCountry] = useState<any>(null);
+    const [zip, setZip] = useState('');
+
+    const [HostOrArtist, setHostOrArtist] = useState('');
+    const [ItenaryTitle, setItenaryTitle] = useState('');
+    const [ItenaryDescription, setItenaryDescription] = useState('');
+
+    const [FAQ1, setFAQ1] = useState('');
+    const [FAQ2, setFAQ2] = useState('');
+    const [Answer1, setAnswer1] = useState('');
+    const [Answer2, setAnswer2] = useState('');
+
+    const eventOptions = ['Single Event', 'Recurring Event'];
+    const [eventType, setEventType] = useState('Single Event');
+    
+    const locationOptions = ['Venue', 'Online Event', 'To be Announced'];
+    const [eventLocation, setEventLocation] = useState('Venue');
+
+    const [agendaStartTime, setAgendaStartTime] = useState<Date | null | undefined>(new Date());
+    const [agendaEndTime, setAgendaEndTime] = useState<Date | null | undefined>(new Date());
+
+
+    const cities = [
+      { name: 'Rome', code: 'RM' },
+      { name: 'London', code: 'LDN' },
+      { name: 'Istanbul', code: 'IST' },
+      { name: 'Paris', code: 'PRS' }
+    ];
+
+    const states = [
+      { name: 'New York', code: 'NY' },
+      { name: 'New Jersey', code: 'RM' },
+      { name: 'Utah', code: 'LDN' },
+      { name: 'California', code: 'PRS' }
+    ];
+
+    const countries = [
+      { name: 'Australia', code: 'AU' },
+      { name: 'Brazil', code: 'BR' },
+      { name: 'China', code: 'CN' },
+      { name: 'Egypt', code: 'EG' },
+      { name: 'France', code: 'FR' },
+      { name: 'Germany', code: 'DE' },
+      { name: 'India', code: 'IN' },
+      { name: 'Japan', code: 'JP' },
+      { name: 'Spain', code: 'ES' },
+      { name: 'United States', code: 'US' }
+    ];
+
+    const onCityChange = (e: { value: any}) => {
+      setSelectedCity(e.value);
+    }
+
+    const onStateChange = (e: { value: any}) => {
+      setSelectedState(e.value);
+    }
+
+    const onCountryChange = (e: { value: any}) => {
+      setSelectedCountry(e.value);
+    }
+
+    let today = new Date();
+    let month = today.getMonth();
+    let year = today.getFullYear();
+    let prevMonth = (month === 0) ? 11 : month - 1;
+    let prevYear = (prevMonth === 11) ? year - 1 : year;
+    let nextMonth = (month === 11) ? 0 : month + 1;
+    let nextYear = (nextMonth === 0) ? year + 1 : year;
+
   return (
     <div className="container">
        {/* ---------------------------Event Media --------------------- */}
        <Panel header="Event Media" toggleable>
         <Image src={eventLogo} alt="Image"/>
        </Panel>
+
         {/* ---------------------------Event Details --------------------- */}
       <Panel header="Event Overview" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
       <div className="p-fluid grid formgrid">
         <div className="field col-12 md:col-12">
           <h5>Event Title</h5>
-          <InputText tooltip='Be clear and descriptive with a title that tells people what your event is about.'/>
+          <InputText value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} 
+          tooltip='Be clear and descriptive with a title that tells people what your event is about.'/>
         </div>
         <div className="field col-12 md:col-12">
           <h5>Summary</h5>
-          <InputTextarea value={value1} rows={5} cols={80} autoResize 
+          <InputTextarea value={eventSummary} onChange={(e) => setEventSummary(e.target.value)} rows={5} cols={80} autoResize 
           tooltip='Attendees will see this at the top of your event page. (140 characters max)'/>
         </div>
       </div>
       </Panel>
-       {/* ---------------------------Event Date Time and Location --------------------- */}
+      
+      {/* ---------------------------Event Date Time and Location --------------------- */}
       <Panel header="Date Time and Location" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
         <h5>Event Type</h5>
         <div className="p-fluid grid formgrid">
           <div className="field col-12 md:col-12">
-            <SelectButton value={value1} options={eventOptions} onChange={(e) => setEventType(e.value)} />
+            <SelectButton value={eventType} options={eventOptions} onChange={(e) => setEventType(e.value)} />
           </div>
           <div className="field col-12 md:col-4">
               <h5>Date</h5>
-              <Calendar id="eventDate" />
+              <Calendar id="eventDate" value={eventDate} onChange={(e) => setEventDate(e.value)}  dateFormat="mm-dd-yy"/>
           </div>
           <div className="field col-12 md:col-4">
               <h5>Start Time</h5>
-              <Calendar id="startTime" timeOnly hourFormat="12" />
+              <Calendar id="startEventTime" value={startEventTime} onChange={(e) => setStartEventTime(e.value)} timeOnly hourFormat="12" />
           </div>
           <div className="field col-12 md:col-4">
               <h5>End Time</h5>
-              <Calendar id="endTime" timeOnly hourFormat="12" />
+              <Calendar id="endEventTime" value={endEventTime} onChange={(e) => setEndEventTime(e.value)} timeOnly hourFormat="12" />
           </div>
           <div className="field col-12 md:col-8">
               <h5>Location</h5>
-              <SelectButton value={eventValue} options={locationOptions} onChange={(e) => setLocatiob(e.value)} />
+              <SelectButton value={eventLocation} options={locationOptions} onChange={(e) => setEventLocation(e.value)} />
           </div>
           <div className="field col-12 md:col-4">
           </div>
           <div className="field col-12 md:col-8">
               <h5>Address</h5>
-              <InputText/>
+              <InputText  id="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
           </div>
           <div className="field col-12 md:col-4">
             <h5>City</h5>
-            <Dropdown options={cities} optionLabel="name" placeholder="Select a City" />
+            <Dropdown options={cities} optionLabel="name" placeholder="Select a City" 
+              value={selectedCity} onChange={onCityChange}/>
           </div>
           <div className="field col-12 md:col-4">
             <h5>State</h5>
-            <Dropdown options={states} optionLabel="name" placeholder="Select a State" />
+            <Dropdown options={states} optionLabel="name" placeholder="Select a State" 
+              value={selectedState} onChange={onStateChange}/>
           </div>
           <div className="field col-12 md:col-4">
             <h5>Country</h5>
-            <Dropdown options={countries} optionLabel="name" placeholder="Select a Country" />
+            <Dropdown options={countries} optionLabel="name" placeholder="Select a Country" 
+              value={selectedCountry} onChange={onCountryChange}/>
           </div>
           <div className="field col-12 md:col-4">
             <h5>Zip</h5>
-            <InputText/>
+            <InputText  id="Zip"  value={zip}  onChange={(e) => setZip(e.target.value)} />
           </div>
           
         </div>
@@ -123,23 +176,23 @@ const CreateEvent = () => {
        <div className="p-fluid grid formgrid">
           <div className="field col-12 md:col-12">
             <h5>Host/Artist</h5>
-            <InputText/>
+            <InputText id="HostOrArtist"  value={HostOrArtist}  onChange={(e) => setHostOrArtist(e.target.value)} />
           </div>
           <div className="field col-12 md:col-6">
             <h5>Title</h5>
-            <InputText/>
+            <InputText id="ItenaryTitle"  value={ItenaryTitle}  onChange={(e) => setItenaryTitle(e.target.value)} />
           </div>
           <div className="field col-12 md:col-6">
             <h5>Description</h5>
-            <InputTextarea value={value1} rows={5} cols={80} autoResize tooltip='List your Agenda'/>
+            <InputTextarea value={ItenaryDescription} onChange={(e) => setItenaryDescription(e.target.value)}  rows={5} cols={80} autoResize tooltip='List your Agenda'/>
           </div>
           <div className="field col-12 md:col-4">
             <h5>Start Time</h5>
-            <Calendar id="agendaStartTime" timeOnly hourFormat="12" />
+            <Calendar id="agendaStartTime" value={agendaStartTime} onChange={(e) => setAgendaStartTime(e.value)} timeOnly hourFormat="12" />
           </div>
           <div className="field col-12 md:col-4">
             <h5>End Time</h5>
-            <Calendar id="agendaEndTime" timeOnly hourFormat="12" />
+            <Calendar id="agendaEndTime" value={agendaEndTime} onChange={(e) => setAgendaEndTime(e.value)}  timeOnly hourFormat="12" />
           </div>
         </div>
        </Panel>
@@ -165,11 +218,11 @@ const CreateEvent = () => {
                       </div>
                   </div>
               </div>
-              <InputText/>
+              <InputText id="FAQ1"  value={FAQ1}  onChange={(e) => setFAQ1(e.target.value)}/>
           </div>
           <div className="field col-12 md:col-12">
             <h5>Answer</h5>
-            <InputTextarea rows={5} cols={80} autoResize />
+            <InputTextarea value={Answer1} onChange={(e) => setAnswer1(e.target.value)}  rows={5} cols={80} autoResize />
           </div>
           <Divider align="left">
             <div className="inline-flex align-items-center">
@@ -185,14 +238,24 @@ const CreateEvent = () => {
                       </div>
                   </div>
               </div>
-              <InputText/>
+              <InputText id="FAQ2"  value={FAQ2}  onChange={(e) => setFAQ2(e.target.value)}/>
           </div>
           <div className="field col-12 md:col-12">
             <h5>Answer</h5>
-            <InputTextarea rows={5} cols={80} autoResize />
+            <InputTextarea value={Answer2} onChange={(e) => setAnswer2(e.target.value)}  rows={5} cols={80} autoResize />
           </div>
         </div>
        </Panel>
+       <div className="p-fluid grid formgrid">
+        <div className="field col-3 md:col-3"></div>
+        <div className="field col-3 md:col-3">
+          <Button label="Submit" aria-label="Save"  />
+        </div>
+        <div className="field col-3 md:col-3">
+          <Button label="Cancel" aria-label="Cancel"  className="p-button-danger" />
+        </div>
+        <div className="field col-3 md:col-3"></div>
+       </div>
     </div>
   );
 };
