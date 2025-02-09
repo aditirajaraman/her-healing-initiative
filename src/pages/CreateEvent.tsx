@@ -2,7 +2,9 @@ import React, { useState }  from 'react';
 import { Link } from 'react-router-dom';
 
 //import { getImageURL } from "../helpers/image-utils";
+import { useForm, Controller } from 'react-hook-form';
 
+import { classNames } from 'primereact/utils';
 import { SelectButton } from 'primereact/selectbutton';
 import { Image } from 'primereact/image';
 import { Panel } from 'primereact/panel';
@@ -13,6 +15,8 @@ import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { Divider } from 'primereact/divider';
 import { addLocale } from 'primereact/api';
+import { Dialog } from 'primereact/dialog';
+
 
   const eventLogo =  require("../assets/images/audience.jpg");
 
@@ -88,6 +92,7 @@ import { addLocale } from 'primereact/api';
       setSelectedCountry(e.value);
     }
 
+
     let today = new Date();
     let month = today.getMonth();
     let year = today.getFullYear();
@@ -96,167 +101,248 @@ import { addLocale } from 'primereact/api';
     let nextMonth = (month === 11) ? 0 : month + 1;
     let nextYear = (nextMonth === 0) ? year + 1 : year;
 
+    /*----------------------Start : Form Setup---------------------- */
+    const [showMessage, setShowMessage] = useState(false);
+    const [formData, setFormData] = useState({});
+    const defaultValues = {
+      eventTitle: '',
+      eventSummary: '',
+      eventOption: null,
+      eventDate : null,
+      startEventTime : null,
+      endEventTime : null,
+      eventLocation : null,
+      eventAddress : '',
+      eventCity : '',
+      eventState : '',
+      eventCountry : '',
+      eventZip : null,
+      itineraryHostOrArtist : '',
+      itineraryDescription : '',
+      agendaStartTime: null,
+      agendaEndTime: null,
+      faqQuestion1: '',
+      faqAnswer1: '',
+      faqQuestion2: '',
+      faqAnswer2: ''
+    }
+
+    const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+    const getFormErrorMessage = (name) => {
+      return errors[name] && <small className="p-error">{errors[name].message}</small>
+    };
+
+    const onSubmit = (data:any) => {
+        setFormData(data);
+        setShowMessage(true);
+        reset();
+    };
+    const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
+    const titleHeader = <h6>Title cant be left blank</h6>;
+    const passwordFooter = (
+        <React.Fragment>
+            <Divider />
+            <p className="mt-2">Suggestions</p>
+            <ul className="pl-2 ml-2 mt-0" style={{ lineHeight: '1.5' }}>
+                <li>At least one lowercase</li>
+                <li>At least one uppercase</li>
+                <li>At least one numeric</li>
+                <li>Minimum 8 characters</li>
+            </ul>
+        </React.Fragment>
+    ); 
+    /*----------------------Start : Form Setup---------------------- */
+
+
   return (
     <div className="container">
-       {/* ---------------------------Event Media --------------------- */}
-       <Panel header="Event Media" toggleable>
-        <Image src={eventLogo} alt="Image"/>
-       </Panel>
+       {/* -------Start Container--------- */}  
+
+       {/* ---------------------------Dialog Message : Submission --------------------- */}
+      <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
+        <div className="flex justify-content-center flex-column pt-6 px-3">
+            <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
+            <h5>Registration Successful!</h5>
+            <p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
+                Your account is registered under name 
+            </p>
+        </div>
+      </Dialog>
+
+      {/* -------Start Form--------- */} 
+     <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
+        {/* ---------------------------Event Media --------------------- */}
+        <Panel header="Event Media" toggleable>
+          <Image src={eventLogo} alt="Image"/>
+        </Panel>
 
         {/* ---------------------------Event Details --------------------- */}
-      <Panel header="Event Overview" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
-      <div className="p-fluid grid formgrid">
-        <div className="field col-12 md:col-12">
-          <h5>Event Title</h5>
-          <InputText value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} 
-          tooltip='Be clear and descriptive with a title that tells people what your event is about.'/>
-        </div>
-        <div className="field col-12 md:col-12">
-          <h5>Summary</h5>
-          <InputTextarea value={eventSummary} onChange={(e) => setEventSummary(e.target.value)} rows={5} cols={80} autoResize 
-          tooltip='Attendees will see this at the top of your event page. (140 characters max)'/>
-        </div>
-      </div>
-      </Panel>
-      
-      {/* ---------------------------Event Date Time and Location --------------------- */}
-      <Panel header="Date Time and Location" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
-        <h5>Event Type</h5>
+        <Panel header="Event Overview" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
         <div className="p-fluid grid formgrid">
           <div className="field col-12 md:col-12">
-            <SelectButton value={eventType} options={eventOptions} onChange={(e) => setEventType(e.value)} />
+            <span className="p-float-label">
+                  <Controller name="eventTitle" control={control} rules={{ required: 'Event Title is required.' }} render={({ field, fieldState }) => (
+                      <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                  )} />
+                  <label htmlFor="eventTitle" className={classNames({ 'p-error': errors.eventTitle })}>Event Title*</label>
+            </span>
+            {getFormErrorMessage('eventTitle')}
           </div>
-          <div className="field col-12 md:col-4">
-              <h5>Date</h5>
-              <Calendar id="eventDate" value={eventDate} onChange={(e) => setEventDate(e.value)}  dateFormat="mm-dd-yy"/>
+          <div className="field col-12 md:col-12">
+            <span className="p-float-label">
+                  <Controller name="eventSummary" control={control} rules={{ required: 'Event Summary is required.' }} render={({ field, fieldState }) => (
+                      <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80} autoResize/>
+                  )} />
+                  <label htmlFor="eventSummary" className={classNames({ 'p-error': errors.eventSummary })}>Event Summmary*</label>
+            </span>
+            {getFormErrorMessage('eventSummary')}
           </div>
-          <div className="field col-12 md:col-4">
-              <h5>Start Time</h5>
-              <Calendar id="startEventTime" value={startEventTime} onChange={(e) => setStartEventTime(e.value)} timeOnly hourFormat="12" />
-          </div>
-          <div className="field col-12 md:col-4">
-              <h5>End Time</h5>
-              <Calendar id="endEventTime" value={endEventTime} onChange={(e) => setEndEventTime(e.value)} timeOnly hourFormat="12" />
-          </div>
-          <div className="field col-12 md:col-8">
-              <h5>Location</h5>
-              <SelectButton value={eventLocation} options={locationOptions} onChange={(e) => setEventLocation(e.value)} />
-          </div>
-          <div className="field col-12 md:col-4">
-          </div>
-          <div className="field col-12 md:col-8">
-              <h5>Address</h5>
-              <InputText  id="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
-          </div>
-          <div className="field col-12 md:col-4">
-            <h5>City</h5>
-            <Dropdown options={cities} optionLabel="name" placeholder="Select a City" 
-              value={selectedCity} onChange={onCityChange}/>
-          </div>
-          <div className="field col-12 md:col-4">
-            <h5>State</h5>
-            <Dropdown options={states} optionLabel="name" placeholder="Select a State" 
-              value={selectedState} onChange={onStateChange}/>
-          </div>
-          <div className="field col-12 md:col-4">
-            <h5>Country</h5>
-            <Dropdown options={countries} optionLabel="name" placeholder="Select a Country" 
-              value={selectedCountry} onChange={onCountryChange}/>
-          </div>
-          <div className="field col-12 md:col-4">
-            <h5>Zip</h5>
-            <InputText  id="Zip"  value={zip}  onChange={(e) => setZip(e.target.value)} />
-          </div>
-          
         </div>
+        </Panel>
+        {/* ---------------------------Event Date Time and Location --------------------- */}
+        <Panel header="Date Time and Location" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
+        <div className="p-fluid grid formgrid">
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventOption" control={control} rules={{ required: 'Event Type is Mandatory.' }} render={({ field }) => (
+                    <SelectButton id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={eventOptions}/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventDate" control={control} rules={{ required: 'Event Date is Mandatory.' }} render={({ field }) => (
+                    <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} dateFormat="dd/mm/yy" mask="99/99/9999" showIcon />
+                )} />
+                <label htmlFor="eventDate">Event Date</label>
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="startEventTime" control={control} rules={{ required: 'Start Time is Mandatory.' }} render={({ field }) => (
+                    <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" showIcon />
+                )} />
+                <label htmlFor="startEventTime">Start Time</label>
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="endEventTime" control={control} rules={{ required: 'End Time is Mandatory.' }} render={({ field }) => (
+                    <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" showIcon />
+                )} />
+                <label htmlFor="endEventTime">End Time</label>
+            </span>
+          </div>
+          <div className="field col-8 md:col-8">
+            <span className="p-float-label">
+                <Controller name="eventLocation" control={control} rules={{ required: 'Event Location is Mandatory.' }} render={({ field }) => (
+                    <SelectButton id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={locationOptions}/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-4 md:col-4"/>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                  <Controller name="eventAddress" control={control} rules={{ required: 'Event Address is required.' }} render={({ field, fieldState }) => (
+                      <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                  )} />
+                  <label htmlFor="eventAddress" className={classNames({ 'p-error': errors.eventAddress })}>Address*</label>
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventCity" control={control} render={({ field }) => (
+                    <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={cities} optionLabel="name" placeholder="Select a City"/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventState" control={control} render={({ field }) => (
+                    <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={states} optionLabel="name"/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventCountry" control={control} render={({ field }) => (
+                    <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={countries} optionLabel="name" placeholder="Select a Country"/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                  <Controller name="eventZip" control={control} rules={{ required: 'Event Zip is required.' }} render={({ field, fieldState }) => (
+                      <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                  )} />
+                  <label htmlFor="eventZip" className={classNames({ 'p-error': errors.eventZip })}>Zip*</label>
+            </span>
+          </div>
+        </div> 
+        </Panel>
         
-      </Panel>
-       {/* ---------------------------Event Itenary---------------------------------------- */}
-       <Panel header="Event Itenary" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
-       <div className="p-fluid grid formgrid">
+        {/* ---------------------------Event Itenary --------------------- */}     
+         <Panel header="Event Itinerary" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
+         <div className="p-fluid grid formgrid">
           <div className="field col-12 md:col-12">
-            <h5>Host/Artist</h5>
-            <InputText id="HostOrArtist"  value={HostOrArtist}  onChange={(e) => setHostOrArtist(e.target.value)} />
+            <span className="p-float-label">
+                  <Controller name="itineraryHostOrArtist" control={control} render={({ field, fieldState }) => (
+                      <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                  )} />
+                  <label htmlFor="itineraryHostOrArtist" className={classNames({ 'p-error': errors.itineraryHostOrArtist })}>Event Title*</label>
+            </span>
           </div>
-          <div className="field col-12 md:col-6">
-            <h5>Title</h5>
-            <InputText id="ItenaryTitle"  value={ItenaryTitle}  onChange={(e) => setItenaryTitle(e.target.value)} />
+          <div className="field col-12 md:col-12">
+            <span className="p-float-label">
+                  <Controller name="itineraryDescription" control={control} render={({ field, fieldState }) => (
+                      <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80} autoResize/>
+                  )} />
+                  <label htmlFor="itineraryDescription" className={classNames({ 'p-error': errors.itineraryDescription })}>Itinerary Description</label>
+            </span>
           </div>
-          <div className="field col-12 md:col-6">
-            <h5>Description</h5>
-            <InputTextarea value={ItenaryDescription} onChange={(e) => setItenaryDescription(e.target.value)}  rows={5} cols={80} autoResize tooltip='List your Agenda'/>
-          </div>
-          <div className="field col-12 md:col-4">
-            <h5>Start Time</h5>
-            <Calendar id="agendaStartTime" value={agendaStartTime} onChange={(e) => setAgendaStartTime(e.value)} timeOnly hourFormat="12" />
-          </div>
-          <div className="field col-12 md:col-4">
-            <h5>End Time</h5>
-            <Calendar id="agendaEndTime" value={agendaEndTime} onChange={(e) => setAgendaEndTime(e.value)}  timeOnly hourFormat="12" />
-          </div>
-        </div>
-       </Panel>
-       {/* ---------------------------Event FAQS------------------------------------------- */}
-       <Panel header="Event FAQS" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
-        <div className="p-fluid grid formgrid">
-          <div className="field col-12 md:col-6">
-          </div>
-          <div className="field col-12 md:col-6">
-            <Button icon="pi pi-plus" rounded severity="warning" aria-label="Notification"  style={{float:'right'}}/>
-          </div>
-          <Divider align="left">
-            <div className="inline-flex align-items-center">
-                <b>FAQ 1</b>
+         </div>
+         </Panel> 
+        
+        {/* ---------------------------Event FAQs --------------------- */}   
+        <Panel header="FAQ's" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
+          <div className="p-fluid grid formgrid">
+            <div className="field col-12 md:col-6">
             </div>
-          </Divider>
-          <div className="field col-12 md:col-12">
-              <div style={{width: '100%', display:'table'}}>
-                  <div style={{display: 'table-row'}}>
-                      <div style={{width: '600px', display: 'table-cell'}}><h5>Question</h5></div>
-                      <div style={{display: 'table-cell'}}> 
-                          <Button icon="pi pi-trash" rounded severity="danger" size="small" style={{float:'right'}}/>
-                      </div>
-                  </div>
-              </div>
-              <InputText id="FAQ1"  value={FAQ1}  onChange={(e) => setFAQ1(e.target.value)}/>
-          </div>
-          <div className="field col-12 md:col-12">
-            <h5>Answer</h5>
-            <InputTextarea value={Answer1} onChange={(e) => setAnswer1(e.target.value)}  rows={5} cols={80} autoResize />
-          </div>
-          <Divider align="left">
-            <div className="inline-flex align-items-center">
-                <b>FAQ 2</b>
+            <div className="field col-12 md:col-6">
+              <Button icon="pi pi-plus" rounded severity="warning" aria-label="Notification"  style={{float:'right'}}/>
             </div>
-          </Divider>
-          <div className="field col-12 md:col-12">
-              <div style={{width: '100%', display:'table'}}>
-                  <div style={{display: 'table-row'}}>
-                      <div style={{width: '600px', display: 'table-cell'}}><h5>Question</h5></div>
-                      <div style={{display: 'table-cell'}}> 
-                          <Button icon="pi pi-trash" rounded severity="danger" size="small" style={{float:'right'}}/>
-                      </div>
-                  </div>
-              </div>
-              <InputText id="FAQ2"  value={FAQ2}  onChange={(e) => setFAQ2(e.target.value)}/>
-          </div>
-          <div className="field col-12 md:col-12">
-            <h5>Answer</h5>
-            <InputTextarea value={Answer2} onChange={(e) => setAnswer2(e.target.value)}  rows={5} cols={80} autoResize />
-          </div>
-        </div>
-       </Panel>
-       <div className="p-fluid grid formgrid">
-        <div className="field col-3 md:col-3"></div>
-        <div className="field col-3 md:col-3">
-          <Button label="Submit" aria-label="Save"  />
-        </div>
-        <div className="field col-3 md:col-3">
-          <Button label="Cancel" aria-label="Cancel"  className="p-button-danger" />
-        </div>
-        <div className="field col-3 md:col-3"></div>
-       </div>
-    </div>
+            <Divider align="left">
+                <div className="inline-flex align-items-center">
+                    <b>FAQ 1</b>
+                </div>
+            </Divider>
+            <div className="field col-9 md:col-9">
+              <span className="p-float-label">
+                    <Controller name="faqQuestion1" control={control} render={({ field, fieldState }) => (
+                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                    )} />
+                    <label htmlFor="faqQuestion1" className={classNames({ 'p-error': errors.faqQuestion1 })}>Question*</label>
+              </span>
+            </div>
+            <div className="field col-3 md:col-3">
+            <Button icon="pi pi-trash" rounded severity="danger" size="small" style={{float:'right'}}/>
+            </div>
+            <div className="field col-12 md:col-12">
+              <span className="p-float-label">
+                    <Controller name="faqAnswer1" control={control} render={({ field, fieldState }) => (
+                        <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80} autoResize/>
+                    )} />
+                    <label htmlFor="faqAnswer1" className={classNames({ 'p-error': errors.faqAnswer1 })}>Answer*</label>
+              </span>
+            </div>
+         </div>
+         </Panel> 
+
+     </form>
+    {/* -------End Form--------- */} 
+
+     {/* -------End Container--------- */}   
+    </div> 
   );
 };
 
