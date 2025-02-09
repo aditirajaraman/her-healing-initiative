@@ -20,6 +20,9 @@ const Navigationbar = () => {
                         <NavDropdown.Item as={Link} to="/faqs">FAQ</NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/contact">Contact</NavDropdown.Item>
                         <NavDropdown.Divider />
+                        <NavDropdown.Item as={Link} to="/register">Register</NavDropdown.Item>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item as={Link} to="/login">Sign in</NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/account">Sign Out</NavDropdown.Item>
                     </NavDropdown>
             </Nav>

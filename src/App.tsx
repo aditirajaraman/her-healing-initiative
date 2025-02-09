@@ -18,6 +18,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import ListEvents from './pages/ListEvents';
 import CreateEvent from './pages/CreateEvent';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/listevents" element={<ListEvents />} />
           <Route path="/createEvent" element={<CreateEvent />} />
-          
+          <Route path="/register" element={<Register />} />
         </Routes>
     </div>
   );
