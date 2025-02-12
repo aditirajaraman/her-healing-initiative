@@ -11,16 +11,19 @@ import { Divider } from 'primereact/divider';
 import { classNames } from 'primereact/utils';
 import { Panel } from 'primereact/panel';
 
+import axios from 'axios';
+
 export const Register = () => {
   const [countries, setCountries] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
   const [formData, setFormData] = useState({});
   const defaultValues = {
-      firstName: '',
-      lastName: '',
+      firstname: '',
+      lastname: '',
       email: '',
+      username: '',
       password: '',
-      date: null,
+      birthdate: null,
       country: null,
       accept: false
   }
@@ -44,12 +47,41 @@ export const Register = () => {
 
   const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
 
-  const onSubmit = (data) => {
-      setFormData(data);
-      setShowMessage(true);
+  const onSubmit = (formData) => {
+      setFormData(formData);
+      
+      //setShowMessage(true);
+      //console.log(data);
+      axios({
+        // Endpoint to send files
+        url: "http://localhost:5500/api/users",
+        method: "POST",
+        headers: {
+            // Add any auth token here
+            //authorization: "your token comes here",
+        },
 
-      reset();
+        // Attaching the form data
+        data: formData,
+        })
+        // Handle the response from backend here
+        .then((res) => {
+            console.log("--------------logged---------------");
+            console.log(res.data.success);
+            console.log(res.data.message);
+        })
+
+        // Catch errors if any
+        .catch((err) => {
+            console.log(err);
+
+        });
+
+
+      //reset();
   };
+
+
 
   const getFormErrorMessage = (name) => {
       return errors[name] && <small className="p-error">{errors[name].message}</small>
@@ -88,21 +120,30 @@ export const Register = () => {
                   <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
                       <div className="field">
                           <span className="p-float-label" style={{marginTop:'20px'}}>
-                              <Controller name="firstName" control={control} rules={{ required: 'First Name is required.' }} render={({ field, fieldState }) => (
+                              <Controller name="firstname" control={control} rules={{ required: 'First Name is required.' }} render={({ field, fieldState }) => (
                                   <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
                               )} />
-                              <label htmlFor="firstName" className={classNames({ 'p-error': errors.firstName })}>First Name*</label>
+                              <label htmlFor="firstname" className={classNames({ 'p-error': errors.firstname })}>First Name*</label>
                           </span>
-                          {getFormErrorMessage('firstName')}
+                          {getFormErrorMessage('firstname')}
                       </div>
                       <div className="field">
                           <span className="p-float-label" style={{marginTop:'20px'}}>
-                              <Controller name="lastName" control={control} rules={{ required: 'Last Name is required.' }} render={({ field, fieldState }) => (
+                              <Controller name="lastname" control={control} rules={{ required: 'Last Name is required.' }} render={({ field, fieldState }) => (
                                   <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
                               )} />
-                              <label htmlFor="firstName" className={classNames({ 'p-error': errors.firstName })}>Last Name*</label>
+                              <label htmlFor="lastname" className={classNames({ 'p-error': errors.lastname })}>Last Name*</label>
                           </span>
-                          {getFormErrorMessage('lastName')}
+                          {getFormErrorMessage('lastname')}
+                      </div>
+                      <div className="field">
+                          <span className="p-float-label" style={{marginTop:'20px'}}>
+                              <Controller name="username" control={control} rules={{ required: 'User Name is required.' }} render={({ field, fieldState }) => (
+                                  <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                              )} />
+                              <label htmlFor="lastname" className={classNames({ 'p-error': errors.lastname })}>User Name*</label>
+                          </span>
+                          {getFormErrorMessage('username')}
                       </div>
                       <div className="field">
                           <span className="p-float-label p-input-icon-right" style={{marginTop:'20px'}}>
@@ -126,10 +167,10 @@ export const Register = () => {
                       </div>
                       <div className="field">
                           <span className="p-float-label" style={{marginTop:'20px'}}>
-                              <Controller name="date" control={control} render={({ field }) => (
+                              <Controller name="birthdate" control={control} render={({ field }) => (
                                   <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} dateFormat="dd/mm/yy" mask="99/99/9999" showIcon />
                               )} />
-                              <label htmlFor="date">Birthday</label>
+                              <label htmlFor="birthdate">Birthday</label>
                           </span>
                       </div>
                       <div className="field">

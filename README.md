@@ -33,6 +33,9 @@ npm install react-bootstrap bootstrap
 npm install -S react-router-dom --force
 npm install react-hook-form --force
 
+# Setup API Framework 
+npm install axios --force
+
 ### Layouts
 https://www.eventbrite.com/manage/events/create
 
