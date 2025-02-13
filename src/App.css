@@ -53,3 +53,15 @@
   text-align: left;
   justify-content: left;
 }
+
+#wrapper {
+  display: flex;
+}
+
+#left {
+  flex: 0 0 7%5;
+}
+
+#right {
+  flex: 1;
+}

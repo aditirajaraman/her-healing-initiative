@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Nav, Navbar, NavLink, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { Avatar } from 'primereact/avatar';
+const userAvatar =  require("../assets/images/aditi.jpg");
 
 const Navigationbar = () => {
     return (
@@ -26,7 +28,12 @@ const Navigationbar = () => {
                         <NavDropdown.Item as={Link} to="/account">Sign Out</NavDropdown.Item>
                     </NavDropdown>
             </Nav>
-        </Navbar.Collapse>     
+        </Navbar.Collapse>               
+        <div id="wrapper">
+            <div id="right">
+                <Avatar image={userAvatar} className="mr-2" size="large" shape="circle" />
+            </div>
+        </div>  
     </Navbar>
     );
 }
