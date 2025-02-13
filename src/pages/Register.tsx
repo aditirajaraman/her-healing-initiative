@@ -11,22 +11,37 @@ import { Divider } from 'primereact/divider';
 import { classNames } from 'primereact/utils';
 import { Panel } from 'primereact/panel';
 
+import { useNavigate } from 'react-router-dom';
+
 import axios from 'axios';
 
 export const Register = () => {
-  const [countries, setCountries] = useState([]);
-  const [showMessage, setShowMessage] = useState(false);
-  const [formData, setFormData] = useState({});
-  const defaultValues = {
-      firstname: '',
-      lastname: '',
-      email: '',
-      username: '',
-      password: '',
-      birthdate: null,
-      country: null,
-      accept: false
-  }
+    const navigate = useNavigate();
+    const handleCreateEvent = () => {
+    navigate('/'); 
+    };
+    const [countries, setCountries] = useState([]);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [showFailureMessage, setShowFailureMessage] = useState(false);
+    const [formData, setFormData] = useState({});
+    const defaultValues = {
+        firstname: '',
+        lastname: '',
+        email: '',
+        username: '',
+        password: '',
+        birthdate: null,
+        country: null,
+        accept: false
+    }
+
+  const registeredStatus = {
+    status:false,
+    statusMessage:false,
+    userName:'',
+    useremail:'', 
+  };
+  const [registrationStatus, setRegistrationStatus] = useState(registeredStatus);
 
   useEffect(() => {
       //countryservice.getCountries().then(data => setCountries(data));
@@ -66,19 +81,24 @@ export const Register = () => {
         })
         // Handle the response from backend here
         .then((res) => {
-            console.log("--------------logged---------------");
-            console.log(res.data.success);
-            console.log(res.data.message);
+            //console.log("--------------logged---------------");
+            //console.log(res.data.success);
+            //console.log(res.data.message);
+            registeredStatus.status = res.data.success;   
+            registeredStatus.statusMessage  = res.data.message;
+            registeredStatus.userName  = formData.username;
+            registeredStatus.useremail  = formData.email;
+            setRegistrationStatus(registeredStatus);
+            res.data.success ? setShowSuccessMessage(true) : setShowFailureMessage(true)
+            //setShowSuccessMessage(true);
         })
-
-        // Catch errors if any
         .catch((err) => {
             console.log(err);
-
+            setShowFailureMessage(true);
         });
 
 
-      //reset();
+      reset();
   };
 
 
@@ -87,7 +107,7 @@ export const Register = () => {
       return errors[name] && <small className="p-error">{errors[name].message}</small>
   };
 
-  const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
+  const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={handleCreateEvent} /></div>;
   const passwordHeader = <h6>Pick a password</h6>;
   const passwordFooter = (
       <React.Fragment>
@@ -104,12 +124,22 @@ export const Register = () => {
 
   return (
       <div className="form-demo">
-          <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
+          <Dialog visible={showSuccessMessage} onHide={() => setShowSuccessMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
               <div className="flex justify-content-center flex-column pt-6 px-3">
                   <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
                   <h5>Registration Successful!</h5>
                   <p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
-                      Your account is registered under name <b></b> ; it'll be valid next 30 days without activation. Please check <b></b> for activation instructions.
+                      Your account is registered under name <b>{formData["username"]}</b> ; it'll be valid next 30 days without activation. Please check <b>{formData["email"]}</b> for activation instructions.
+                  </p>
+              </div>
+          </Dialog>
+
+          <Dialog visible={showFailureMessage} onHide={() => setShowFailureMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
+              <div className="flex justify-content-center flex-column pt-6 px-3">
+                  <i className="pi pi-ban" style={{ fontSize: '5rem', color: 'var(--red-500)' }}></i>
+                  <h5>Registration Failed!</h5>
+                  <p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
+                      Error : {registrationStatus.statusMessage}
                   </p>
               </div>
           </Dialog>

@@ -20,7 +20,7 @@ const footer = (
 
 const ListEvents = () => {
     const navigate = useNavigate();
-    const habdleCreateEvent = () => {
+    const handleCreateEvent = () => {
         navigate('/createEvent'); 
     };
     
@@ -28,7 +28,7 @@ const ListEvents = () => {
      <div className="grid">
       
       <div className="col-12">
-        <Button style={{float: 'right'}} label="Create Event" className="p-button-raised p-button-warning" onClick={habdleCreateEvent}/>
+        <Button style={{float: 'right'}} label="Create Event" className="p-button-raised p-button-warning" onClick={handleCreateEvent}/>
       </div>
       
       {/* ---------------------------Upcoming Ecents--------------------- */}
