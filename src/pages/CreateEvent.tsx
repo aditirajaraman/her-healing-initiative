@@ -188,15 +188,7 @@ import { Dialog } from 'primereact/dialog';
             </span>
             {getFormErrorMessage('eventTitle')}
           </div>
-          <div className="field col-12 md:col-12">
-            <span className="p-float-label">
-                  <Controller name="eventSummary" control={control} rules={{ required: 'Event Summary is required.' }} render={({ field, fieldState }) => (
-                      <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80} autoResize/>
-                  )} />
-                  <label htmlFor="eventSummary" className={classNames({ 'p-error': errors.eventSummary })}>Event Summmary*</label>
-            </span>
-            {getFormErrorMessage('eventSummary')}
-          </div>
+
         </div>
         </Panel>
         {/* ---------------------------Event Date Time and Location --------------------- */}
