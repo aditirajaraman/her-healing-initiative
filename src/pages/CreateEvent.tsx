@@ -113,7 +113,8 @@ const CreateEvent = () => {
   const defaultValues = {
     eventTitle: '',
     eventSubTitle: '',
-    eventSummary: ''
+    eventSummary: '',
+    eventCategory: ''
     /*eventOption: null,
     eventDate : null,
     startEventTime : null,
@@ -154,13 +155,8 @@ const CreateEvent = () => {
         // Endpoint to send files
         url: "http://localhost:5500/api/events",
         method: "POST",
-        headers: {
-            // Add any auth token here
-            //authorization: "your token comes here",
-        },
         data: formData, // Attaching the form data
         })
-        // Handle the response from backend here
         .then((res) => {
             //console.log("--------------logged---------------");
             //console.log(res.data.success);
@@ -173,7 +169,7 @@ const CreateEvent = () => {
         .catch((err) => {
             console.log(err);
             setShowMessage(true);
-        });
+      });
   };
   const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
   const titleHeader = <h6>Title cant be left blank</h6>;

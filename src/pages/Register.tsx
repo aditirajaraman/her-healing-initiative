@@ -45,41 +45,30 @@ export const Register = () => {
 
   useEffect(() => {
       //countryservice.getCountries().then(data => setCountries(data));
-      const countries = [
-        { name: 'Australia', code: 'AU' },
-        { name: 'Brazil', code: 'BR' },
-        { name: 'China', code: 'CN' },
-        { name: 'Egypt', code: 'EG' },
-        { name: 'France', code: 'FR' },
-        { name: 'Germany', code: 'DE' },
-        { name: 'India', code: 'IN' },
-        { name: 'Japan', code: 'JP' },
-        { name: 'Spain', code: 'ES' },
-        { name: 'United States', code: 'US' }
-      ];
-      setCountries(countries);
+      axios({
+        // Endpoint to send files
+        url: "http://localhost:5500/api/countries",
+        method: "GET"
+        })
+        .then((res) => {
+            //console.log("--------------logged---------------");
+            setCountries(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
 
   const onSubmit = (formData) => {
       setFormData(formData);
-      
-      //setShowMessage(true);
-      //console.log(data);
       axios({
         // Endpoint to send files
         url: "http://localhost:5500/api/users",
         method: "POST",
-        headers: {
-            // Add any auth token here
-            //authorization: "your token comes here",
-        },
-
-        // Attaching the form data
         data: formData,
         })
-        // Handle the response from backend here
         .then((res) => {
             //console.log("--------------logged---------------");
             //console.log(res.data.success);
@@ -90,18 +79,13 @@ export const Register = () => {
             registeredStatus.useremail  = formData.email;
             setRegistrationStatus(registeredStatus);
             res.data.success ? setShowSuccessMessage(true) : setShowFailureMessage(true)
-            //setShowSuccessMessage(true);
         })
         .catch((err) => {
             console.log(err);
             setShowFailureMessage(true);
         });
-
-
       reset();
   };
-
-
 
   const getFormErrorMessage = (name) => {
       return errors[name] && <small className="p-error">{errors[name].message}</small>
