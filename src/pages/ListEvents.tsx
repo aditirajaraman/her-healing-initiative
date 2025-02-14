@@ -121,10 +121,13 @@ const ListEvents = () => {
     const renderHeader = () => {
         return (
             <div className="grid grid-nogutter">
-                <div className="col-6">
-                    <Dropdown style={{float: 'left'}} options={sortOptions} value={sortKey} optionLabel="label" placeholder="Sort By Event" onChange={onSortChange}/>
+                <div className="col-2">
+                    <Dropdown options={sortOptions} value={sortKey} optionLabel="label" placeholder="Sort By Event" onChange={onSortChange}/>
                 </div>
-                <div className="col-6" style={{float: 'right'}}>
+                <div className="col-2">
+                    <Button style={{float: 'left'}} label="Host Event" className="p-button-raised p-button-warning" onClick={handleCreateEvent}/>
+                </div>
+                <div className="col-8" style={{float: 'right'}}>
                     <DataViewLayoutOptions style={{float: 'right'}} layout={layout} onChange={(e) => setLayout(e.value)} />
                 </div>
             </div>
@@ -135,11 +138,6 @@ const ListEvents = () => {
     
   return (
      <div className="grid">
-      
-      <div className="col-12">
-        <Button style={{float: 'right'}} label="Create Event" className="p-button-raised p-button-warning" onClick={handleCreateEvent}/>
-      </div>
-      
       {/* ---------------------------Upcoming Events --------------------- */}
       <Divider align="left">
           <div className="inline-flex align-items-center">

@@ -64,3 +64,11 @@ https://stackoverflow.com/questions/52759220/importing-images-in-typescript-reac
 Registered 
 Interested / Queries
 Liked
+
+Ability to Create Group
+    Group Type - Event Group, Donation Group 
+Ability to Tag to Friends, Groups   
+Event View 
+Edit / Delete Event 
+Share Event 
+Like Event 
