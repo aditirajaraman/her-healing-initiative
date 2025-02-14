@@ -50,3 +50,12 @@ https://medium.com/@sadafamininia/react-ts-folder-structure-b2378387065e
 https://www.primefaces.org/primereact-v8/dropdown/
 https://primereact.org/dropdown/
 https://primeflex.org/gridsystem
+
+
+# Dynamic loading of images 
+npm install -D webpack webpack-cli ts-loader webpack-dev-server
+npm install --save-dev file-loader --force
+npm install --save-dev babel-loader --force
+https://stackoverflow.com/questions/52759220/importing-images-in-typescript-react-cannot-find-module
+
+<img src={require(getImagePath(data.eventImage)).default}/>

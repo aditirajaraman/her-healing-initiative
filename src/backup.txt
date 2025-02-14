@@ -1,0 +1,138 @@
+{/* ---------------------------Event Date Time and Location --------------------- */}
+        <Panel header="Date Time and Location" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
+        <div className="p-fluid grid formgrid">
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventOption" control={control} rules={{ required: 'Event Type is Mandatory.' }} render={({ field }) => (
+                    <SelectButton id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={eventOptions}/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventDate" control={control} rules={{ required: 'Event Date is Mandatory.' }} render={({ field }) => (
+                    <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} dateFormat="dd/mm/yy" mask="99/99/9999" showIcon />
+                )} />
+                <label htmlFor="eventDate">Event Date</label>
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="startEventTime" control={control} rules={{ required: 'Start Time is Mandatory.' }} render={({ field }) => (
+                    <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" showIcon />
+                )} />
+                <label htmlFor="startEventTime">Start Time</label>
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="endEventTime" control={control} rules={{ required: 'End Time is Mandatory.' }} render={({ field }) => (
+                    <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" showIcon />
+                )} />
+                <label htmlFor="endEventTime">End Time</label>
+            </span>
+          </div>
+          <div className="field col-8 md:col-8">
+            <span className="p-float-label">
+                <Controller name="eventLocation" control={control} rules={{ required: 'Event Location is Mandatory.' }} render={({ field }) => (
+                    <SelectButton id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={locationOptions}/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-4 md:col-4"/>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                  <Controller name="eventAddress" control={control} rules={{ required: 'Event Address is required.' }} render={({ field, fieldState }) => (
+                      <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                  )} />
+                  <label htmlFor="eventAddress" className={classNames({ 'p-error': errors.eventAddress })}>Address*</label>
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventCity" control={control} render={({ field }) => (
+                    <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={cities} optionLabel="name" placeholder="Select a City"/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventState" control={control} render={({ field }) => (
+                    <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={states} optionLabel="name"/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                <Controller name="eventCountry" control={control} render={({ field }) => (
+                    <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={countries} optionLabel="name" placeholder="Select a Country"/>
+                )} />
+            </span>
+          </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                  <Controller name="eventZip" control={control} rules={{ required: 'Event Zip is required.' }} render={({ field, fieldState }) => (
+                      <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                  )} />
+                  <label htmlFor="eventZip" className={classNames({ 'p-error': errors.eventZip })}>Zip*</label>
+            </span>
+          </div>
+        </div> 
+        </Panel>
+        
+        {/* ---------------------------Event Itenary --------------------- */}     
+         <Panel header="Event Itinerary" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
+         <div className="p-fluid grid formgrid">
+          <div className="field col-12 md:col-12">
+            <span className="p-float-label">
+                  <Controller name="itineraryHostOrArtist" control={control} render={({ field, fieldState }) => (
+                      <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                  )} />
+                  <label htmlFor="itineraryHostOrArtist" className={classNames({ 'p-error': errors.itineraryHostOrArtist })}>Event Title*</label>
+            </span>
+          </div>
+          <div className="field col-12 md:col-12">
+            <span className="p-float-label">
+                  <Controller name="itineraryDescription" control={control} render={({ field, fieldState }) => (
+                      <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80} autoResize/>
+                  )} />
+                  <label htmlFor="itineraryDescription" className={classNames({ 'p-error': errors.itineraryDescription })}>Itinerary Description</label>
+            </span>
+          </div>
+         </div>
+         </Panel> 
+        
+        {/* ---------------------------Event FAQs --------------------- */}   
+        <Panel header="FAQ's" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
+          <div className="p-fluid grid formgrid">
+            <div className="field col-12 md:col-6">
+            </div>
+            <div className="field col-12 md:col-6">
+              <Button icon="pi pi-plus" rounded severity="warning" aria-label="Notification"  style={{float:'right'}}/>
+            </div>
+            <Divider align="left">
+                <div className="inline-flex align-items-center">
+                    <b>FAQ 1</b>
+                </div>
+            </Divider>
+            <div className="field col-9 md:col-9">
+              <span className="p-float-label">
+                    <Controller name="faqQuestion1" control={control} render={({ field, fieldState }) => (
+                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                    )} />
+                    <label htmlFor="faqQuestion1" className={classNames({ 'p-error': errors.faqQuestion1 })}>Question*</label>
+              </span>
+            </div>
+            <div className="field col-3 md:col-3">
+            <Button icon="pi pi-trash" rounded severity="danger" size="small" style={{float:'right'}}/>
+            </div>
+            <div className="field col-12 md:col-12">
+              <span className="p-float-label">
+                    <Controller name="faqAnswer1" control={control} render={({ field, fieldState }) => (
+                        <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80} autoResize/>
+                    )} />
+                    <label htmlFor="faqAnswer1" className={classNames({ 'p-error': errors.faqAnswer1 })}>Answer*</label>
+              </span>
+            </div>
+         </div>
+         </Panel> 

@@ -1,28 +1,143 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Divider } from 'primereact/divider';
 import { Button } from 'primereact/button';
 import '../assets/css/prime-styles.css';
+import '../assets/css/eventView.css';
 
 import { Card } from 'primereact/card';
+import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
+import { Dropdown } from 'primereact/dropdown';
 
-const header = (
-  <img alt="Card" src="../assets/imanges/"  />
-);
-const footer = (
-  <span>
-     <Button label="More Info" className="p-button-raised p-button-help" />
-  </span>
-);
+import axios from 'axios';
 
+const imageList = ["arts.png", "hackathon.png"]
+//const arts =  require("../assets/images/events/arts.png");
+//const hackathon =  require("../assets/images/events/hackathon.png");
 
+const getImagePath = (image) => {
+    return './assets/images/' + image + '.png';
+}
 
 const ListEvents = () => {
     const navigate = useNavigate();
     const handleCreateEvent = () => {
         navigate('/createEvent'); 
     };
+
+    useEffect(() => {
+        axios({
+        // Endpoint to send files
+        url: "http://localhost:5500/api/events",
+        method: "GET",
+        headers: {
+            // Add any auth token here
+            //authorization: "your token comes here",
+        },
+        })
+        // Handle the response from backend here
+        .then((res) => {
+            console.log(res.data);
+            setEvents(res.data);
+            setLayout("grid");
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const [events, setEvents] = useState(null);
+    const [layout, setLayout] = useState(null);
+    const [sortKey, setSortKey] = useState(null);
+    const [sortOrder, setSortOrder] = useState(null);
+    const [sortField, setSortField] = useState(null);
+    const sortOptions = [
+        {label: 'Event Date', value: 'date'},
+        {label: 'Event Category', value: 'category'},
+        {label: 'Event Name', value: 'name'}
+    ];
+
+    const onSortChange = (event) => {
+        const value = event.value;
+
+        if (value.indexOf('!') === 0) {
+            setSortOrder(-1);
+            setSortField(value.substring(1, value.length));
+            setSortKey(value);
+        }
+        else {
+            setSortOrder(1);
+            setSortField(value);
+            setSortKey(value);
+        }
+    }
+
+    const renderListItem = (data) => {
+        return (
+            <div className="col-12">
+                <div className="product-list-item">
+                    <img src={require( `../assets/images/${data.eventImage}.png`)}/>
+                    <div className="product-list-detail">
+                        <div className="product-name">{data.eventTitle}</div>
+                        <div className="product-description">{data.eventSummary}</div>
+                        <i className="pi pi-tag product-category-icon"></i><span className="product-category">{"hackathons"}</span>
+                    </div>
+                    <div className="product-list-action">
+                        <Button icon="pi pi-shopping-cart" label="More"></Button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const renderGridItem = (data) => {
+        return (
+            <div className="col-12 md:col-4">
+                <div className="product-grid-item card">
+                    <div className="product-grid-item-top">
+                        <div>
+                            <i className="pi pi-tag product-category-icon"></i>
+                            <span className="product-category">{"hackathons"}</span>
+                        </div>
+                    </div>
+                    <div className="product-grid-item-content">
+                    <img src={require( `../assets/images/${data.eventImage}.png`)}/>
+                        <div className="product-name">{data.eventTitle}</div>
+                        <div className="product-description">{data.eventSummary}</div>
+                    </div>
+                    <div className="product-grid-item-bottom">
+                        <Button icon="pi pi-shopping-cart" label="More"></Button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const itemTemplate = (event, layout) => {
+        if (layout === 'list')
+            return renderListItem(event);
+        else if (layout === 'grid')
+            return renderGridItem(event);
+        else
+            return null;
+    }
+
+
+    const renderHeader = () => {
+        return (
+            <div className="grid grid-nogutter">
+                <div className="col-6">
+                    <Dropdown style={{float: 'left'}} options={sortOptions} value={sortKey} optionLabel="label" placeholder="Sort By Event" onChange={onSortChange}/>
+                </div>
+                <div className="col-6" style={{float: 'right'}}>
+                    <DataViewLayoutOptions style={{float: 'right'}} layout={layout} onChange={(e) => setLayout(e.value)} />
+                </div>
+            </div>
+        );
+    }
+
+    const header = renderHeader();
     
   return (
      <div className="grid">
@@ -31,65 +146,24 @@ const ListEvents = () => {
         <Button style={{float: 'right'}} label="Create Event" className="p-button-raised p-button-warning" onClick={handleCreateEvent}/>
       </div>
       
-      {/* ---------------------------Upcoming Ecents--------------------- */}
+      {/* ---------------------------Upcoming Events --------------------- */}
       <Divider align="left">
           <div className="inline-flex align-items-center">
               <i className="pi pi-user mr-2" style={{color: 'green', 'fontSize': '2em'}}></i>
               <b>Upcoming Events</b>
           </div>
       </Divider>
-
-      <div className="col-3">
-          <Card title="JPS Hackathon" subTitle="The March Tech Summit" style={{ width: '25em', textAlign:'left'}} footer={footer}>
-              <p className="m-0" style={{lineHeight: '1.5'}}>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt
-                  quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!</p>
-          </Card>
-      </div>
-      <div className="col-3">
-          <Card title="DYFS- Fundraiser!" subTitle="Celebrate Christams together !" style={{ width: '25em', textAlign:'left' }} footer={footer}>
-              <p className="m-0" style={{lineHeight: '1.5'}}>DYFC funds programs serving young people up to age 24 and their families. We’re committed to advancing equity and healing trauma.We bring together and work alongside community-based organizations, government agencies, and schools.</p>
-          </Card>
-      </div>
-      <div className="col-3">
-          <Card title="The Live Experience" subTitle="François Capdeville  are the talent behind" style={{ width: '25em', textAlign:'left' }} footer={footer}>
-              <p className="m-0" style={{lineHeight: '1.5'}}>BlogHer, one of SHE Media’s flagship sites, is a leading content and events platform with a mission to provide economic empowerment for all women. BlogHer has evolved from in-person to virtual events, with an on-demand video and content library to feed an increasing demand for 24/7.</p>
-          </Card>
-      </div>
-      <div className="col-3">
-          <Card title="Fenergy" subTitle="Educate and Inspire" style={{ width: '25em', textAlign:'left' }} footer={footer}>
-              <p className="m-0" style={{lineHeight: '1.5'}}>Founders Maylin and Christina met through a leadership development program back in 2010. Through that experience, they shared childhood stories, along with adult struggles and personal dreams. The same life experiences would lead them on a journey of self-discovery, purpose, and service.</p>
-          </Card>
-      </div>
-      
-      {/* ---------------------------Past Ecents--------------------- */}
-      <Divider align="left">
-          <div className="inline-flex align-items-center">
-              <i className="pi pi-user mr-2" style={{color: 'brown', 'fontSize': '2em'}}></i>
-              <b>Past Events</b>
-          </div>
-      </Divider>
-
-      <div className="col-3">
-          <Card title="Writing and Mindfulness" subTitle="Cultivating Self-Compassion" style={{ width: '25em', textAlign:'left'}} footer={footer}>
-              <p className="m-0" style={{lineHeight: '1.5'}}>This workshop will be a combination of writing exercises, meditation, mindfulness practices, somatics, discussion, lecture, etc. all centered around the theme of cultivating self-compassion. This a weekly workshop and each week we'll focus on a different topic.</p>
-          </Card>
-      </div>
-      <div className="col-3">
-          <Card title="Community Day: Lunar New Year" subTitle="Lunar New Year celebration!" style={{ width: '25em', textAlign:'left' }} footer={footer}>
-              <p className="m-0" style={{lineHeight: '1.5'}}>Let’s celebrate the Year of the Snake! Join us for this family-friendly celebration, where the spirit of Lunar New Year comes alive through art, tradition, and community. Travel to Asia with us to experience dance performances, acrobatics, crafts, food, and more!</p>
-          </Card>
-      </div>
-      <div className="col-3">
-          <Card title="Paws and Poses at Fearvana Yoga!" subTitle="ARe you ready to get down(ward dog) with the pups of OSCAR!" style={{ width: '25em', textAlign:'left' }} footer={footer}>
-              <p className="m-0" style={{lineHeight: '1.5'}}>Join paws with us for a unique and heartwarming yoga class at Fearvana Yoga in Kenilworth, NJ. Doggy Noses & Yoga Poses combines the joy of yoga with the cuddles of adorable rescue puppies and dogs from OSCAR.</p>
-          </Card>
-      </div>
-      <div className="col-3">
-          <Card title="LATIN JAZZ @ GALERIA" subTitle="with dynamic Javier Madrazo Quartet" style={{ width: '25em', textAlign:'left' }} footer={footer}>
-              <p className="m-0" style={{lineHeight: '1.5'}}>Direct from Buenos Aires, Argentina and beyond, the Javier Madrazo Quartet features a dynamic fusion of diverse Latin rhythms and jazz improvisation, transporting the audience through a vibrant range of styles. From the smooth, sophisticated melodies of Bossa Nova to the infectious energy of Mambo,</p>
-          </Card>
-      </div>
-
+      {/* --------------------------- Events--------------------- */}
+      <div className="dataview-event">
+        <div className="card">
+            <DataView layout={layout} 
+                value={events}
+                header={header}
+                itemTemplate={itemTemplate}
+                paginator rows={9}
+                sortOrder={sortOrder} sortField={sortField} />
+        </div>
+      </div>    
     </div>
   );
 };

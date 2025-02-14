@@ -12,10 +12,10 @@
     "allowSyntheticDefaultImports": true, // Allow default imports from modules with no default export
     "noImplicitAny": false,
     "noImplicitThis": true,
-    "strictNullChecks": false,
-    "strict": true,
     "noImplicitReturns": true,
     "noImplicitOverride": true,
+    "strictNullChecks": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file.
     "module": "esnext", // Specify module code generation
     "moduleResolution": "node", // Resolve modules using Node.js style
@@ -26,13 +26,13 @@
     "sourceMap": true, // Generate corrresponding .map file
     "declaration": true, // Generate corresponding .d.ts file
     "noUnusedLocals": false, // Report errors on unused locals
-    //"strictNullChecks": false, // Dont check for Nulls default
     "noUnusedParameters": true, // Report errors on unused parameters
     "incremental": true, // Enable incremental compilation by reading/writing information from prior compilations to a file on disk
     "noFallthroughCasesInSwitch": true// Report errors for fallthrough cases in switch statement
   },
   "include": [
-    "src/**/*" // *** The files TypeScript should type check ***
+    "src/**/*", // *** The files TypeScript should type check ***
+    "src/types/images.d.ts",
   ],
   "exclude": ["node_modules", "build"] // *** The files to not type check ***
 }

@@ -18,7 +18,7 @@ import axios from 'axios';
 export const Register = () => {
     const navigate = useNavigate();
     const handleCreateEvent = () => {
-    navigate('/'); 
+        navigate('/'); 
     };
     const [countries, setCountries] = useState([]);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
