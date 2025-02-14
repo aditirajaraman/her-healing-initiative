@@ -59,3 +59,8 @@ npm install --save-dev babel-loader --force
 https://stackoverflow.com/questions/52759220/importing-images-in-typescript-react-cannot-find-module
 
 <img src={require(getImagePath(data.eventImage)).default}/>
+
+### Events MetaData
+Registered 
+Interested / Queries
+Liked
