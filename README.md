@@ -82,3 +82,9 @@ View Event =>
     Edit Event
     Delete Event
     Review Event Comments   
+
+### How to Run the Project
+# Run the API Project - Launch Terminial from Visual Code
+npm run dev 
+# Run the UI Project - Launch Terminial from Visual Code
+npm run start
