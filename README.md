@@ -26,8 +26,8 @@ npm run eject
 # primereact setup
 npm install primereact primeicons --force
 npm install primeflex --force
-npm install primeicons 
-npm install react-bootstrap bootstrap
+npm install primeicons  --force
+npm install react-bootstrap bootstrap --force
 
 # Setup React Routers
 npm install -S react-router-dom --force
@@ -53,7 +53,7 @@ https://primeflex.org/gridsystem
 
 
 # Dynamic loading of images 
-npm install -D webpack webpack-cli ts-loader webpack-dev-server
+npm install -D webpack webpack-cli ts-loader webpack-dev-server -force
 npm install --save-dev file-loader --force
 npm install --save-dev babel-loader --force
 https://stackoverflow.com/questions/52759220/importing-images-in-typescript-react-cannot-find-module
