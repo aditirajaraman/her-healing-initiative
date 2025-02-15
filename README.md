@@ -60,6 +60,11 @@ https://stackoverflow.com/questions/52759220/importing-images-in-typescript-reac
 
 <img src={require(getImagePath(data.eventImage)).default}/>
 
+### Parent - Child Components Integration
+
+https://codesandbox.io/p/sandbox/ecstatic-shamir-1ffso?file=%2Fsrc%2FApp.js
+
+
 ### Events MetaData
 Registered 
 Interested / Queries
@@ -72,3 +77,8 @@ Event View
 Edit / Delete Event 
 Share Event 
 Like Event 
+
+View Event => 
+    Edit Event
+    Delete Event
+    Review Event Comments   

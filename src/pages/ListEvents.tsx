@@ -12,8 +12,11 @@ import { Card } from 'primereact/card';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Dropdown } from 'primereact/dropdown';
 import { Badge } from 'primereact/badge';
+import { Dialog } from 'primereact/dialog';
 
 import axios from 'axios';
+
+import ViewEvent from './ViewEvent';
 
 const ListEvents = () => {
     const navigate = useNavigate();
@@ -47,6 +50,12 @@ const ListEvents = () => {
     const [sortKey, setSortKey] = useState(null);
     const [sortOrder, setSortOrder] = useState(null);
     const [sortField, setSortField] = useState(null);
+    const currentEventData = {
+        id:'',
+        eventTitle:''
+    };
+    const [currentEvent, setCurrentEvent] = useState(currentEventData);
+
     const sortOptions = [
         {label: 'Event Date', value: 'date'},
         {label: 'Event Category', value: 'category'},
@@ -88,9 +97,9 @@ const ListEvents = () => {
         return (
             <div className="col-12 md:col-4">
                 <div className="product-grid-item card">
-                    <div className="product-grid-item-content">
+                    <div className="product-grid-item-content"> 
                         <img src={require( `../assets/images/events/${data.eventImage}.png`)}/>
-                        <div className="product-name">{data.eventTitle}</div>
+                        <div className="product-name" onClick={() => handleEventClick('displayEvent', 'center', data._id,  data.eventTitle)}  style={{cursor:'pointer'}}>{data.eventTitle}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.eventTag}</span>
                         <div className="product-description">{data.eventSummary}</div>
@@ -135,9 +144,48 @@ const ListEvents = () => {
     }
 
     const header = renderHeader();
+
+    const [displayEvent, setDisplayEvent] = useState(false);
+    const [position, setPosition] = useState('center');
+    const dialogFuncMap = {
+        'displayEvent': setDisplayEvent
+    }
+
+    const handleEventClick = (name, position, id, eventTitle) => {
+        //console.log(id)
+        currentEventData.id = id;
+        currentEventData.eventTitle = eventTitle;
+        setCurrentEvent(currentEventData);
+
+        dialogFuncMap[`${name}`](true);
+
+        if (position) {
+            setPosition(position);
+        }
+    }
+
+    const onHide = (name) => {
+        dialogFuncMap[`${name}`](false);
+    }
+
+    const renderFooter = (name) => {
+        return (
+            <div>
+                <Button label="Edit Event" icon="pi pi-pencil" onClick={() => onHide(name)} autoFocus />
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>    
+                <Button label="Delete Event" icon="pi pi-trash" severity='danger' onClick={() => onHide(name)}/>
+            </div>
+        );
+    }
     
   return (
      <div className="grid">
+        {/* ---------------------------View Event --------------------- */}
+        <Dialog header={currentEvent.eventTitle} visible={displayEvent} style={{ width: '60vw' }} footer={renderFooter('displayEvent')} onHide={() => onHide('displayEvent')}>
+        <br></br>
+        <ViewEvent eventData={currentEvent}/>
+      </Dialog>  
+
       {/* ---------------------------Upcoming Events --------------------- */}
       <Divider align="left">
           <div className="inline-flex align-items-center">

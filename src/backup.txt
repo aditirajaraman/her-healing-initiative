@@ -80,7 +80,7 @@
         </div> 
         </Panel>
         
-        {/* ---------------------------Event Itenary --------------------- */}     
+        {/* ---------------------------Event Itinerary --------------------- */}     
          <Panel header="Event Itinerary" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
          <div className="p-fluid grid formgrid">
           <div className="field col-12 md:col-12">
