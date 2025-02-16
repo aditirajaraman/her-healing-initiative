@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import { classNames } from 'primereact/utils';
@@ -9,6 +9,7 @@ import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 import { Button } from 'primereact/button';
 import { Divider } from 'primereact/divider';
 import { addLocale } from 'primereact/api';
@@ -56,13 +57,15 @@ const CreateEvent = () => {
   const [agendaStartTime, setAgendaStartTime] = useState<Date | null | undefined>(new Date());
   const [agendaEndTime, setAgendaEndTime] = useState<Date | null | undefined>(new Date());
 
-
+  const [selectedCities2, setSelectedCities2] = useState(null);
   const cities = [
+    { name: 'New York', code: 'NY' },
     { name: 'Rome', code: 'RM' },
     { name: 'London', code: 'LDN' },
     { name: 'Istanbul', code: 'IST' },
     { name: 'Paris', code: 'PRS' }
   ];
+
 
   const states = [
     { name: 'New York', code: 'NY' },
@@ -84,17 +87,60 @@ const CreateEvent = () => {
     { name: 'United States', code: 'US' }
   ];
 
-  const onCityChange = (e: { value: any}) => {
-    setSelectedCity(e.value);
-  }
+  const groupedEventTags = [
+    {
+        label: 'Life Sciences', code: 'LS',
+        items: [
+            { label: 'Microbiology', value: 'Microbiology' },
+            { label: 'BioChemistry', value: 'BioChemistry' },
+            { label: 'Ecology', value: 'Ecology' },
+            { label: 'Genomics', value: 'Genomics' },
+            { label: 'Neuroscience', value: 'Neuroscience' }
+        ]
+    },
+    {
+        label: 'AI', code: 'AI',
+        items: [
+            { label: 'NLP', value: 'NLP' },
+            { label: 'Computer Vision', value: 'ComputerVision' },
+            { label: 'Generative AI', value: 'GenAI' },
+            { label: 'Deep Learning', value: 'DeepLearning' }
+        ]
+    },
+    {
+      label: 'Arts & Writing', code: 'ArtsWriting',
+      items: [
+          { label: 'Self-Help', value: 'Self-Help' },
+          { label: 'Poetry', value: 'Poetry' },
+          { label: 'Short Story', value: 'ShortSory' }
+      ]
+    },
+    {
+        label: 'Competitions', code: 'Comp',
+        items: [
+            { label: 'Hackathons', value: 'Hackathons' },
+            { label: 'App Development', value: 'AppDevelopment' },
+            { label: 'Robotics', value: 'Robotics' }
+        ]
+    }];
 
-  const onStateChange = (e: { value: any}) => {
-    setSelectedState(e.value);
-  }
+    const eventOrganizerTypeOptions = [
+      {name: 'Group', value: 'Group'},
+      {name: 'Individuals', value: 'Individuals'}
+    ];
+    const [eventOrganizerTypeOption, setEventOrganizerTypeOptions] = useState('Individuals');
 
-  const onCountryChange = (e: { value: any}) => {
-    setSelectedCountry(e.value);
-  }
+    const onCityChange = (e: { value: any}) => {
+      setSelectedCity(e.value);
+    }
+
+    const onStateChange = (e: { value: any}) => {
+      setSelectedState(e.value);
+    }
+
+    const onCountryChange = (e: { value: any}) => {
+      setSelectedCountry(e.value);
+    }
 
 
   let today = new Date();
@@ -114,7 +160,10 @@ const CreateEvent = () => {
     eventTitle: '',
     eventSubTitle: '',
     eventSummary: '',
-    eventCategory: ''
+    eventCategory: '',
+    eventTags: '',
+    eventOrganizerType:'',
+    eventOrganizer:'',
     /*eventOption: null,
     eventDate : null,
     startEventTime : null,
@@ -147,6 +196,25 @@ const CreateEvent = () => {
   };
 
   const [eventStatus, setEventStatus] = useState(createEventStatus);
+
+  const [userEventOrganizers, setUserEventOrganizers] = useState(null);
+  const [eventOrganizer, setEventOrganizer] = useState(null);
+  useEffect(() => {
+    //console.log("----------Loaded ViewEvent-----------");
+    //console.log(eventData);
+    axios({
+        url: "http://localhost:5500/api/users/GetUserEventOrganizer",
+        method: "GET",
+        })
+        .then((res) => {
+            console.log("----------Load Event Organizers-----------");
+            console.log(res.data);
+            setUserEventOrganizers(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+    });
+  }, []);  
 
   const onSubmit = (formData:any) => {
       setFormData(formData);
@@ -185,6 +253,14 @@ const CreateEvent = () => {
           </ul>
       </React.Fragment>
   ); 
+  const [selectedGroupedEventTags, setSelectedGroupedEventTags] = useState(null);
+  const groupedItemTemplate = (option) => {
+    return (
+        <div className="flex align-items-center">
+            <div>{option.label}</div>
+        </div>
+    );
+  }
 
   /*----------------------Start : Form Setup---------------------- */
 
@@ -242,6 +318,42 @@ const CreateEvent = () => {
             </span>
             {getFormErrorMessage('eventSummary')}
           </div>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                  <Controller name="eventTags" control={control} rules={{ required: 'Event Tag is required.' }} render={({ field, fieldState }) => (
+                       <MultiSelect id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                       value={selectedGroupedEventTags} options={groupedEventTags} onChange={(e) => setSelectedGroupedEventTags(e.value)} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items"
+                       optionGroupTemplate={groupedItemTemplate} placeholder="Select Event Tags"  display="chip" />
+                  )} />
+                  <label htmlFor="eventTags" className={classNames({ 'p-error': errors.eventTags })}>Event Tag*</label>
+            </span>
+            {getFormErrorMessage('eventTags')}
+          </div>
+          <div className="field col-6 md:col-6"/>
+          <div className="field col-6 md:col-6">
+            <label htmlFor="eventOrganizerType">Event Organizer*</label>
+            <span className="p-float-label">
+                  <Controller name="eventOrganizerType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
+                      <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                        value={eventOrganizerTypeOption} options={eventOrganizerTypeOptions} onChange={(e) => setEventOrganizerTypeOptions(e.value)} optionLabel="name"/>
+                  )} />
+            </span>
+            {getFormErrorMessage('eventOrganizerType')}
+          </div>
+          <div className="field col-6 md:col-6"/>
+          <div className="field col-6 md:col-6">
+            <span className="p-float-label">
+                  <Controller name="eventOrganizer" control={control} rules={{ required: 'Event Organizer is required.' }} render={({ field, fieldState }) => (
+                      <MultiSelect  id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                        placeholder="Select EVent Organizer" maxSelectedLabels={3}
+                        value={eventOrganizer} options={userEventOrganizers} onChange={(e) => setEventOrganizer(e.value)} optionLabel="name"/>
+                  )} />
+            </span>
+            {getFormErrorMessage('eventOrganizer')}
+          </div>
+
+         
+         
         </div>
         </Panel>
         <div className="p-fluid grid formgrid">
