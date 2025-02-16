@@ -1,4 +1,4 @@
-{/* ---------------------------Event Date Time and Location --------------------- */}
+{/* ---------------------------Event Schedule --------------------- */}
         <Panel header="Date Time and Location" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
         <div className="p-fluid grid formgrid">
           <div className="field col-6 md:col-6">
