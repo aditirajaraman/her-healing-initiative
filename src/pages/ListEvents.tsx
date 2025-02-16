@@ -111,6 +111,7 @@ const ListEvents = () => {
                         <i className="interested-users pi pi-question-circle mr-4 p-text-secondary p-overlay-badge" data-pr-tooltip="Interested Users" data-pr-position="bottom" data-pr-at="right+5 top" data-pr-my="left center-2" style={{ fontSize: '2rem', float: 'left', cursor: 'pointer', color:'orange' }}><Badge value="10+" severity="warning" ></Badge></i>
                         <Tooltip target=".liked" />
                         <i className="liked pi pi-thumbs-up mr-4 p-text-secondary p-overlay-badge" data-pr-tooltip="Likes !" data-pr-position="bottom" data-pr-at="right+5 top" data-pr-my="left center-2"  style={{ fontSize: '2rem', float: 'left', cursor: 'pointer', color:'darkblue' }}><Badge value="100" severity="info"></Badge></i>
+                        <Button icon="pi pi-times" rounded text raised severity="danger" aria-label="Cancel" />
                     </div>
             </div>
             </div>
