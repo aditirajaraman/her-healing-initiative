@@ -47,9 +47,10 @@
   align-items: stretch;
 }
 
+/***************Create Event Container***************************/
 .container {
   display: block;
-  width: 50%;
+  width: 75%;
   text-align: left;
   justify-content: left;
 }
