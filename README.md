@@ -87,4 +87,4 @@ View Event =>
 # Run the API Project - Launch Terminial from Visual Code
 npm run dev 
 # Run the UI Project - Launch Terminial from Visual Code
-npm run start
+np

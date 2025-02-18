@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -10,7 +11,12 @@ const water =  require("../assets/images/water.jpg");
 const africakids =  require("../assets/images/africakids.jpg");
 const ruralkids =  require("../assets/images/ruralkids.jpg");
 
+
 const Home = () => {
+  const navigate = useNavigate();
+  const handleDonateEvent = () => {
+      navigate('/donate'); 
+  };
   return (
     <Container fluid>
     <Row>
@@ -23,7 +29,7 @@ const Home = () => {
           <Container>
             <Row>
               <Col><Button variant="primary">VOLUNTEER</Button></Col>
-              <Col><Button variant="info">DONATE</Button></Col>
+              <Col><Button variant="info" onClick={handleDonateEvent}>DONATE</Button></Col>
               <Col><Button variant="success">PARTNER</Button></Col>
               <Col><Button variant="warning">HIRE US</Button></Col>
             </Row>
