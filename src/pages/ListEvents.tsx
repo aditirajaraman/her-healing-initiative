@@ -18,6 +18,8 @@ import axios from 'axios';
 
 import ViewEvent from './ViewEvent';
 
+const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
+
 const ListEvents = () => {
     const navigate = useNavigate();
     const handleCreateEvent = () => {
@@ -27,7 +29,7 @@ const ListEvents = () => {
     useEffect(() => {
         axios({
         // Endpoint to send files
-        url: "http://localhost:5500/api/events",
+        url: config.API_URL + "/api/events",
         method: "GET",
         headers: {
             // Add any auth token here
@@ -179,6 +181,7 @@ const ListEvents = () => {
     }
     
   return (
+    
      <div className="grid">
         {/* ---------------------------View Event --------------------- */}
         <Dialog header={currentEvent.eventTitle} visible={displayEvent} style={{ width: '60vw' }} footer={renderFooter('displayEvent')} onHide={() => onHide('displayEvent')}>

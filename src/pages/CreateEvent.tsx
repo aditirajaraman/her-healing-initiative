@@ -24,6 +24,7 @@ import { Tag } from 'primereact/tag';
 import axios from 'axios';
 
 const eventLogo =  require("../assets/images/audience.jpg");
+const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
 const CreateEvent = () => {
   const navigate = useNavigate();
@@ -285,7 +286,7 @@ const CreateEvent = () => {
     //console.log("----------Loaded ViewEvent-----------");
     //console.log(eventData);
     axios({
-        url: "http://localhost:5500/api/users/GetUserEventOrganizer",
+        url: config.API_URL + "/api/users/GetUserEventOrganizer",
         method: "GET",
         })
         .then((res) => {
@@ -303,7 +304,7 @@ const CreateEvent = () => {
       console.log(formData);
       axios({
         // Endpoint to send files
-        url: "http://localhost:5500/api/events",
+        url: config.API_URL + "/api/events",
         method: "POST",
         data: formData, // Attaching the form data
         })
