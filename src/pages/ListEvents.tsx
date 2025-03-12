@@ -38,11 +38,15 @@ const ListEvents = () => {
         })
         // Handle the response from backend here
         .then((res) => {
+            console.log("----------process.env---------");
+            console.log(process.env.NODE_ENV);
             console.log(res.data);
             setEvents(res.data);
             setLayout("grid");
         })
         .catch((err) => {
+            console.log("----------process.env---------");
+            console.log(process.env.NODE_ENV);
             console.log(err);
         });
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
