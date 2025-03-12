@@ -1,3 +1,11 @@
+### Application Setup 
+
+# Localhost : in config_development.json
+"API_URL" : "http://localhost:5000"
+
+# development ( On Server ) : in config_development.json
+"API_URL" : "http://www.her-healing-initiative-api.org"
+
 # Steps used to Create Project 
 //Create react typescript project 
 npx create-react-app arch-toolkit --template typescript --force
@@ -88,3 +96,6 @@ View Event =>
 npm run dev 
 # Run the UI Project - Launch Terminial from Visual Code
 np
+
+
+
