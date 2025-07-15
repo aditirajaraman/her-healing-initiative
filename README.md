@@ -56,7 +56,6 @@ https://medium.com/@sadafamininia/react-ts-folder-structure-b2378387065e
 
 # Prime react Programming References 
 https://www.primefaces.org/primereact-v8/dropdown/
-https://www.primefaces.org/primereact-v8/dropdown/
 https://primereact.org/dropdown/
 https://primeflex.org/gridsystem
 
