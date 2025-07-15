@@ -15,6 +15,11 @@ import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 
+const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
+
+//console.log("-----API URL--------");
+//console.log(config.API_URL);
+
 export const Register = () => {
     const navigate = useNavigate();
     const handleCreateEvent = () => {
@@ -45,9 +50,11 @@ export const Register = () => {
 
   useEffect(() => {
       //countryservice.getCountries().then(data => setCountries(data));
+      const apiKey = process.env.API_URL;
+      console.log(apiKey);
       axios({
         // Endpoint to send files
-        url: "http://localhost:5500/api/countries",
+        url: config.API_URL + "/api/countries",
         method: "GET"
         })
         .then((res) => {
@@ -65,7 +72,7 @@ export const Register = () => {
       setFormData(formData);
       axios({
         // Endpoint to send files
-        url: "http://localhost:5500/api/users",
+        url: config.API_URL + "/api/users",
         method: "POST",
         data: formData,
         })

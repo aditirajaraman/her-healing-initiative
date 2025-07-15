@@ -4,13 +4,16 @@ import axios from 'axios';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { SelectButton } from 'primereact/selectbutton';
 
+const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
+
 const ViewEvent = ({eventData}) => {
     const [currentEvent, setCurrentEvent] = useState(null);
     useEffect(() => {
         //console.log("----------Loaded ViewEvent-----------");
         //console.log(eventData);
+        console.log(process.env.NODE_ENV?.trim());
         axios({
-            url: "http://localhost:5500/api/events/" + eventData.id,
+            url: config.API_URL + "/api/events/" + eventData.id,
             method: "GET",
             })
             .then((res) => {
