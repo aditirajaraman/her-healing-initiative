@@ -15,17 +15,17 @@ const Navigationbar = () => {
             <Nav className="justify-content-center" style={{ flex: 1}}>
                 <NavLink  eventKey="1" as={Link} to="/">Home</NavLink>
                 <NavLink  eventKey="1" as={Link} to="/listevents">Events</NavLink>
-                    <NavLink  eventKey="1" as={Link} to="/blogs">Blogs</NavLink>
-                    <NavDropdown title="About" id="basic-nav-dropdown">
-                        <NavDropdown.Item as={Link} to="/team">Meet our Team!</NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/faqs">FAQ</NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/contact">Contact</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item as={Link} to="/register">Register</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item as={Link} to="/login">Sign in</NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/account">Sign Out</NavDropdown.Item>
-                    </NavDropdown>
+                <NavLink  eventKey="1" as={Link} to="/listblogs">Blogs</NavLink>
+                <NavDropdown title="About" id="basic-nav-dropdown">
+                    <NavDropdown.Item as={Link} to="/team">Meet our Team!</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/faqs">FAQ</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/contact">Contact</NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item as={Link} to="/register">Register</NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item as={Link} to="/login">Sign in</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/account">Sign Out</NavDropdown.Item>
+                </NavDropdown>
             </Nav>
         </Navbar.Collapse>               
         <div id="wrapper">

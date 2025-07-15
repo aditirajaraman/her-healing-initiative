@@ -18,6 +18,7 @@ import 'primeflex/primeflex.css';
 import Home from './pages/Home';
 import About from './pages/About';
 import ListEvents from './pages/ListEvents';
+import ListBlogs from './pages/ListBlogs';
 import CreateEvent from './pages/CreateEvent';
 import Donate from './pages/Donate';
 import Register from './pages/Register';
@@ -30,6 +31,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/listevents" element={<ListEvents />} />
+          <Route path="/listblogs" element={<ListBlogs />} />
           <Route path="/createEvent" element={<CreateEvent />} />
           <Route path="/donate" element={<Donate />} />
           <Route path="/register" element={<Register />} />
