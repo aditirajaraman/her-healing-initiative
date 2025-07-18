@@ -11,10 +11,14 @@ import { Dropdown } from 'primereact/dropdown';
 import { Avatar } from 'primereact/avatar';
 import { Tooltip } from 'primereact/tooltip';
 import { Badge } from 'primereact/badge';
+import { Dialog } from 'primereact/dialog';
 
 /*********************************3: Imports / custom css ********************************/
 import '../assets/css/prime-styles.css';
 import '../assets/css/eventView.css';
+
+/*********************************3: Imports / Views ********************************/
+import ViewBlog from './ViewBlog';
 
 /*********************************4: Start : Application Code ********************************/
 
@@ -22,7 +26,7 @@ import '../assets/css/eventView.css';
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
 // 4.2 : Class Code
-const ListBlogs = () => {
+const ListBlogs = () => { 
     /*---------------------4.2.1: api call / start ------------------------*/
     useEffect(() => {
         axios({
@@ -54,7 +58,7 @@ const ListBlogs = () => {
         id:'',
         blogTitle:''
     };
-     const sortOptions = [
+    const sortOptions = [
       {label: 'Blog Date', value: 'date'},
       {label: 'Blog Category', value: 'category'},
       {label: 'Blog Name', value: 'name'}
@@ -117,7 +121,7 @@ const ListBlogs = () => {
             </div>
         );
     }
-    const header = renderHeader()
+    const headerTemplate = renderHeader()
 
     //4.2.3.4 :  Data View / ListItem Definition
     const renderListItem = (data) => {
@@ -143,7 +147,7 @@ const ListBlogs = () => {
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content"> 
                         <img src={require( `../assets/images/events/${data.imglink}.png`)}/>
-                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick('displayEvent', 'center', data._id,  data.eventTitle)}>{data.title}</div>
+                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick('displayBlog', 'center', data._id,  data.blogTitle)}>{data.title}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.tag}</span>
                         <div className="product-description">{data.description}</div>
@@ -178,20 +182,44 @@ const ListBlogs = () => {
         }
     }
 
+    const onHide = (name) => {
+        dialogFuncMap[`${name}`](false);
+    }
+    
+    const renderFooter = (name) => {
+        return (
+            <div>
+                <Button label="Edit Blog" icon="pi pi-pencil" onClick={() => onHide(name)} autoFocus />
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>    
+                <Button label="Delete Blog" icon="pi pi-trash" severity='danger' onClick={() => onHide(name)}/>
+            </div>
+        );
+    }
+
     /*--------------------- 4.2.3: End : Event Handlers ------------------------*/
     
     /*--------------------- 4.2.4: UI Container Code ------------------------*/
     return (
+
+        
      <div className="grid">
+
+        {/* ---------------------------View Event --------------------- */}
+        <Dialog header={currentBlog.blogTitle} visible={displayBlog} style={{ width: '60vw' }} footer={renderFooter('displayBlog')} onHide={() => onHide('displayBlog')}>
+            <br></br>
+            <ViewBlog eventData={currentBlog}/>
+        </Dialog>  
+
         {/* --------------------------- Events--------------------- */}
         <div className="dataview-event">
           <div className="card">
               <DataView layout={layout} 
                   value={blogs}
-                  header={header}
+                  header={headerTemplate}
                   itemTemplate={itemTemplate}
                   paginator rows={9}
-                  sortOrder={sortOrder} sortField={sortField} />
+                  sortOrder={sortOrder} 
+                  sortField={sortField} />
           </div>
         </div>  
     </div>
