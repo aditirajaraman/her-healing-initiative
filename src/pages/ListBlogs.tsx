@@ -111,7 +111,7 @@ const ListBlogs = () => {
                 <div className="col-2">
                     <Dropdown options={sortOptions} value={sortKey} optionLabel="label" placeholder="Sort By Event" onChange={onSortChange}/>
                 </div>
-                <div className="col-8" style={{float: 'right'}}>
+                <div className="col-10" style={{float: 'right'}}>
                     <DataViewLayoutOptions style={{float: 'right'}} layout={layout} onChange={(e) => setLayout(e.value)} />
                 </div>
             </div>
