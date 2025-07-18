@@ -1,58 +1,94 @@
+
+/*********************************1: Imports / react *************************************/
 import React, { useState, useEffect } from 'react';
-import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+/*********************************2: Imports / primereact ********************************/
+import { Button } from 'primereact/button';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Dropdown } from 'primereact/dropdown';
 import { Avatar } from 'primereact/avatar';
 import { Tooltip } from 'primereact/tooltip';
 import { Badge } from 'primereact/badge';
-import axios from 'axios';
 
+/*********************************3: Imports / custom css ********************************/
 import '../assets/css/prime-styles.css';
 import '../assets/css/eventView.css';
-const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
-const ListBlogs = () => {
-    /***********api call : start ********************/
-    useEffect(() => {
-    axios({
-    // Endpoint to send files
-    url: config.API_URL + "/api/blogs",
-    method: "GET",
-    headers: {
-        // Add any auth token here
-        //authorization: "your token comes here",
-    },
-    })
-    // Handle the response from backend here
-    .then((res) => {
-        console.log("----------process.env---------");
-        console.log(process.env.NODE_ENV);
-        console.log(res.data);
-        setBlogs(res.data);
-        setLayout("grid");
-    })
-    .catch((err) => {
-        console.log("----------process.env---------");
-        console.log(process.env.NODE_ENV);
-        console.log(err);
-    });
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-    /***********api call : end ********************/
 
-    const [blogs, setBlogs] = useState(null);    
-    const sortOptions = [
+/*********************************4: Start : Application Code ********************************/
+
+// 4.1 : Configuration
+const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
+
+// 4.2 : Class Code
+const ListBlogs = () => {
+    /*---------------------4.2.1: api call / start ------------------------*/
+    useEffect(() => {
+        axios({
+            // Endpoint to send files
+            url: config.API_URL + "/api/blogs",
+            method: "GET",
+            headers: {
+                // Add any auth token here
+                //authorization: "your token comes here",
+            },
+        })
+        // Handle the response from backend here
+        .then((res) => {
+            console.log("----------process.env---------");
+            console.log(process.env.NODE_ENV);
+            console.log(res.data);
+            setBlogs(res.data);
+            setLayout("grid");
+        })
+        .catch((err) => {
+            console.log("----------process.env---------");
+            console.log(process.env.NODE_ENV);
+            console.log(err);
+        });
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    /*---------------------4.2.1: UI Model  ------------------------*/
+    const currentBlogData = {
+        id:'',
+        blogTitle:''
+    };
+     const sortOptions = [
       {label: 'Blog Date', value: 'date'},
       {label: 'Blog Category', value: 'category'},
       {label: 'Blog Name', value: 'name'}
     ];
+
+    /*--------------------- 4.2.2: State Management ------------------------*/
+    const [blogs, setBlogs] = useState(null); 
     const [sortKey, setSortKey] = useState(null);
     const [layout, setLayout] = useState(null);
     const [sortOrder, setSortOrder] = useState(null);
-    const [sortField, setSortField] = useState(null);
+    const [sortField, setSortField] = useState(null);   
+    const [displayBlog, setDisplayBlog] = useState(false);
+    const [currentBlog, setCurrentBlog] = useState(currentBlogData);
+    const [position, setPosition] = useState('center');
+
+    /*--------------------- 4.2.3: Start : Event Handlers ------------------------*/
+
+    //4.2.3.1 : Navigation Functionality
     const navigate = useNavigate();
     const handleCreateBlog = () => {
         navigate('/createBlog'); 
     };
+
+    // Data View - Grid / List
+    const itemTemplate = (event, layout) => {
+    if (layout === 'list')
+        return renderListItem(event);
+    else if (layout === 'grid')
+        return renderGridItem(event);
+    else
+        return null;
+    }
+
+     //4.2.3.2 : Sort Functionality 
     const onSortChange = (event) => {
         const value = event.value;
 
@@ -68,32 +104,7 @@ const ListBlogs = () => {
         }
     }
 
-     const currentBlogData = {
-        id:'',
-        blogTitle:''
-    };
-
-    const [displayEvent, setDisplayBlog] = useState(false);
-    const [currentBlog, setCurrentBlog] = useState(currentBlogData);
-    const [position, setPosition] = useState('center');
-
-    const dialogFuncMap = {
-        'displayBlog': setDisplayBlog
-    }
-
-    const handleBlogClick = (name, position, id, blogTitle) => {
-        //console.log(id)
-        currentBlogData.id = id;
-        currentBlogData.blogTitle = blogTitle;
-        setCurrentBlog(currentBlogData);
-
-        dialogFuncMap[`${name}`](true);
-
-        if (position) {
-            setPosition(position);
-        }
-    }
-
+    //4.2.3.3 :  Data View - Header 
     const renderHeader = () => {
         return (
             <div className="grid grid-nogutter">
@@ -106,8 +117,10 @@ const ListBlogs = () => {
             </div>
         );
     }
+    const header = renderHeader()
 
-     const renderListItem = (data) => {
+    //4.2.3.4 :  Data View / ListItem Definition
+    const renderListItem = (data) => {
             return (
                 <div className="col-12">
                     <div className="product-list-item">
@@ -122,6 +135,8 @@ const ListBlogs = () => {
                 </div>
             );
     }
+
+    //4.2.3.5 :  Data View / GridItem Definition
     const renderGridItem = (data) => {
         return (
             <div className="col-12 md:col-4">
@@ -145,18 +160,26 @@ const ListBlogs = () => {
             </div>
         );
     }
-    
-    const header = renderHeader()
 
-    const itemTemplate = (event, layout) => {
-    if (layout === 'list')
-        return renderListItem(event);
-    else if (layout === 'grid')
-        return renderGridItem(event);
-    else
-        return null;
+    //4.2.3.6 : Click Functionaility 
+    const dialogFuncMap = {
+        'displayBlog': setDisplayBlog
+    }
+    const handleBlogClick = (name, position, id, blogTitle) => {
+        //console.log(id)
+        currentBlogData.id = id;
+        currentBlogData.blogTitle = blogTitle;
+        setCurrentBlog(currentBlogData);
+
+        dialogFuncMap[`${name}`](true);
+
+        if (position) {
+            setPosition(position);
+        }
     }
 
+    /*--------------------- 4.2.3: End : Event Handlers ------------------------*/
+    
     return (
      <div className="grid">
         {/* --------------------------- Events--------------------- */}
@@ -175,3 +198,5 @@ const ListBlogs = () => {
 };
 
 export default ListBlogs;
+
+/*********************************End : Application Code ********************************/
