@@ -83,8 +83,8 @@ const ListBlogs = () => {
 
     const handleBlogClick = (name, position, id, blogTitle) => {
         //console.log(id)
-        //currentEventData.id = id;
-        //currentEventData.eventTitle = eventTitle;
+        currentBlogData.id = id;
+        currentBlogData.blogTitle = blogTitle;
         setCurrentBlog(currentBlogData);
 
         dialogFuncMap[`${name}`](true);
@@ -128,7 +128,7 @@ const ListBlogs = () => {
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content"> 
                         <img src={require( `../assets/images/events/${data.imglink}.png`)}/>
-                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleEventClick('displayEvent', 'center', data._id,  data.eventTitle)}>{data.title}</div>
+                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick('displayEvent', 'center', data._id,  data.eventTitle)}>{data.title}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.tag}</span>
                         <div className="product-description">{data.description}</div>
