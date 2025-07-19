@@ -22,6 +22,7 @@ import ListBlogs from './pages/ListBlogs';
 import CreateEvent from './pages/CreateEvent';
 import Donate from './pages/Donate';
 import Register from './pages/Register';
+import CreateBlog from './pages/CreateBlog';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/listevents" element={<ListEvents />} />
           <Route path="/listblogs" element={<ListBlogs />} />
+          <Route path="/createblog" element={<CreateBlog/>} />
           <Route path="/createEvent" element={<CreateEvent />} />
           <Route path="/donate" element={<Donate />} />
           <Route path="/register" element={<Register />} />
