@@ -31,9 +31,10 @@ const Home = () => {
           <p className="lead">Female Health Education / Fundraising for Women / Non-Profit</p>
           <p><h5>We are HerHealing Initiative, a nonprofit organization dedicated to helping underpriviliged women gain access to sanitary products and educate others on female health.</h5></p>
           <Container>
-            <Row>
-              <Col><Button variant="info">ENGAGE</Button></Col>
-              <Col><Button variant="info" onClick={handleDonateEvent}>DONATE</Button></Col>
+            <Row className="justify-content-md-center">
+              <Col lg={3}><Button variant="primary">ENGAGE</Button></Col>
+              <Col lg={3}><Button variant="success" onClick={handleDonateEvent}>DONATE</Button></Col>
+              <Col lg={3}><Button variant="info" onClick={handleDonateEvent}>SHARE</Button></Col>
             </Row>
           </Container>
         </div>
