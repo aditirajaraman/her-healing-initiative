@@ -26,8 +26,8 @@ const Home = () => {
     <Container fluid>
     <Row>
       <Col>
-        <div className="p-5 mb-4 rounded-3" style={{ color:'white',  background: 'linear-gradient(135deg, rgba(158, 0, 255, 1.0), rgba(158, 160, 173, 1.0))' }}>
-          <h1 className="display-4">Welcome to HerHealing Initiative!</h1>
+        <div className="p-5 mb-4 rounded-3" style={{ color:'white',  background: 'linear-gradient(135deg, rgba(177, 156, 215, 1.0), rgba(206, 194, 235, 1.0))' }}>
+          <h1 className="display-4" style={{ fontFamily:'Brush Script MT, cursive'}}>Welcome to HerHealing Initiative!</h1>
           <p className="lead">Female Health Education / Fundraising for Women / Non-Profit</p>
           <p><h5>We are HerHealing Initiative, a nonprofit organization dedicated to helping underpriviliged women gain access to sanitary products and educate others on female health.</h5></p>
           <Container>
