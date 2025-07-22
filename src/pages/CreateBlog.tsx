@@ -15,6 +15,7 @@ const CreateBlog = () => {
     blogger: '',
     publicationDate: null,
     desc: ' ',
+    tags: ' ',
   }
   const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
   const getFormErrorMessage = (name) => {
@@ -35,6 +36,13 @@ const CreateBlog = () => {
     {name: 'Snigdha Tadikamalla', value: 'Snigdha'},
     {name: 'Haarika Pemmeraju', value: 'Baarika'},
     {name: 'Tejaswi Garlapati', value: 'TJ'}
+];
+
+const tags = [
+    {name: 'liberals', value: 'libs'},
+    {name: 'healthcare', value: 'health'},
+    {name: 'medicine', value: 'med'},
+    {name: 'womens health', value: 'women health'},
 ];
 
 return (   
@@ -77,6 +85,14 @@ return (
                           </span>
                       {getFormErrorMessage('desc')}
                   </div>
+                        <div className="field">
+                          <span className="p-float-label">
+                              <Controller name="tags" control={control} render={({ field }) => (
+                                  <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={tags} optionLabel="name" />
+                              )} />
+                              <label htmlFor="country">Tag</label>
+                          </span>
+                      </div>
                      <Button type="submit" label="Create" className="mt-2" />
                   </form>
                 </div>
