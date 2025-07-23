@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
@@ -54,8 +54,8 @@ const CreateBlog = () => {
         {name: 'womens health', value: 'women health'},
     ];
 
-    let name = '';
-    let email = '';
+    let name = 'Aditi Rajaraman';
+    let email = 'aditirajaraman@gmail.com';
 
     const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
 
@@ -66,7 +66,7 @@ const CreateBlog = () => {
                     <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
                     <h5>Registration Successful!</h5>
                     <p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
-                        Your blog is registered under name <b></b> ; it'll be valid next 30 days without activation. Please check <b></b> for activation instructions.
+                        Your blog is registered under name <b>{name}</b> ; it'll be valid next 30 days without activation. Please check <b>{email}</b> for activation instructions.
                     </p>
                 </div>
         </Dialog>
