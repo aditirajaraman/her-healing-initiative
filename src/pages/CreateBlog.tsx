@@ -1,6 +1,10 @@
+/*********************************1: Imports / react *************************************/
 import React, { useState, useEffect} from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+/*********************************2: Imports / primereact ********************************/
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
@@ -9,36 +13,16 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames } from 'primereact/utils';
 import { Dialog } from 'primereact/dialog';
 
+/*********************************3: Imports / custom css ********************************/
 import '../assets/css/createBlog.css';
 
+/*********************************4: Start : Application Code ********************************/
+// 4.1 : Configuration
+const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
+
+// 4.2 : Class Code
 const CreateBlog = () => { 
-    const [formData, setFormData] = useState({});
-    const [showMessage, setShowMessage] = useState(false);
-    const defaultValues = {
-        title: '',
-        blogger: '',
-        publicationDate: null,
-        desc: ' ',
-        tags: ' ',
-        imglink: ' ',
-        authoricon: ' '
-    }
-    const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
-    const getFormErrorMessage = (name) => {
-            return errors[name] && <small className="p-error">{errors[name].message}</small>
-    };
-  
-    const onSubmit = (data) => {
-        console.log('---------------------formdata-----------------');
-        console.log(data);
-        name = data.blogger;
-        email = data.blogger + '@gmail.com';
-        setFormData(data);
-        setShowMessage(true);
-
-        reset();
-    };
-
+    /*---------------------4.2.1: UI Model  ------------------------*/
     const bloggers = [
         {name: 'Aditi Rajaraman', value: 'AditiR'},
         {name: 'Shruthi Srinivisan', value: 'Shruthi'},
@@ -54,23 +38,74 @@ const CreateBlog = () => {
         {name: 'womens health', value: 'women health'},
     ];
 
-    let name = 'Aditi Rajaraman';
-    let email = 'aditirajaraman@gmail.com';
+    /*---------------------4.2.2: State Management ------------------------*/
+    const [formData, setFormData] = useState({});
+    const [showMessage, setShowMessage] = useState(false);
+    const defaultValues = {
+        title: '',
+        author: '',
+        authorIcon: '',
+        content: '',
+        tag: '',
+        blogImage: '',
+        publicationDate:null,
+    }
+    const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+    const getFormErrorMessage = (name) => {
+            return errors[name] && <small className="p-error">{errors[name].message}</small>
+    };
 
+    /*---------------------4.2.3: UI Templates ------------------------*/
     const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
+
+    /*---------------------4.2.4: api call / start ------------------------*/
+    const apiStatus = {
+        status:false,
+        statusMessage:false
+    };
+    const onSubmit = (formData) => {
+        setFormData(formData);
+        
+        console.log('---------------------formdata-----------------');
+        console.log(formData);
+                
+        axios({
+            // Endpoint to send files
+                url: config.API_URL + "/api/blogs",
+                method: "POST",
+                data: formData, // Attaching the form data
+            })
+            .then((res) => {
+                //console.log("--------------logged---------------");
+                //console.log(res.data.success);
+                //console.log(res.data.message);
+                apiStatus.status = res.data.success;   
+                apiStatus.statusMessage  = res.data.message;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+        setShowMessage(true);
+
+        reset();
+    };
 
     return (   
      <div className="form-demo">
+        {/* --------------------------- UI Dialogs--------------------- */}
          <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
                 <div className="flex justify-content-center flex-column pt-6 px-3">
                     <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
-                    <h5>Registration Successful!</h5>
+                    <h5>Blog Status!</h5>
                     <p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
-                        Your blog is registered under name <b>{name}</b> ; it'll be valid next 30 days without activation. Please check <b>{email}</b> for activation instructions.
+                         Your Blog <b>{formData["title"]}</b> Registration {apiStatus.status}
+                         Message : {apiStatus.statusMessage}
                     </p>
                 </div>
         </Dialog>
         <br></br>
+        
+        {/* --------------------------- Events--------------------- */}
          <div className="flex flex-wrap align-items-center justify-content-center">
                 <div className="card">
                   <h2 className="text-center">Create Blog</h2>
@@ -86,26 +121,26 @@ const CreateBlog = () => {
                     </div>
                     <div className="field">
                         <span className="p-float-label">
-                            <Controller name="blogger" control={control} render={({ field }) => (
+                            <Controller name="author" control={control} render={({ field }) => (
                                 <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={bloggers} optionLabel="name" />
                             )} />
-                            <label htmlFor="blogger">Blogger</label>
+                            <label htmlFor="author">Blogger</label>
                         </span>
                     </div>
                     <div className="field">
                         <span className="p-float-label">
-                            <Controller name="imglink" control={control} render={({ field }) => (
+                            <Controller name="blogImage" control={control} render={({ field }) => (
                                <InputText id={field.name} value={field.value} onChange={(e) => field.onChange(e.target.value)} />
                             )} />
-                            <label htmlFor="imglink">Image Link</label>
+                            <label htmlFor="blogImage">Image Link</label>
                         </span>
                     </div>
                      <div className="field">
                         <span className="p-float-label">
-                            <Controller name="authoricon" control={control} render={({ field }) => (
+                            <Controller name="authorIcon" control={control} render={({ field }) => (
                                <InputText id={field.name} value={field.value} onChange={(e) => field.onChange(e.target.value)} />
                             )} />
-                            <label htmlFor="authoricon">Author Icon</label>
+                            <label htmlFor="authorIcon">Author Icon</label>
                         </span>
                     </div>
                     <div className="field">
@@ -113,30 +148,32 @@ const CreateBlog = () => {
                             <Controller name="publicationDate" control={control} render={({ field }) => (
                                 <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} dateFormat="mm/dd/yy" mask="99/99/9999" showIcon />
                             )} />
-                            <label htmlFor="date">Publication Date</label>
+                            <label htmlFor="publicationDate">Publication Date</label>
                         </span>
                     </div>
                     <div className="field">
                         <span className="p-float-label">
-                            <Controller name="desc" control={control} rules={{ required: 'Description is required.' }} render={({ field }) => (
+                            <Controller name="content" control={control} rules={{ required: 'Content is required.' }} render={({ field }) => (
                                 <InputTextarea id={field.name} value={field.value} onChange={(e) => field.onChange(e.target.value)} rows={5} cols={30} />
                             )} />
-                            <label htmlFor="name" className={classNames({ 'p-error': errors.desc })}>Description*</label>
+                            <label htmlFor="content" className={classNames({ 'p-error': errors.content })}>Content*</label>
                         </span>
                     {getFormErrorMessage('desc')}
                     </div>
                     <div className="field">
                         <span className="p-float-label">
-                            <Controller name="tags" control={control} render={({ field }) => (
+                            <Controller name="tag" control={control} render={({ field }) => (
                                 <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={tags} optionLabel="name" />
                             )} />
-                            <label htmlFor="country">Tag</label>
+                            <label htmlFor="tag">Tag</label>
                         </span>
                     </div>
-                     <Button type="submit" label="Create" className="mt-2" />
+                    
+                    <Button type="submit" label="Create" className="mt-2" />
                   </form>
                 </div>
           </div>
+
     </div>
   );
 };
