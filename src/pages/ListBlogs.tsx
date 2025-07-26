@@ -56,7 +56,7 @@ const ListBlogs = () => {
     /*---------------------4.2.1: UI Model  ------------------------*/
     const currentBlogData = {
         id:'',
-        blogTitle:''
+        title:''
     };
     const sortOptions = [
       {label: 'Blog Date', value: 'date'},
@@ -131,11 +131,11 @@ const ListBlogs = () => {
             return (
                 <div className="col-12">
                     <div className="product-list-item">
-                        <img src={require( `../assets/images/events/${data.imglink}.png`)}/>
+                        <img src={require( `../assets/images/events/${data.blogImage}.png`)}/>
                         <div className="product-list-detail">
                             <div className="product-name">{data.title}</div>
-                            <div className="product-description">{data.description}</div>
-                            <Avatar image={require( `../assets/images/event-organizers/${data.authoricon}.png`)} className="mr-2" size="normal" shape="circle" />
+                            <div className="product-description">{data.content}</div>
+                            <Avatar image={require( `../assets/images/event-organizers/${data.authorIcon}.png`)} className="mr-2" size="normal" shape="circle" />
                             <i className="pi pi-tag product-category-icon"></i><span className="product-category">{data.tag}</span>
                         </div>
                     </div>
@@ -149,11 +149,11 @@ const ListBlogs = () => {
             <div className="col-12 md:col-4">
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content"> 
-                        <img src={require( `../assets/images/events/${data.imglink}.png`)}/>
-                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick('displayBlog', 'center', data._id,  data.blogTitle)}>{data.title}</div>
+                        <img src={require( `../assets/images/events/${data.blogImage}.png`)}/>
+                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick('displayBlog', 'center', data._id,  data.title)}>{data.title}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.tag}</span>
-                        <div className="product-description">{data.description}</div>
+                        <div className="product-description">{data.content}</div>
                     </div>
                     <div className="product-list-action">
                         <Tooltip target=".registered-users" />
@@ -172,10 +172,10 @@ const ListBlogs = () => {
     const dialogFuncMap = {
         'displayBlog': setDisplayBlog
     }
-    const handleBlogClick = (name, position, id, blogTitle) => {
+    const handleBlogClick = (name, position, id, title) => {
         //console.log(id)
         currentBlogData.id = id;
-        currentBlogData.blogTitle = blogTitle;
+        currentBlogData.title = title;
         setCurrentBlog(currentBlogData);
 
         dialogFuncMap[`${name}`](true);
@@ -208,9 +208,9 @@ const ListBlogs = () => {
      <div className="grid">
 
         {/* ---------------------------View Event --------------------- */}
-        <Dialog header={currentBlog.blogTitle} visible={displayBlog} style={{ width: '60vw' }} footer={renderFooter('displayBlog')} onHide={() => onHide('displayBlog')}>
+        <Dialog header={currentBlog.title} visible={displayBlog} style={{ width: '60vw' }} footer={renderFooter('displayBlog')} onHide={() => onHide('displayBlog')}>
             <br></br>
-            <ViewBlog eventData={currentBlog}/>
+            <ViewBlog blogData={currentBlog}/>
         </Dialog>  
 
         {/* --------------------------- Events--------------------- */}

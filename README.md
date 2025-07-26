@@ -100,5 +100,6 @@ npm run dev
 # Run the UI Project - Launch Terminial from Visual Code
 np
 
+# API End point : http://localhost:5000/api/blogs
 
 
