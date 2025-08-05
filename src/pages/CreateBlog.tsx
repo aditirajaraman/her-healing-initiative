@@ -12,6 +12,7 @@ import { Calendar } from 'primereact/calendar';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames } from 'primereact/utils';
 import { Dialog } from 'primereact/dialog';
+import { Editor } from 'primereact/editor';
 
 /*********************************3: Imports / custom css ********************************/
 import '../assets/css/createBlog.css';
@@ -23,6 +24,21 @@ const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.js
 // 4.2 : Class Code
 const CreateBlog = () => { 
     /*---------------------4.2.1: UI Model  ------------------------*/
+    const [text1, setText1] = useState<string>('<div>Hello World!</div><div>PrimeReact <b>Editor</b> Rocks</div><div><br></div>');
+    const [text2, setText2] = useState<string>('');
+
+    const renderHeader = () => {
+        return (
+            <span className="ql-formats">
+                <button className="ql-bold" aria-label="Bold"></button>
+                <button className="ql-italic" aria-label="Italic"></button>
+                <button className="ql-underline" aria-label="Underline"></button>
+            </span>
+        );
+    }
+
+    const header = renderHeader();
+
     const bloggers = [
         {name: 'Aditi Rajaraman', value: 'AditiR'},
         {name: 'Shruthi Srinivisan', value: 'Shruthi'},
@@ -168,7 +184,7 @@ const CreateBlog = () => {
                             <label htmlFor="tag">Tag</label>
                         </span>
                     </div>
-                    
+                    <Editor style={{ height: '320px' }} value={text1} onTextChange={(e) => setText1(e.htmlValue)} />
                     <Button type="submit" label="Create" className="mt-2" />
                   </form>
                 </div>
