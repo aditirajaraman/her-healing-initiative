@@ -20,3 +20,21 @@
         min-width: 0;
     }
 }
+
+.separator {
+  border-right: 1px solid #ccc; /* Or choose a different style */
+  margin: 0 5px; /* Adjust spacing as needed */
+  height: 20px; /* Adjust height to match other toolbar buttons */
+  display: inline-block; /* Ensure proper positioning */
+  vertical-align: middle; /* Align with other buttons */
+}
+
+p-card {
+    border-radius: 10px;
+}
+
+.cardStyle {
+  width:75%;
+  border: 1px solid lightslategrey; /* Sets border to 1px solid blue */
+  border-radius: 0.5rem;
+}
