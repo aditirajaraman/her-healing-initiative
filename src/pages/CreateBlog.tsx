@@ -15,6 +15,7 @@ import { Dialog } from 'primereact/dialog';
 import { Card } from 'primereact/card';
 import { FileUpload } from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
+import { Fieldset } from 'primereact/fieldset';
 
 /*********************************3: Imports / mdxEditor ********************************/
 import '@mdxeditor/editor/style.css'
@@ -195,12 +196,17 @@ const CreateBlog = () => {
                     </span>
                 </div>
 
-                <Divider />
-                
+                <Divider align="left">
+                    <div className="inline-flex align-items-center">
+                        <i className="pi pi-pencil mr-2"></i>
+                        <b>Blog Content</b>
+                    </div>
+                </Divider>
+
                 {/* ---------------------------Blog Content Control--------------------- */}
                 <MDXEditor 
                     ref={editorRef}
-                    markdown={'# Your Blog Content...'}
+                    markdown={'###### Your content goes here...'}
                     contentEditableClassName="prose" 
                     plugins={[
                     toolbarPlugin({
