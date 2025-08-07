@@ -13,6 +13,8 @@ import { Divider } from 'primereact/divider';
 import { classNames } from 'primereact/utils';
 import { Dialog } from 'primereact/dialog';
 import { Card } from 'primereact/card';
+import { FileUpload } from 'primereact/fileupload';
+import { Toast } from 'primereact/toast';
 
 /*********************************3: Imports / mdxEditor ********************************/
 import '@mdxeditor/editor/style.css'
@@ -56,6 +58,7 @@ import '../assets/css/createBlog.css';
 /*********************************5: Start : Application Code ********************************/
 // 4.1 : Configuration
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
+const blogHeaderImage =  require("../assets/images/blogheader.jpg");
 
 // 4.2 : Class Code
 const CreateBlog = () => {
@@ -93,6 +96,7 @@ const CreateBlog = () => {
     const [formData, setFormData] = useState({});
     const [showMessage, setShowMessage] = useState(false);
     const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+    const toast = useRef(null);
     
     const getFormErrorMessage = (name) => {
         return errors[name] && <small className="p-error">{errors[name].message}</small>
@@ -100,8 +104,14 @@ const CreateBlog = () => {
 
     /*---------------------5.2.4: UI Templates ------------------------*/
     const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
+    const blogHeaderBanner = (
+        <img alt="Card" src='https://as2.ftcdn.net/v2/jpg/15/97/57/01/1000_F_1597570101_kdgfiEZ7EjmaeMDRZb1KkAlhZfXo1GPB.jpg' style={{ width:'100%', height:'200px'}}/>
+    );
 
     /*---------------------5.2.5: event Handlers------------------------*/
+    const onUpload = () => {
+        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
+    }
 
     /*---------------------5.2.6: api call / start ------------------------*/
     const apiStatus = {
@@ -164,28 +174,9 @@ const CreateBlog = () => {
                     {getFormErrorMessage('title')}
                 </div>
                 <div className="field">
-                    <span className="p-float-label">
-                        <Controller name="author" control={control} render={({ field }) => (
-                            <Dropdown id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} options={bloggers} optionLabel="name" />
-                        )} />
-                        <label htmlFor="author">Blogger</label>
-                    </span>
-                </div>
-                <div className="field">
-                    <span className="p-float-label">
-                        <Controller name="blogImage" control={control} render={({ field }) => (
-                            <InputText id={field.name} value={field.value} onChange={(e) => field.onChange(e.target.value)} />
-                        )} />
-                        <label htmlFor="blogImage">Image Link</label>
-                    </span>
-                </div>
-                    <div className="field">
-                    <span className="p-float-label">
-                        <Controller name="authorIcon" control={control} render={({ field }) => (
-                            <InputText id={field.name} value={field.value} onChange={(e) => field.onChange(e.target.value)} />
-                        )} />
-                        <label htmlFor="authorIcon">Author Icon</label>
-                    </span>
+                    <span>Blog Header Image</span>
+                    <FileUpload name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" onUpload={onUpload} multiple accept="image/*" maxFileSize={1000000}
+                            emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
                 </div>
                 <div className="field">
                     <span className="p-float-label">

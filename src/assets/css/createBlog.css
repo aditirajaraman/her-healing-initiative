@@ -34,7 +34,8 @@ p-card {
 }
 
 .cardStyle {
-  width:75%;
+  width:90%;
   border: 1px solid lightslategrey; /* Sets border to 1px solid blue */
   border-radius: 0.5rem;
+  text-align:left;
 }
