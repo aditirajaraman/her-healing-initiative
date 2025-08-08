@@ -102,6 +102,5 @@ np
 
 # API End point : http://localhost:5000/api/blogs
 
-#### react quill setup 
-### npm install react-quill --save --force
-### https://codesandbox.io/p/sandbox/react-quill-full-toolbar-j569z?file=%2Fsrc%2FEditorToolbar.js%3A7%2C1-26%2C3
+#### Install syncfusion 
+### npm install @syncfusion/ej2-react-richtexteditor --force

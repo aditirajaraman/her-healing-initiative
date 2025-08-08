@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@mdxeditor/editor": "^3.40.1",
+    "@syncfusion/ej2-react-richtexteditor": "^30.2.4",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",

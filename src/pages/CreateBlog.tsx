@@ -17,41 +17,20 @@ import { FileUpload } from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
 import { Fieldset } from 'primereact/fieldset';
 
-/*********************************3: Imports / mdxEditor ********************************/
-import '@mdxeditor/editor/style.css'
-import { MDXEditor, 
-  Separator,
-  UndoRedo, 
-  BoldItalicUnderlineToggles, 
-  toolbarPlugin,
-  headingsPlugin,
-  BlockTypeSelect,
-
-  InsertTable,
-  tablePlugin,
-  
-  ListsToggle,
-  listsPlugin,
-
-  InsertImage,
-  imagePlugin,
-
-  InsertThematicBreak,
-  thematicBreakPlugin,
-
-  CodeToggle,
-  InsertCodeBlock,
-  codeBlockPlugin,
-  codeMirrorPlugin,
-  ConditionalContents,
-  ChangeCodeMirrorLanguage,
-
-  CreateLink,
-  linkDialogPlugin,
-
-  type MDXEditorMethods 
+/*********************************3: Imports / syncFusion ********************************/
+import { 
+    HtmlEditor, 
+    Image, 
+    Inject, 
+    Link, 
+    QuickToolbar, 
+    RichTextEditorComponent, 
+    Toolbar, 
+    Table,
+    PasteCleanup, 
+    ImportExport, ImportWordModel , ExportWordModel, ExportPdfModel
 } 
-from '@mdxeditor/editor'
+from '@syncfusion/ej2-react-richtexteditor';
 
 /*********************************4: Imports / custom css ********************************/
 import '../assets/css/createBlog.css';
@@ -64,7 +43,53 @@ const blogHeaderImage =  require("../assets/images/blogheader.jpg");
 // 4.2 : Class Code
 const CreateBlog = () => {
     /*---------------------5.2.1: UI Controls Reference ---------------------*/ 
-    const editorRef = useRef<MDXEditorMethods>(null);
+    const richTextEditorRef = useRef<RichTextEditorComponent | null>(null);
+    const [richTextEditorValue, setRichTextEditorValue] = useState<string>('');
+
+    const hostUrl: string = 'https://services.syncfusion.com/react/production/';
+    let rteValue: string = "<p>The Syncfusion Rich Text Editor, a WYSIWYG (what you see is what you get) editor, is a user interface that allows you to create, edit, and format rich text content. You can try out a demo of this editor here.</p><p><b>Key features:</b></p><ul><li><p>Provides &lt;IFRAME&gt; and &lt;DIV&gt; modes.</p></li><li><p>Bulleted and numbered lists.</p></li><li><p>Handles images, hyperlinks, videos, hyperlinks, uploads, etc.</p></li><li><p>Contains undo/redo manager. </p></li></ul><div style='display: inline-block; width: 60%; vertical-align: top; cursor: auto;'><img alt='Sky with sun' src='https://cdn.syncfusion.com/ej2/richtexteditor-resources/RTE-Overview.png' width='309' style='min-width: 10px; min-height: 10px; width: 309px; height: 174px;' class='e-rte-image e-imginline e-rte-drag-image' height='174' /></div>";
+    const toolbarSettings: object = {
+        items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
+        'FontName', 'FontSize', 'FontColor', 'BackgroundColor',
+        'LowerCase', 'UpperCase', '|',
+        'Formats', 'Alignments', 'OrderedList', 'UnorderedList',
+        'Outdent', 'Indent', '|',
+        'CreateLink', 'Image', '|', 'ClearFormat', 'Print',
+        'SourceCode', 'FullScreen', '|', 'Undo', 'Redo', '|', 
+        'CreateTable', '|', 
+        'ImportWord', '|', 'ExportWord', 'ExportPdf'
+        ]
+    }
+
+    const quickToolbarSettings: object = {
+        image: ['Replace', 'Align', 'Caption', 'Remove', 'InsertLink', 'OpenImageLink', '-', 'EditImageLink', 'RemoveImageLink', 'Display', 'AltText', 'Dimension'],
+        link: ['Open', 'Edit', 'UnLink']
+    }
+
+    const insertImageSettings = {
+            saveUrl: hostUrl + 'api/RichTextEditor/SaveFile',
+            removeUrl: hostUrl + 'api/RichTextEditor/DeleteFile',
+            path: hostUrl + 'RichTextEditor/'
+    }
+
+    const importWord: ImportWordModel = {
+            serviceUrl: hostUrl + 'api/RichTextEditor/ImportFromWord',
+    };
+    const exportWord: ExportWordModel = {
+        serviceUrl: hostUrl + 'api/RichTextEditor/ExportToDocx',
+        fileName: 'RichTextEditor.docx'
+    };
+
+    const exportPdf: ExportPdfModel = {
+        serviceUrl: hostUrl + 'api/RichTextEditor/ExportToPdf',
+        fileName: 'RichTextEditor.pdf'
+    };
+
+    const getEditorContent = () => {
+        if (richTextEditorRef.current) {
+            setRichTextEditorValue(richTextEditorRef.current.value);
+        }
+    };
  
     /*---------------------5.2.2: UI Models  ------------------------*/
    
@@ -124,6 +149,8 @@ const CreateBlog = () => {
         
         console.log('---------------------formdata-----------------');
         console.log(formData);
+
+        getEditorContent()
                 
         axios({
             // Endpoint to send files
@@ -204,52 +231,14 @@ const CreateBlog = () => {
                 </Divider>
 
                 {/* ---------------------------Blog Content Control--------------------- */}
-                <MDXEditor 
-                    ref={editorRef}
-                    markdown={'###### Your content goes here...'}
-                    contentEditableClassName="prose" 
-                    plugins={[
-                    toolbarPlugin({
-                        toolbarClassName: 'my-classname',
-                        toolbarContents: () => (
-                            <>
-                            <UndoRedo/>
-                            <BoldItalicUnderlineToggles/>
-                            <BlockTypeSelect/>
-                            <Separator/>
-                            <InsertTable/>
-                            <Separator/>
-                            <ListsToggle/>
-                            <Separator/>
-                            <InsertImage/>
-                            <CreateLink/>
-                            <Separator/>
-                            <InsertThematicBreak/>
-                            <Separator/>
-                            <ConditionalContents
-                                options={[
-                                { when: (editor) => editor?.editorType === 'codeblock', contents: () => <ChangeCodeMirrorLanguage /> },
-                                {
-                                    fallback: () => (
-                                    <>
-                                        <InsertCodeBlock />
-                                    </>
-                                    )
-                                }
-                                ]}
-                            />
-                            </>
-                        )
-                    }),
-                    headingsPlugin(),
-                    tablePlugin(),
-                    listsPlugin(),
-                    imagePlugin(),
-                    thematicBreakPlugin(),
-                    codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
-                    codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS' } })
-                    ]} 
-                />
+                 <RichTextEditorComponent ref={richTextEditorRef} 
+                    height={450} value={rteValue} 
+                    toolbarSettings={toolbarSettings} quickToolbarSettings={quickToolbarSettings}
+                    importWord={importWord}
+                    exportPdf={exportPdf} 
+                    exportWord={exportWord}>
+                    <Inject services={[Toolbar, HtmlEditor, QuickToolbar, Image, Link, Table, PasteCleanup, ImportExport]} />
+                </RichTextEditorComponent>
 
                 {/* ---------------------------Submit Control--------------------- */}    
                 <Button type="submit" label="Create" className="mt-2" />
