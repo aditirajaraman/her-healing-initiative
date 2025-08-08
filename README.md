@@ -102,5 +102,5 @@ np
 
 # API End point : http://localhost:5000/api/blogs
 
-#### Install syncfusion 
+#### Install syncfusion - https://ej2.syncfusion.com/react/documentation/introduction
 ### npm install @syncfusion/ej2-react-richtexteditor --force
