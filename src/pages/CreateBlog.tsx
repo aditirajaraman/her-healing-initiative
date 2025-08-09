@@ -241,7 +241,16 @@ const CreateBlog = () => {
                 </RichTextEditorComponent>
 
                 {/* ---------------------------Submit Control--------------------- */}    
-                <Button type="submit" label="Create" className="mt-2" />
+                <div className="grid">
+                    <div className="col-5"/>
+                    <div className="col-2">
+                        <Button type="submit" label="Save Blog" />
+                    </div>
+                    <div className="col-1">
+                        <Button type="button" label="Reset"  onClick={() => reset()}/>
+                    </div>
+                    <div className="col-4"></div>
+                </div>
                 </form>
             </Card>
         </div>
