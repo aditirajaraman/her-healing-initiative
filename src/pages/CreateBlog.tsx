@@ -42,6 +42,35 @@ const blogHeaderImage =  require("../assets/images/blogheader.jpg");
 
 // 4.2 : Class Code
 const CreateBlog = () => {
+    const hasRun = useRef(false);
+    
+    //React Hooks for Component OnLoad() 
+    useEffect(() => {
+        if (!hasRun.current) {
+            console.log("-------Component has loaded-----------");
+            hasRun.current = true;
+            axios({
+                // Endpoint to send files
+                url: config.API_URL + "/api/Utils/GetUniqueId",
+                method: "GET",
+                headers: {
+                    // Add any auth token here
+                    //authorization: "your token comes here",
+                },
+            })
+            .then((res) => {
+                console.log("----------process.env---------");
+                console.log(process.env.NODE_ENV);
+                console.log(res.data);
+                setBlogId(res.data);
+            })
+            .catch((err) => {
+                console.log("----------OnLoad Erro---------");
+                console.log(err);
+            });
+        }
+    }, []);
+    
     /*---------------------5.2.1: UI Controls Reference ---------------------*/ 
     const richTextEditorRef = useRef<RichTextEditorComponent | null>(null);
     const [richTextEditorValue, setRichTextEditorValue] = useState<string>('');
@@ -67,13 +96,13 @@ const CreateBlog = () => {
     }
 
     const insertImageSettings = {
-            saveUrl: hostUrl + 'api/RichTextEditor/SaveFile',
-            removeUrl: hostUrl + 'api/RichTextEditor/DeleteFile',
-            path: hostUrl + 'RichTextEditor/'
+        saveUrl: hostUrl + 'api/RichTextEditor/SaveFile',
+        removeUrl: hostUrl + 'api/RichTextEditor/DeleteFile',
+        path: hostUrl + 'RichTextEditor/'
     }
 
     const importWord: ImportWordModel = {
-            serviceUrl: hostUrl + 'api/RichTextEditor/ImportFromWord',
+        serviceUrl: hostUrl + 'api/RichTextEditor/ImportFromWord',
     };
     const exportWord: ExportWordModel = {
         serviceUrl: hostUrl + 'api/RichTextEditor/ExportToDocx',
@@ -119,10 +148,11 @@ const CreateBlog = () => {
     }
 
     /*---------------------5.2.3: State Management ------------------------*/
+    const [blogId, setBlogId] = useState<string | null>(null);
     const [formData, setFormData] = useState({});
     const [showMessage, setShowMessage] = useState(false);
-    const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
-    const toast = useRef(null);
+    const {control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+    const uploadToast = useRef(null);
     
     const getFormErrorMessage = (name) => {
         return errors[name] && <small className="p-error">{errors[name].message}</small>
@@ -136,7 +166,7 @@ const CreateBlog = () => {
 
     /*---------------------5.2.5: event Handlers------------------------*/
     const onUpload = () => {
-        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
+        uploadToast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
     }
 
     /*---------------------5.2.6: api call / start ------------------------*/
@@ -188,10 +218,11 @@ const CreateBlog = () => {
         </Dialog>
         <br></br>
         
-        {/* --------------------------- Events--------------------- */}
+        {/* --------------------------- Blog Form--------------------- */}
         <div className="flex flex-wrap align-items-center justify-content-center">
             <Card className="cardStyle" title="Create Blog">
                 <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
+                {/*---<span>{blogId}</span>------*/}
                 <div className="field">
                     <span className="p-float-label">
                         <Controller name="title" control={control} rules={{ required: 'Title is required.' }} render={({ field, fieldState }) => (
@@ -203,7 +234,12 @@ const CreateBlog = () => {
                 </div>
                 <div className="field">
                     <span>Blog Header Image</span>
-                    <FileUpload name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" onUpload={onUpload} multiple accept="image/*" maxFileSize={1000000}
+                    <FileUpload name="blogImage" url="http://localhost:5000/api/fileUpload/uploadImage" 
+                            onUpload={onUpload} onBeforeUpload={({ formData }) => {
+                                //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
+                                formData.append('blogId', blogId);
+                            }}
+                            accept="image/*" maxFileSize={1000000}
                             emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
                 </div>
                 <div className="field">
@@ -254,6 +290,7 @@ const CreateBlog = () => {
                 </form>
             </Card>
         </div>
+        <Toast ref={uploadToast} />
 
     </div>
   );
