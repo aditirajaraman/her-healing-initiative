@@ -237,6 +237,7 @@ const CreateBlog = () => {
                     <FileUpload name="blogImage" url="http://localhost:5000/api/fileUpload/uploadImage" 
                             onUpload={onUpload} onBeforeUpload={({ formData }) => {
                                 //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
+                                formData.append('uiAction', 'blogImage');
                                 formData.append('blogId', blogId);
                             }}
                             accept="image/*" maxFileSize={1000000}
