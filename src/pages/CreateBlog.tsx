@@ -27,8 +27,8 @@ import {
     RichTextEditorComponent, 
     Toolbar, 
     Table,
-    PasteCleanup, 
-    ImportExport, ImportWordModel , ExportWordModel, ExportPdfModel
+    PasteCleanup,
+    ImportExport
 } 
 from '@syncfusion/ej2-react-richtexteditor';
 
@@ -85,8 +85,7 @@ const CreateBlog = () => {
         'Outdent', 'Indent', '|',
         'CreateLink', 'Image', '|', 'ClearFormat', 'Print',
         'SourceCode', 'FullScreen', '|', 'Undo', 'Redo', '|', 
-        'CreateTable', '|', 
-        'ImportWord', '|', 'ExportWord', 'ExportPdf'
+        'CreateTable'
         ]
     }
 
@@ -95,24 +94,68 @@ const CreateBlog = () => {
         link: ['Open', 'Edit', 'UnLink']
     }
 
-    const insertImageSettings = {
-        saveUrl: hostUrl + 'api/RichTextEditor/SaveFile',
-        removeUrl: hostUrl + 'api/RichTextEditor/DeleteFile',
-        path: hostUrl + 'RichTextEditor/'
+    // This function will be triggered before the image is uploaded.
+    /*const onImageUploading = (args) => {
+        console.log("Image uploading event triggered. Adding custom form data."); 
+        const originalFile = args.fileData;
+        console.log(originalFile.name);
+        const extension = originalFile.name.split('.').pop();
+    
+        // Create a new unique filename
+        const newFileName = `blogContentImage_${blogId}_${originalFile.name}`;
+
+        console.log("-----------newFileName-----------.");
+        console.log(newFileName);
+        // Assign the new filename to the file object
+        // This new name will be used in the multipart/form-data request
+        args.fileData.name = newFileName;
+        
+        // The 'customFormData' property is an array of key-value pairs.
+        // You can add your custom data here.
+        args.customFormData = [
+            { 'uiAction': 'blogContentImage' },
+            { 'blogId': blogId }
+        ];
+
+        // You can also add data dynamically
+        // args.customFormData.push({ 'currentTime': new Date().toISOString() });
+    };*/
+
+    const onImageUploading = (args) => {
+        console.log("Image uploading event triggered. Adding custom form data."); 
+        const originalFile = args.fileData;
+        console.log(originalFile.name);
+    
+        // Create a new unique filename
+        console.log("-----------newFileName-----------.");
+        const newFileName = `blogContentImage_${blogId}_${originalFile.name}`;
+        console.log(newFileName);
+        
+        // The 'customFormData' property is an array of key-value pairs.
+        // You can add your custom data here.
+        args.customFormData = [
+            { 'uiAction': 'blogContentImage' },
+            { 'userId': 'rajaramans' },
+            { 'targetFileName': newFileName },
+            { 'blogId': blogId }
+        ];
     }
 
-    const importWord: ImportWordModel = {
-        serviceUrl: hostUrl + 'api/RichTextEditor/ImportFromWord',
-    };
-    const exportWord: ExportWordModel = {
-        serviceUrl: hostUrl + 'api/RichTextEditor/ExportToDocx',
-        fileName: 'RichTextEditor.docx'
+
+    const onImageRemoving = (args) => {
+        console.log("Image Removing event triggered. Adding custom form data.");
+        console.log(args);
     };
 
-    const exportPdf: ExportPdfModel = {
-        serviceUrl: hostUrl + 'api/RichTextEditor/ExportToPdf',
-        fileName: 'RichTextEditor.pdf'
-    };
+    const insertImageSettings = {
+        saveUrl: config.API_URL + '/api/fileUpload/uploadBlogContentImage',
+        removeUrl: config.API_URL + '/api/fileUpload/deleteBlogContentImage',
+        path: './uploads/',
+        allowedTypes: ['.png', '.jpg', '.jpeg'],
+        maxFileSize: 5000000, // 5MB,
+        //saveFormat: 'Blob',  //By default, Syncfusion saves images as Base64. Set saveFormat to 'Blob' to upload the actual file.
+       // uploading: onImageUploading, //Add event handler
+    }
 
     const getEditorContent = () => {
         if (richTextEditorRef.current) {
@@ -234,14 +277,14 @@ const CreateBlog = () => {
                 </div>
                 <div className="field">
                     <span>Blog Header Image</span>
-                    <FileUpload name="blogImage" url="http://localhost:5000/api/fileUpload/uploadImage" 
-                            onUpload={onUpload} onBeforeUpload={({ formData }) => {
-                                //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
-                                formData.append('uiAction', 'blogImage');
-                                formData.append('blogId', blogId);
-                            }}
-                            accept="image/*" maxFileSize={1000000}
-                            emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
+                    <FileUpload name="blogImage" url="http://localhost:5000/api/fileUpload/uploadBlogImage" 
+                        onUpload={onUpload} onBeforeUpload={({ formData }) => {
+                            //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
+                            formData.append('uiAction', 'blogImage');
+                            formData.append('blogId', blogId);
+                        }}
+                        accept="image/*" maxFileSize={1000000}
+                        emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
                 </div>
                 <div className="field">
                     <span className="p-float-label">
@@ -269,11 +312,12 @@ const CreateBlog = () => {
 
                 {/* ---------------------------Blog Content Control--------------------- */}
                  <RichTextEditorComponent ref={richTextEditorRef} 
-                    height={450} value={rteValue} 
-                    toolbarSettings={toolbarSettings} quickToolbarSettings={quickToolbarSettings}
-                    importWord={importWord}
-                    exportPdf={exportPdf} 
-                    exportWord={exportWord}>
+                        height={450} value={rteValue} 
+                        toolbarSettings={toolbarSettings} quickToolbarSettings={quickToolbarSettings}
+                        insertImageSettings={insertImageSettings}
+                        imageUploading={onImageUploading}
+                        imageRemoving={onImageRemoving}
+                    >
                     <Inject services={[Toolbar, HtmlEditor, QuickToolbar, Image, Link, Table, PasteCleanup, ImportExport]} />
                 </RichTextEditorComponent>
 
