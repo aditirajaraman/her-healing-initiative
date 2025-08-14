@@ -144,7 +144,24 @@ const CreateBlog = () => {
 
     const onImageRemoving = (args) => {
         console.log("Image Removing event triggered. Adding custom form data.");
-        console.log(args);
+        if (args) {
+            console.log('Image is being removed:');
+            // You can get the image URL from args.file
+            console.log(args);
+            const originalFile = args.filesData[0];
+            //console.log(originalFile);
+            console.log(originalFile.name);
+            args.customFormData = [
+                { 'uiAction': 'blogContentImage' },
+                { 'userId': 'rajaramans' },
+                { 'targetFileName': originalFile.name },
+                { 'blogId': blogId }
+            ];
+        } 
+        else 
+        {
+            console.error('onImageRemoving event args are null.');
+        }
     };
 
     const insertImageSettings = {
@@ -318,7 +335,7 @@ const CreateBlog = () => {
                         imageUploading={onImageUploading}
                         imageRemoving={onImageRemoving}
                     >
-                    <Inject services={[Toolbar, HtmlEditor, QuickToolbar, Image, Link, Table, PasteCleanup, ImportExport]} />
+                    <Inject services={[Toolbar, HtmlEditor, QuickToolbar, Image, Link, Table, PasteCleanup]} />
                 </RichTextEditorComponent>
 
                 {/* ---------------------------Submit Control--------------------- */}    
