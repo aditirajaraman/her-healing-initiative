@@ -28,7 +28,8 @@ import {
     Toolbar, 
     Table,
     PasteCleanup,
-    ImportExport
+    ImportExport,
+    CommandName
 } 
 from '@syncfusion/ej2-react-richtexteditor';
 
@@ -141,13 +142,35 @@ const CreateBlog = () => {
         ];
     }
 
+    const OnImageUploadSuccess = (args) => {
+        // The args object contains information about the upload
+        // args.file: The file object
+        // args.response: The response from the server
+        console.log('---------------OnImageUploadSuccess----------------------'); 
+        const xhr = args.e.currentTarget;
+        if (xhr === null || xhr === undefined)
+        {
+            console.log('---------------OnImageUploadSuccess / Response Issue----------------------'); 
+            args.file.name = "File Upload Response Issue";
+        }
+        else
+        {
+            console.log('---------------OnImageUploadSuccess / Got Response----------------------'); 
+            const responseData = JSON.parse(xhr.responseText);
+            //console.log(responseData.key);
+            const modifiedFileName: string | null = "File Upload Response Issue";
+            const message: string = modifiedFileName ?? responseData.key; // "Hello World"
+            args.file.name = responseData.key;
+        }  
+    };
+
 
     const onImageRemoving = (args) => {
         console.log("Image Removing event triggered. Adding custom form data.");
         if (args) {
             console.log('Image is being removed:');
             // You can get the image URL from args.file
-            console.log(args);
+            //console.log(args);
             const originalFile = args.filesData[0];
             //console.log(originalFile);
             console.log(originalFile.name);
@@ -159,15 +182,14 @@ const CreateBlog = () => {
             ];
         } 
         else 
-        {
             console.error('onImageRemoving event args are null.');
-        }
     };
 
     const insertImageSettings = {
         saveUrl: config.API_URL + '/api/uploadBlogContentImage',
         removeUrl: config.API_URL + '/api/fileUpload/deleteBlogContentImage',
-        path: './uploads/',
+        //path: './uploads/',
+        path:'https://blog.her-healing-initiative.org/',
         allowedTypes: ['.png', '.jpg', '.jpeg'],
         maxFileSize: 5000000, // 5MB,
         //saveFormat: 'Blob',  //By default, Syncfusion saves images as Base64. Set saveFormat to 'Blob' to upload the actual file.
@@ -333,6 +355,7 @@ const CreateBlog = () => {
                         toolbarSettings={toolbarSettings} quickToolbarSettings={quickToolbarSettings}
                         insertImageSettings={insertImageSettings}
                         imageUploading={onImageUploading}
+                        imageUploadSuccess={OnImageUploadSuccess}
                         imageRemoving={onImageRemoving}
                     >
                     <Inject services={[Toolbar, HtmlEditor, QuickToolbar, Image, Link, Table, PasteCleanup]} />
