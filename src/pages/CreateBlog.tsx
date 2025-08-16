@@ -173,7 +173,7 @@ const CreateBlog = () => {
             //console.log(args);
             const originalFile = args.filesData[0];
             //console.log(originalFile);
-            console.log(originalFile.name);
+            //console.log(originalFile.name);
             args.customFormData = [
                 { 'uiAction': 'blogContentImage' },
                 { 'userId': 'rajaramans' },
@@ -189,7 +189,7 @@ const CreateBlog = () => {
         saveUrl: config.API_URL + '/api/uploadBlogContentImage',
         removeUrl: config.API_URL + '/api/fileUpload/deleteBlogContentImage',
         //path: './uploads/',
-        path:'https://blog.her-healing-initiative.org/',
+        path:config.AWS_S3_URL,
         allowedTypes: ['.png', '.jpg', '.jpeg'],
         maxFileSize: 5000000, // 5MB,
         //saveFormat: 'Blob',  //By default, Syncfusion saves images as Base64. Set saveFormat to 'Blob' to upload the actual file.

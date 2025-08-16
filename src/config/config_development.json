@@ -1,3 +1,4 @@
 {
-    "API_URL" : "http://localhost:5000"
+    "API_URL" : "http://localhost:5000",
+    "AWS_S3_URL" : "https://blog.her-healing-initiative.org/"
 }
