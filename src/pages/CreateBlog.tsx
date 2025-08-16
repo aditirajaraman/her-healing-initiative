@@ -165,7 +165,7 @@ const CreateBlog = () => {
     };
 
     const insertImageSettings = {
-        saveUrl: config.API_URL + '/api/fileUpload/uploadBlogContentImage',
+        saveUrl: config.API_URL + '/api/uploadBlogContentImage',
         removeUrl: config.API_URL + '/api/fileUpload/deleteBlogContentImage',
         path: './uploads/',
         allowedTypes: ['.png', '.jpg', '.jpeg'],
@@ -294,13 +294,13 @@ const CreateBlog = () => {
                 </div>
                 <div className="field">
                     <span>Blog Header Image</span>
-                    <FileUpload name="blogImage" url="http://localhost:5000/api/fileUpload/uploadBlogImage" 
+                    <FileUpload name="blogImage" url="http://localhost:5000/api/uploadBlogImageToBucket" 
                         onUpload={onUpload} onBeforeUpload={({ formData }) => {
                             //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
                             formData.append('uiAction', 'blogImage');
                             formData.append('blogId', blogId);
                         }}
-                        accept="image/*" maxFileSize={1000000}
+                        accept="image/*" maxFileSize={2000000}
                         emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
                 </div>
                 <div className="field">
