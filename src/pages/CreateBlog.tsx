@@ -76,7 +76,6 @@ const CreateBlog = () => {
     const richTextEditorRef = useRef<RichTextEditorComponent | null>(null);
     const [richTextEditorValue, setRichTextEditorValue] = useState<string>('');
 
-    const hostUrl: string = 'https://services.syncfusion.com/react/production/';
     let rteValue: string = "<i>Write your blog...</i>";
     const toolbarSettings: object = {
         items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
@@ -95,99 +94,9 @@ const CreateBlog = () => {
         link: ['Open', 'Edit', 'UnLink']
     }
 
-    // This function will be triggered before the image is uploaded.
-    /*const onImageUploading = (args) => {
-        console.log("Image uploading event triggered. Adding custom form data."); 
-        const originalFile = args.fileData;
-        console.log(originalFile.name);
-        const extension = originalFile.name.split('.').pop();
-    
-        // Create a new unique filename
-        const newFileName = `blogContentImage_${blogId}_${originalFile.name}`;
-
-        console.log("-----------newFileName-----------.");
-        console.log(newFileName);
-        // Assign the new filename to the file object
-        // This new name will be used in the multipart/form-data request
-        args.fileData.name = newFileName;
-        
-        // The 'customFormData' property is an array of key-value pairs.
-        // You can add your custom data here.
-        args.customFormData = [
-            { 'uiAction': 'blogContentImage' },
-            { 'blogId': blogId }
-        ];
-
-        // You can also add data dynamically
-        // args.customFormData.push({ 'currentTime': new Date().toISOString() });
-    };*/
-
-    const onImageUploading = (args) => {
-        console.log("Image uploading event triggered. Adding custom form data."); 
-        const originalFile = args.fileData;
-        console.log(originalFile.name);
-    
-        // Create a new unique filename
-        console.log("-----------newFileName-----------.");
-        const newFileName = `blogContentImage_${blogId}_${originalFile.name}`;
-        console.log(newFileName);
-        
-        // The 'customFormData' property is an array of key-value pairs.
-        // You can add your custom data here.
-        args.customFormData = [
-            { 'uiAction': 'blogContentImage' },
-            { 'userId': 'rajaramans' },
-            { 'targetFileName': newFileName },
-            { 'blogId': blogId }
-        ];
-    }
-
-    const OnImageUploadSuccess = (args) => {
-        // The args object contains information about the upload
-        // args.file: The file object
-        // args.response: The response from the server
-        console.log('---------------OnImageUploadSuccess----------------------'); 
-        const xhr = args.e.currentTarget;
-        if (xhr === null || xhr === undefined)
-        {
-            console.log('---------------OnImageUploadSuccess / Response Issue----------------------'); 
-            args.file.name = "File Upload Response Issue";
-        }
-        else
-        {
-            console.log('---------------OnImageUploadSuccess / Got Response----------------------'); 
-            const responseData = JSON.parse(xhr.responseText);
-            //console.log(responseData.key);
-            const modifiedFileName: string | null = "File Upload Response Issue";
-            const message: string = modifiedFileName ?? responseData.key; // "Hello World"
-            args.file.name = responseData.key;
-        }  
-    };
-
-
-    const onImageRemoving = (args) => {
-        console.log("Image Removing event triggered. Adding custom form data.");
-        if (args) {
-            console.log('Image is being removed:');
-            // You can get the image URL from args.file
-            //console.log(args);
-            const originalFile = args.filesData[0];
-            //console.log(originalFile);
-            //console.log(originalFile.name);
-            args.customFormData = [
-                { 'uiAction': 'blogContentImage' },
-                { 'userId': 'rajaramans' },
-                { 'targetFileName': originalFile.name },
-                { 'blogId': blogId }
-            ];
-        } 
-        else 
-            console.error('onImageRemoving event args are null.');
-    };
-
     const insertImageSettings = {
         saveUrl: config.API_URL + '/api/uploadBlogContentImage',
-        removeUrl: config.API_URL + '/api/fileUpload/deleteBlogContentImage',
+        removeUrl: config.API_URL + '/api/deleteS3Object',
         //path: './uploads/',
         path:config.AWS_S3_URL,
         allowedTypes: ['.png', '.jpg', '.jpeg'],
@@ -250,6 +159,66 @@ const CreateBlog = () => {
     const onUpload = () => {
         uploadToast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
     }
+
+    const onImageUploading = (args) => {
+        console.log("Image uploading event triggered. Adding custom form data."); 
+        const originalFile = args.fileData;
+        console.log(originalFile.name);
+    
+        // Create a new unique filename
+        console.log("-----------newFileName-----------.");
+        const newFileName = `blogContentImage_${blogId}_${originalFile.name}`;
+        console.log(newFileName);
+        
+        // The 'customFormData' property is an array of key-value pairs.
+        // You can add your custom data here.
+        args.customFormData = [
+            { 'uiAction': 'blogContentImage' },
+            { 'userId': 'rajaramans' },
+            { 'targetFileName': newFileName },
+            { 'blogId': blogId }
+        ];
+    }
+
+    const OnImageUploadSuccess = (args) => {
+        // The args object contains information about the upload
+        // args.file: The file object
+        // args.response: The response from the server
+        console.log('---------------OnImageUploadSuccess----------------------'); 
+        const xhr = args.e.currentTarget;
+        if (xhr === null || xhr === undefined)
+        {
+            console.log('---------------OnImageUploadSuccess / Response Issue----------------------'); 
+            args.file.name = "File Upload Response Issue";
+        }
+        else
+        {
+            console.log('---------------OnImageUploadSuccess / Got Response----------------------'); 
+            const responseData = JSON.parse(xhr.responseText);
+            //console.log(responseData.key);
+            const modifiedFileName: string | null = "File Upload Response Issue";
+            const message: string = modifiedFileName ?? responseData.key; // "Hello World"
+            args.file.name = responseData.key;
+        }  
+    };
+
+    const onImageRemoving = (args) => {
+        console.log("Image Removing event triggered. Adding custom form data.");
+        if (args) {
+            console.log('Image is being removed:');
+            // You can get the image URL from args.file
+            //console.log(args);
+            const originalFile = args.filesData[0];
+            //console.log(originalFile);
+            //console.log(originalFile.name);
+            args.customFormData = [
+                { 'bucketName': config.AWS_S3_BUKCET },
+                { 'key': originalFile.name }
+            ];
+        } 
+        else 
+            console.error('onImageRemoving event args are null.');
+    };
 
     /*---------------------5.2.6: api call / start ------------------------*/
     const apiStatus = {
