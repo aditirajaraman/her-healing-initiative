@@ -151,9 +151,6 @@ const CreateBlog = () => {
 
     /*---------------------5.2.4: UI Templates ------------------------*/
     const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
-    const blogHeaderBanner = (
-        <img alt="Card" src='https://as2.ftcdn.net/v2/jpg/15/97/57/01/1000_F_1597570101_kdgfiEZ7EjmaeMDRZb1KkAlhZfXo1GPB.jpg' style={{ width:'100%', height:'200px'}}/>
-    );
 
     /*---------------------5.2.5: event Handlers------------------------*/
     const onUpload = () => {
@@ -169,7 +166,10 @@ const CreateBlog = () => {
         console.log("-----------newFileName-----------.");
         const newFileName = `blogContentImage_${blogId}_${originalFile.name}`;
         console.log(newFileName);
-        
+
+        //This changes the filename that the server will receive
+        //args.fileData.name = newFileName;
+
         // The 'customFormData' property is an array of key-value pairs.
         // You can add your custom data here.
         args.customFormData = [
