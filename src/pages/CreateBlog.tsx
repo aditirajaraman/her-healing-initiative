@@ -61,12 +61,32 @@ const CreateBlog = () => {
             })
             .then((res) => {
                 console.log("----------process.env---------");
-                console.log(process.env.NODE_ENV);
+                //console.log(process.env.NODE_ENV);
                 console.log(res.data);
                 setBlogId(res.data);
             })
             .catch((err) => {
                 console.log("----------OnLoad Erro---------");
+                console.log(err);
+            });
+
+            /*------Get Tags------*/
+             axios({
+                // Endpoint to send files
+                url: config.API_URL + "/api/tags",
+                method: "GET",
+                headers: {
+                    // Add any auth token here
+                    //authorization: "your token comes here",
+                },
+            })
+            .then((res) => {
+                console.log("----------Get Tags---------");
+                console.log(res.data);
+                setTags(res.data);
+            })
+            .catch((err) => {
+                console.log("----------OnLoad Error---------");
                 console.log(err);
             });
         }
@@ -113,20 +133,12 @@ const CreateBlog = () => {
  
     /*---------------------5.2.2: UI Models  ------------------------*/
    
-    const bloggers = [
-        {name: 'Aditi Rajaraman', value: 'AditiR'},
-        {name: 'Shruthi Srinivisan', value: 'Shruthi'},
-        {name: 'Snigdha Tadikamalla', value: 'Snigdha'},
-        {name: 'Haarika Pemmeraju', value: 'Baarika'},
-        {name: 'Tejaswi Garlapati', value: 'TJ'}
-    ];
-
-    const tags = [
+    /*const tags = [
         {name: 'liberals', value: 'libs'},
         {name: 'healthcare', value: 'health'},
         {name: 'medicine', value: 'med'},
-        {name: 'womens health', value: 'women health'},
-    ]
+        {name: 'womens health', value: 'women health'}
+    ]*/
 
     const defaultValues = {
         title: '',
@@ -140,6 +152,7 @@ const CreateBlog = () => {
 
     /*---------------------5.2.3: State Management ------------------------*/
     const [blogId, setBlogId] = useState<string | null>(null);
+    const [tags, setTags] = useState([]);
     const [formData, setFormData] = useState({});
     const [showMessage, setShowMessage] = useState(false);
     const {control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
@@ -195,7 +208,7 @@ const CreateBlog = () => {
         {
             console.log('---------------OnImageUploadSuccess / Got Response----------------------'); 
             const responseData = JSON.parse(xhr.responseText);
-            //console.log(responseData.key);
+            console.log(responseData.key);
             const modifiedFileName: string | null = "File Upload Response Issue";
             const message: string = modifiedFileName ?? responseData.key; // "Hello World"
             args.file.name = responseData.key;
