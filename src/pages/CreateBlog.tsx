@@ -35,14 +35,18 @@ from '@syncfusion/ej2-react-richtexteditor';
 
 /*********************************4: Imports / custom css ********************************/
 import '../assets/css/createBlog.css';
+import { confirmDialog } from 'primereact/confirmdialog';
 
 /*********************************5: Start : Application Code ********************************/
 // 4.1 : Configuration
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
-const blogHeaderImage =  require("../assets/images/blogheader.jpg");
 
 // 4.2 : Class Code
 const CreateBlog = () => {
+    const navigate = useNavigate();
+    const redirectToBlogs = () => {
+        navigate('/listblogs'); 
+    };
     const hasRun = useRef(false);
     
     //React Hooks for Component OnLoad() 
@@ -93,6 +97,7 @@ const CreateBlog = () => {
     }, []);
     
     /*---------------------5.2.1: UI Controls Reference ---------------------*/ 
+    const formRef = useRef(null);
     const richTextEditorRef = useRef<RichTextEditorComponent | null>(null);
     const [richTextEditorValue, setRichTextEditorValue] = useState<string>('');
 
@@ -142,8 +147,8 @@ const CreateBlog = () => {
 
     const defaultValues = {
         title: '',
-        author: '',
-        authorIcon: '',
+        author: 'aditir',
+        authorIcon: 'elwinsharvill',
         content: '',
         tag: '',
         blogImage: '',
@@ -151,11 +156,12 @@ const CreateBlog = () => {
     }
 
     /*---------------------5.2.3: State Management ------------------------*/
+    const [currentUser, setCurrentUser] = useState<string | null>('aditir');
     const [blogId, setBlogId] = useState<string | null>(null);
     const [tags, setTags] = useState([]);
     const [formData, setFormData] = useState({});
     const [showMessage, setShowMessage] = useState(false);
-    const {control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+    const {control, register, formState: { errors }, handleSubmit, reset } = useForm({defaultValues});
     const uploadToast = useRef(null);
     
     const getFormErrorMessage = (name) => {
@@ -165,7 +171,7 @@ const CreateBlog = () => {
     /*---------------------5.2.4: UI Templates ------------------------*/
     const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
 
-    /*---------------------5.2.5: event Handlers------------------------*/
+    /*---------------------5.2.5: Start : Event Handlers------------------------*/
     const onUpload = () => {
         uploadToast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
     }
@@ -233,40 +239,68 @@ const CreateBlog = () => {
             console.error('onImageRemoving event args are null.');
     };
 
-    /*---------------------5.2.6: api call / start ------------------------*/
     const apiStatus = {
         status:false,
         statusMessage:false
     };
     const onSubmit = (formData) => {
+
         setFormData(formData);
         
-        console.log('---------------------formdata-----------------');
-        console.log(formData);
+        //console.log('---------------------formdata-----------------');
+        //console.log(blogId);
+        //console.log(formData);
 
-        getEditorContent()
-                
-        axios({
-            // Endpoint to send files
-                url: config.API_URL + "/api/blogs",
-                method: "POST",
-                data: formData, // Attaching the form data
-            })
-            .then((res) => {
-                //console.log("--------------logged---------------");
-                //console.log(res.data.success);
-                //console.log(res.data.message);
-                apiStatus.status = res.data.success;   
-                apiStatus.statusMessage  = res.data.message;
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-        setShowMessage(true);
+        console.log('---------------------post Rich Text Content  to S3-----------------');
+        if (richTextEditorRef.current) {
+            // Call the get-content method on the editor instance
+            const htmlContent = richTextEditorRef.current.getHtml();
+            
+            //console.log('--- Editor HTML Content ---');
+            //console.log(htmlContent);
 
-        reset();
+            const s3APIUrl =  config.API_URL + '/api/uploadRichText';
+            const richTextContent = {
+                content: htmlContent,
+                blogId: blogId
+            };
+            axios.post(s3APIUrl, richTextContent)
+                .then((res) => {
+                    console.log(res.data);
+                    apiStatus.status = res.data.status;   
+                    apiStatus.statusMessage  = res.data.message;
+                    if (res.data.status == false)
+                       setShowMessage(true)
+                    else{
+                        console.log('---------------------Save Blog-----------------');
+                        const API_URL = config.API_URL;
+                        const computedUrl = `${API_URL}/api/blogs/?blogId=${blogId}`;
+                        axios({
+                            // Endpoint to send files
+                                url: computedUrl,
+                                method: "POST",
+                                data: formData, // Attaching the form data
+                            })
+                            .then((res) => {
+                                //console.log("--------------logged---------------");
+                                //console.log(res.data.success);
+                                //console.log(res.data.message);
+                                apiStatus.status = res.data.status;   
+                                apiStatus.statusMessage  = res.data.message;
+                                if (res.data.status == false)
+                                    setShowMessage(true);
+                                else
+                                    redirectToBlogs();   
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                    }
+                });
+        }
     };
 
+     /*---------------------5.2.5: End : Event Handlers------------------------*/
     return (   
      <div className="form-demo">
         {/* --------------------------- UI Dialogs--------------------- */}
@@ -285,7 +319,9 @@ const CreateBlog = () => {
         {/* --------------------------- Blog Form--------------------- */}
         <div className="flex flex-wrap align-items-center justify-content-center">
             <Card className="cardStyle" title="Create Blog">
-                <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
+                <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="p-fluid">
+                {/*---Hidden variable: This input is not visible to the user------*/}
+                
                 {/*---<span>{blogId}</span>------*/}
                 <div className="field">
                     <span className="p-float-label">
