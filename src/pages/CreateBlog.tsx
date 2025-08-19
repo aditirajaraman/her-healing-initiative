@@ -6,6 +6,7 @@ import axios from 'axios';
 
 /*********************************2: Imports / primereact ********************************/
 import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
@@ -145,8 +146,11 @@ const CreateBlog = () => {
         {name: 'womens health', value: 'women health'}
     ]*/
 
+    const maxCharacters = 250;
+
     const defaultValues = {
         title: '',
+        shortDescription: '',
         author: 'aditir',
         authorIcon: 'elwinsharvill',
         content: '',
@@ -352,6 +356,16 @@ const CreateBlog = () => {
                         <label htmlFor="name" className={classNames({ 'p-error': errors.title })}>Title*</label>
                     </span>
                     {getFormErrorMessage('title')}
+                </div>
+                <br></br>
+                <div className="field">
+                    <span className="p-float-label">
+                        <Controller name="shortDescription" control={control} rules={{ required: 'Short Description is required.' }} render={({ field, fieldState }) => (
+                            <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} maxLength={maxCharacters}/>
+                        )} />
+                        <label htmlFor="name" className={classNames({ 'p-error': errors.shortDescription })}>ShortDescription* (Only 250 Characters)</label>
+                    </span>
+                    {getFormErrorMessage('shortDescription')}
                 </div>
                 <div className="field">
                     <span>Blog Header Image</span>

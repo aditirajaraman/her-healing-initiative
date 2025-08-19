@@ -134,7 +134,7 @@ const ListBlogs = () => {
                         <img src={`${data.blogImage}`}/>
                         <div className="product-list-detail">
                             <div className="product-name">{data.title}</div>
-                            <div className="product-description">{data.content}</div>
+                            <div className="product-description">{data.shortDescription}</div>
                             <Avatar image={require( `../assets/images/event-organizers/${data.authorIcon}.png`)} className="mr-2" size="normal" shape="circle" />
                             <i className="pi pi-tag product-category-icon"></i><span className="product-category">{data.tag}</span>
                         </div>
@@ -153,7 +153,7 @@ const ListBlogs = () => {
                         <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick('displayBlog', 'center', data._id,  data.title)}>{data.title}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.tag}</span>
-                        <div className="product-description">{data.content}</div>
+                        <div className="product-description">{data.shortDescription}</div>
                     </div>
                     <div className="product-list-action">
                         <Tooltip target=".registered-users" />
