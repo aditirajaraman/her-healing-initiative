@@ -149,7 +149,7 @@ const ListBlogs = () => {
             <div className="col-12 md:col-4">
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content"> 
-                        <img src={`${data.blogImage}`}/>
+                        <img src={`${data.blogImage}`} style={{width:'400px', height:'200px'}}/>
                         <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick('displayBlog', 'center', data._id,  data.title)}>{data.title}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.tag}</span>
