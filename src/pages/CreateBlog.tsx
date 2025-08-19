@@ -13,7 +13,7 @@ import { Divider } from 'primereact/divider';
 import { classNames } from 'primereact/utils';
 import { Dialog } from 'primereact/dialog';
 import { Card } from 'primereact/card';
-import { FileUpload } from 'primereact/fileupload';
+import { FileUpload, FileUploadUploadEvent, FileUploadRemoveEvent} from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
 import { Fieldset } from 'primereact/fieldset';
 
@@ -70,7 +70,7 @@ const CreateBlog = () => {
                 setBlogId(res.data);
             })
             .catch((err) => {
-                console.log("----------OnLoad Erro---------");
+                console.log("----------OnLoad Error---------");
                 console.log(err);
             });
 
@@ -158,6 +158,7 @@ const CreateBlog = () => {
     /*---------------------5.2.3: State Management ------------------------*/
     const [currentUser, setCurrentUser] = useState<string | null>('aditir');
     const [blogId, setBlogId] = useState<string | null>(null);
+    const [blogImage, setBlogImage] = useState<string | null>(null);
     const [tags, setTags] = useState([]);
     const [formData, setFormData] = useState({});
     const [showMessage, setShowMessage] = useState(false);
@@ -172,8 +173,25 @@ const CreateBlog = () => {
     const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
 
     /*---------------------5.2.5: Start : Event Handlers------------------------*/
-    const onUpload = () => {
-        uploadToast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
+    const onBlogImageUpload = (event: FileUploadUploadEvent) => {
+        console.log('-----------------Upload completed-----------------');
+        console.log(event.xhr.response);
+        const responseData = JSON.parse(event.xhr.response);
+        if (Boolean(responseData.status))
+        {
+            uploadToast.current.show({severity: 'info', summary: 'Success', detail: `File Uploaded ${responseData.key}`, life: 4000});
+            let computedBlogImageurl = `${config.AWS_S3_URL}${responseData.key}`;
+            setBlogImage(computedBlogImageurl);
+        }
+        else{
+            uploadToast.current.show({severity: 'error', summary: 'Error Message', detail: `File Uploaded ${responseData.message}`, life: 6000});
+        }
+    }
+
+    const OnBlogImageRemove = (event: FileUploadRemoveEvent) => {
+        console.log('-----------------Blog Image Remove-----------------');
+        console.log('File removed:', event.file);
+        //uploadToast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
     }
 
     const onImageUploading = (args) => {
@@ -275,8 +293,11 @@ const CreateBlog = () => {
                         console.log('---------------------Save Blog-----------------');
                         const API_URL = config.API_URL;
                         const computedUrl = `${API_URL}/api/blogs/?blogId=${blogId}`;
+                        //formData.set('blogImage', blogImage);
+                        formData.blogImage = blogImage;
+                        console.log(formData);
+                        
                         axios({
-                            // Endpoint to send files
                                 url: computedUrl,
                                 method: "POST",
                                 data: formData, // Attaching the form data
@@ -335,11 +356,12 @@ const CreateBlog = () => {
                 <div className="field">
                     <span>Blog Header Image</span>
                     <FileUpload name="blogImage" url="http://localhost:5000/api/uploadBlogImageToBucket" 
-                        onUpload={onUpload} onBeforeUpload={({ formData }) => {
+                        onUpload={onBlogImageUpload} onBeforeUpload={({ formData }) => {
                             //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
                             formData.append('uiAction', 'blogImage');
                             formData.append('blogId', blogId);
                         }}
+                        onRemove={OnBlogImageRemove}
                         accept="image/*" maxFileSize={2000000}
                         emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
                 </div>
