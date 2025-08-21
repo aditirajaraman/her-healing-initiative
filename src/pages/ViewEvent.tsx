@@ -16,13 +16,13 @@ const ViewEvent = ({eventData}) => {
             url: config.API_URL + "/api/events/" + eventData.id,
             method: "GET",
             })
-            .then((res) => {
-                console.log("----------Loaded Event Data-----------");
-                console.log(res.data);
-                setCurrentEvent(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
+        .then((res) => {
+            console.log("----------Loaded Event Data-----------");
+            console.log(res.data);
+            setCurrentEvent(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
         });
     }, []);  
     const [eventState, setEventState] = useState('Withdraw');

@@ -54,10 +54,16 @@ const ListBlogs = () => {
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     /*---------------------4.2.1: UI Model  ------------------------*/
-    const currentBlogData = {
-        id:'',
-        title:''
+    interface BlogData {
+        id:string,
+        blogId:string;
     };
+
+    const currentBlogData: BlogData = {
+        id: '',
+        blogId: ''
+    };
+
     const sortOptions = [
       {label: 'Blog Date', value: 'date'},
       {label: 'Blog Category', value: 'category'},
@@ -71,8 +77,7 @@ const ListBlogs = () => {
     const [sortOrder, setSortOrder] = useState(null);
     const [sortField, setSortField] = useState(null);   
     const [displayBlog, setDisplayBlog] = useState(false);
-    const [currentBlog, setCurrentBlog] = useState(currentBlogData);
-    const [position, setPosition] = useState('center');
+    const [currentBlog, setCurrentBlog] = useState<BlogData>(null);
 
     /*--------------------- 4.2.3: Start : Event Handlers ------------------------*/
 
@@ -128,19 +133,19 @@ const ListBlogs = () => {
 
     //4.2.3.4 :  Data View / ListItem Definition
     const renderListItem = (data) => {
-            return (
-                <div className="col-12">
-                    <div className="product-list-item">
-                        <img src={`${data.blogImage}`}/>
-                        <div className="product-list-detail">
-                            <div className="product-name">{data.title}</div>
-                            <div className="product-description">{data.shortDescription}</div>
-                            <Avatar image={require( `../assets/images/event-organizers/${data.authorIcon}.png`)} className="mr-2" size="normal" shape="circle" />
-                            <i className="pi pi-tag product-category-icon"></i><span className="product-category">{data.tag}</span>
-                        </div>
+        return (
+            <div className="col-12">
+                <div className="product-list-item">
+                    <img src={`${data.blogImage}`}/>
+                    <div className="product-list-detail">
+                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick(data._id, data.blogId )}>{data.title}</div>
+                        <div className="product-description">{data.shortDescription}</div>
+                        <Avatar image={require( `../assets/images/event-organizers/${data.authorIcon}.png`)} className="mr-2" size="normal" shape="circle" />
+                        <i className="pi pi-tag product-category-icon"></i><span className="product-category">{data.tag}</span>
                     </div>
                 </div>
-            );
+            </div>
+        );
     }
 
     //4.2.3.5 :  Data View / GridItem Definition
@@ -150,7 +155,7 @@ const ListBlogs = () => {
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content"> 
                         <img src={`${data.blogImage}`} style={{width:'400px', height:'200px'}}/>
-                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick('displayBlog', 'center', data._id,  data.title)}>{data.title}</div>
+                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick(data._id, data.blogId)}>{data.title}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.tag}</span>
                         <div className="product-description">{data.shortDescription}</div>
@@ -163,7 +168,7 @@ const ListBlogs = () => {
                         <Tooltip target=".liked" />
                         <i className="liked pi pi-thumbs-up mr-4 p-text-secondary p-overlay-badge" data-pr-tooltip="Likes !" data-pr-position="bottom" data-pr-at="right+5 top" data-pr-my="left center-2"  style={{ fontSize: '2rem', float: 'left', cursor: 'pointer', color:'darkblue' }}><Badge value="100" severity="info"></Badge></i>
                     </div>
-            </div>
+                </div>
             </div>
         );
     }
@@ -172,17 +177,14 @@ const ListBlogs = () => {
     const dialogFuncMap = {
         'displayBlog': setDisplayBlog
     }
-    const handleBlogClick = (name, position, id, title) => {
-        //console.log(id)
-        currentBlogData.id = id;
-        currentBlogData.title = title;
-        setCurrentBlog(currentBlogData);
-
-        dialogFuncMap[`${name}`](true);
-
-        if (position) {
-            setPosition(position);
+    const handleBlogClick = (id, blogId) => {
+        console.log("--------handleBlogClick---------");
+        let currentBlogData:BlogData = {
+            id : id,
+            blogId : blogId
         }
+        console.log(currentBlogData);
+        navigate('/viewBlog', { state: { blogData : currentBlogData } }); 
     }
 
     const onHide = (name) => {
@@ -199,21 +201,14 @@ const ListBlogs = () => {
         );
     }
 
-    /*--------------------- 4.2.3: End : Event Handlers ------------------------*/
+    /*--------------------- 4.2.3: End : Blog Handlers ------------------------*/
     
     /*--------------------- 4.2.4: UI Container Code ------------------------*/
     return (
 
         
      <div className="grid">
-
-        {/* ---------------------------View Event --------------------- */}
-        <Dialog header={currentBlog.title} visible={displayBlog} style={{ width: '60vw' }} footer={renderFooter('displayBlog')} onHide={() => onHide('displayBlog')}>
-            <br></br>
-            <ViewBlog blogData={currentBlog}/>
-        </Dialog>  
-
-        {/* --------------------------- Events--------------------- */}
+    {/* --------------------------- Blogs--------------------- */}
         <div className="dataview-event">
           <div className="card">
               <DataView layout={layout} 
