@@ -40,6 +40,9 @@ const ViewBlog: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [content, setContent] = useState(null);
+  const [loadingContent, setLoadingContent] = useState<boolean>(true);
+
   const location = useLocation();
   const currentBlogState = location.state?.blogData as BlogData;
 
@@ -116,9 +119,27 @@ const ViewBlog: React.FC = () => {
         setLoading(false);
       }
     };
+
+    const fetchContent = async () => {
+      try {
+        //const url = `https://${bucket}.s3.${region}.amazonaws.com/blogs/${blogId}.json`;
+        //const url = 'https://blog.her-healing-initiative.org/BlogContent_e482eccf-066f-4c5c-9e6d-1628900c5988.html';
+        const filename = `BlogContent_${currentBlogState.blogId}.html`
+        const s3APIUrl =  `${config.API_URL}/api/fileContent?key=${filename}`;
+        const response = await axios.get(s3APIUrl);
+        //console.log(response.data);
+        setContent(response.data);
+      } catch (err) {
+        console.error('Error fetching blog content:', err);
+        setError('Failed to load blog content. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
     
     // Call the async function
     fetchBlogData();
+    fetchContent();
     
     // The dependency array now includes currentBlogState
   }, [currentBlogState]); // React now knows to re-run the effect if this variable changes
@@ -158,6 +179,8 @@ const ViewBlog: React.FC = () => {
       </div>
       {/* ----------------------------------User Blog Profile-------------------------- */}
       <Divider />
+      <div style={{textAlign:'left'}} dangerouslySetInnerHTML={{ __html: content }} >
+      </div>
     </div>
   );
 };
