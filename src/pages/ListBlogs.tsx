@@ -17,17 +17,20 @@ import { Dialog } from 'primereact/dialog';
 import '../assets/css/prime-styles.css';
 import '../assets/css/eventView.css';
 
-/*********************************3: Imports / Views ********************************/
+/*********************************4: Imports Utils ********************************/
+import { truncateString } from '../helpers/stringUtils';
+
+/*********************************5: Imports / Views ********************************/
 import ViewBlog from './ViewBlog';
 
-/*********************************4: Start : Application Code ********************************/
+/*********************************6: Start : Application Code ********************************/
 
 // 4.1 : Configuration
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
 // 4.2 : Class Code
 const ListBlogs = () => { 
-    /*---------------------4.2.1: api call / start ------------------------*/
+    /*---------------------6.2.1: api call / start ------------------------*/
     useEffect(() => {
         axios({
             // Endpoint to send files
@@ -53,7 +56,7 @@ const ListBlogs = () => {
         });
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    /*---------------------4.2.1: UI Model  ------------------------*/
+    /*---------------------6.2.1: UI Model  ------------------------*/
     interface BlogData {
         id:string,
         blogId:string;
@@ -70,7 +73,7 @@ const ListBlogs = () => {
       {label: 'Blog Name', value: 'name'}
     ];
 
-    /*--------------------- 4.2.2: State Management ------------------------*/
+    /*--------------------- 6.2.2: State Management ------------------------*/
     const [blogs, setBlogs] = useState(null); 
     const [sortKey, setSortKey] = useState(null);
     const [layout, setLayout] = useState(null);
@@ -79,9 +82,9 @@ const ListBlogs = () => {
     const [displayBlog, setDisplayBlog] = useState(false);
     const [currentBlog, setCurrentBlog] = useState<BlogData>(null);
 
-    /*--------------------- 4.2.3: Start : Event Handlers ------------------------*/
+    /*--------------------- 6.2.3: Start : Event Handlers ------------------------*/
 
-    //4.2.3.1 : Navigation Functionality
+    //6.2.3.1 : Navigation Functionality
     const navigate = useNavigate();
     const handleCreateBlog = () => {
         navigate('/createBlog'); 
@@ -97,7 +100,7 @@ const ListBlogs = () => {
         return null;
     }
 
-     //4.2.3.2 : Sort Functionality 
+     //6.2.3.2 : Sort Functionality 
     const onSortChange = (event) => {
         const value = event.value;
 
@@ -113,7 +116,7 @@ const ListBlogs = () => {
         }
     }
 
-    //4.2.3.3 :  Data View - Header 
+    //6.2.3.3 :  Data View - Header 
     const renderHeader = () => {
         return (
             <div className="grid grid-nogutter">
@@ -131,7 +134,7 @@ const ListBlogs = () => {
     }
     const headerTemplate = renderHeader()
 
-    //4.2.3.4 :  Data View / ListItem Definition
+    //6.2.3.4 :  Data View / ListItem Definition
     const renderListItem = (data) => {
         return (
             <div className="col-12">
@@ -148,14 +151,14 @@ const ListBlogs = () => {
         );
     }
 
-    //4.2.3.5 :  Data View / GridItem Definition
+    //6.2.3.5 :  Data View / GridItem Definition
     const renderGridItem = (data) => {
         return (
             <div className="col-12 md:col-4">
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content"> 
                         <img src={`${data.blogImage}`} style={{width:'400px', height:'200px'}}/>
-                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick(data._id, data.blogId)}>{data.title}</div>
+                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleBlogClick(data._id, data.blogId)}>{truncateString(data.title, 35)}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.tag}</span>
                         <div className="product-description">{data.shortDescription}</div>
@@ -173,7 +176,7 @@ const ListBlogs = () => {
         );
     }
 
-    //4.2.3.6 : Click Functionaility 
+    //6.2.3.6 : Click Functionaility 
     const dialogFuncMap = {
         'displayBlog': setDisplayBlog
     }
@@ -201,9 +204,9 @@ const ListBlogs = () => {
         );
     }
 
-    /*--------------------- 4.2.3: End : Blog Handlers ------------------------*/
+    /*--------------------- 6.2.3: End : Blog Handlers ------------------------*/
     
-    /*--------------------- 4.2.4: UI Container Code ------------------------*/
+    /*--------------------- 6.2.4: UI Container Code ------------------------*/
     return (
 
         

@@ -14,6 +14,8 @@ import { Dropdown } from 'primereact/dropdown';
 import { Badge } from 'primereact/badge';
 import { Dialog } from 'primereact/dialog';
 
+import { truncateString } from '../helpers/stringUtils';
+
 import axios from 'axios';
 
 import ViewEvent from './ViewEvent';
@@ -105,7 +107,7 @@ const ListEvents = () => {
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content"> 
                         <img src={require( `../assets/images/events/${data.eventImage}.png`)}/>
-                        <div className="product-name" onClick={() => handleEventClick('displayEvent', 'center', data._id,  data.eventTitle)}  style={{cursor:'pointer'}}>{data.eventTitle}</div>
+                        <div className="product-name" onClick={() => handleEventClick('displayEvent', 'center', data._id,  data.eventTitle)}  style={{cursor:'pointer'}}>{truncateString(data.eventTitle, 35)}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.eventTag}</span>
                         <div className="product-description">{data.eventSummary}</div>
