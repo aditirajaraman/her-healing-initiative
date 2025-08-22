@@ -27,6 +27,7 @@ import Donate from './pages/Donate';
 import Register from './pages/Register';
 import CreateBlog from './pages/CreateBlog';
 import ViewBlog from './pages/ViewBlog';
+import EditBlog from './pages/EditBlog';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/createblog" element={<CreateBlog/>} />
           <Route path="/createEvent" element={<CreateEvent />} />
           <Route path="/viewBlog" element={<ViewBlog />} />
+          <Route path="/editBlog" element={<EditBlog />} />
           <Route path="/donate" element={<Donate />} />
           <Route path="/register" element={<Register />} />
         </Routes>

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 /*********************************2: Imports / primereact ********************************/ 
 import { Accordion, AccordionTab } from 'primereact/accordion';
@@ -47,26 +48,17 @@ const ViewBlog: React.FC = () => {
   const currentBlogState = location.state?.blogData as BlogData;
 
   const toast = useRef<any>(null);
+
+  const navigate = useNavigate();
+  const redirectToEditBlog = () => {
+        navigate('/editBlog'); 
+  };
   const items = [
         {
             label: 'Send',
             icon: 'pi pi-send',
             command: () => {
                 toast.current.show({ severity: 'info', summary: 'Add', detail: 'Data Added' });
-            }
-        },
-        {
-            label: 'Save',
-            icon: 'pi pi-save',
-            command: () => {
-                toast.current.show({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
-            }
-        },
-        {
-            label: 'tag',
-            icon: 'pi pi-tag',
-            command: () => {
-                toast.current.show({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
             }
         },
         {
@@ -77,10 +69,10 @@ const ViewBlog: React.FC = () => {
             }
         },
         {
-            label: 'Share',
-            icon: 'pi-whatsapp',
+            label: 'Edit',
+            icon: 'pi pi-user-edit',
             command: () => {
-                window.location.href = 'https://facebook.github.io/react/'
+                redirectToEditBlog();
             }
         }
     ];
@@ -166,7 +158,9 @@ const ViewBlog: React.FC = () => {
         </div> 
         {/* ----------------------------------Title--------------------------------------- */}
         <div className="col-11"><h1 style={{textAlign:'center'}}>{currentBlog.title}</h1></div>
-        <div className="col-1"> <SpeedDial model={items} radius={80} direction="down" type="semi-circle" className="p-speeddial-rounded" /></div>
+        <div className="col-1 speeddial-circle-demo" > 
+           <SpeedDial model={items} radius={80} direction="down" type="semi-circle" className="p-speeddial-rounded"/>
+        </div>
       </div>
       {/* ----------------------------------User Blog Profile-------------------------- */}
       <div className="flex justify-content-center flex-wrap">
