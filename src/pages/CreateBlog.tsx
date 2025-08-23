@@ -296,7 +296,7 @@ const CreateBlog = () => {
                     else{
                         console.log('---------------------Save Blog-----------------');
                         const API_URL = config.API_URL;
-                        const computedUrl = `${API_URL}/api/blogs/?blogId=${blogId}`;
+                        const computedUrl = `${API_URL}/api/createBlog/?blogId=${blogId}`;
                         //formData.set('blogImage', blogImage);
                         formData.blogImage = blogImage;
                         console.log(formData);
