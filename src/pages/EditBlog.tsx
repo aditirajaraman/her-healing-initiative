@@ -16,6 +16,7 @@ import { Dialog } from 'primereact/dialog';
 import { Card } from 'primereact/card';
 import { FileUpload, FileUploadUploadEvent, FileUploadRemoveEvent} from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
+import { Image as BlogHeaderImage } from 'primereact/image';
 
 /*********************************3: Imports / syncFusion ********************************/
 import { 
@@ -50,6 +51,12 @@ interface BlogData {
     publicationDate:string;
 }
 
+// 1. Define TypeScript interfaces for your data
+interface InitialFile {
+    url: string;
+    name: string;
+}
+
 const EditBlog : React.FC = () => {
     const navigate = useNavigate();
     const redirectToBlogs = () => {
@@ -60,12 +67,14 @@ const EditBlog : React.FC = () => {
     const [currentBlog, setCurrentBlog] = useState<BlogData | null>(null);
     const [publicationDateValue, setPublicationDateValue] = useState<Date | null>(null);
     const [content, setContent] = useState(null);
+
+    const [initialFile, setInitialFile] = useState<InitialFile | null>(null);
+    const [showUploader, setShowUploader] = useState<boolean>(false);
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [loading, setLoading] = useState(true);
 
     //React Hooks for Component OnLoad() 
     useEffect(() => {
-        setLoading(true);
         if (!hasRun.current) {       
             // Get a single query parameter
             const blogId = searchParams.get('blogId');
@@ -121,10 +130,7 @@ const EditBlog : React.FC = () => {
                 console.log("----------OnLoad Error---------");
                 console.log(err);
             });
-
-            /*------ Fetching a previously uploaded file------*/
-            
-                
+             
             /*------Get Blog Content------*/
             const fileKey = `BlogContent_${blogId}.html`
             const s3APIUrl =  `${config.API_URL}/api/getContent?key=${fileKey}`;
@@ -146,7 +152,6 @@ const EditBlog : React.FC = () => {
                 console.log("----------OnLoad Error---------");
                 console.log(err);
             });
-            setLoading(false);
         }
     }, []);
     
@@ -429,6 +434,15 @@ const EditBlog : React.FC = () => {
                     </span>
                     {getFormErrorMessage('shortDescription')}
                 </div>
+
+                <div className="field">
+                    <h5>Current Banner</h5>
+                    <BlogHeaderImage 
+                    src={currentBlog?.blogImage}  
+                    zoomSrc={currentBlog?.blogImage} 
+                    alt="Image" width="100%" height="200" preview />
+                </div>
+
                 <div className="field">
                     <span>Blog Header Image</span>
                     <FileUpload name="blogImage" mode="advanced" customUpload
