@@ -304,7 +304,7 @@ const CreateBlog = () => {
                         axios({
                                 url: computedUrl,
                                 method: "POST",
-                                data: formData, // Attaching the form data
+                                data: formData // Attaching the form data
                             })
                             .then((res) => {
                                 //console.log("--------------logged---------------");

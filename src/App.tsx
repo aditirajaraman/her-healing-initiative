@@ -28,6 +28,8 @@ import Register from './pages/Register';
 import CreateBlog from './pages/CreateBlog';
 import ViewBlog from './pages/ViewBlog';
 import EditBlog from './pages/EditBlog';
+import Login from './pages/Login';
+import ForgotUserNamePassword from './pages/ForgotUserNamePassword';
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function App() {
           <Route path="/editBlog" element={<EditBlog />} />
           <Route path="/donate" element={<Donate />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgotusernameorpassword" element={<ForgotUserNamePassword />} />
         </Routes>
     </div>
   );

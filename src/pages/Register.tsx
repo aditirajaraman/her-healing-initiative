@@ -209,7 +209,7 @@ export const Register = () => {
                           <label htmlFor="accept" className={classNames({ 'p-error': errors.accept })}>I agree to the terms and conditions*</label>
                       </div>
 
-                      <Button type="submit" label="Submit" className="mt-2" />
+                      <Button type="submit" label="Log In" className="mt-2" />
                   </form>
               </Panel>
           </div>
