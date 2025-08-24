@@ -66,7 +66,7 @@ const EditBlog : React.FC = () => {
     const hasRun = useRef(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentBlog, setCurrentBlog] = useState<BlogData | null>(null);
-    const [content, setContent] = useState(null);
+    const [blogContent, setBlogContent] = useState(null);
 
     const [initialFile, setInitialFile] = useState<InitialFile | null>(null);
     const [showUploader, setShowUploader] = useState<boolean>(false);
@@ -151,7 +151,7 @@ const EditBlog : React.FC = () => {
             .then((res) => {
                 console.log("----------Get Blog content---------");
                 console.log(res.data);
-                setContent(res.data);
+                setBlogContent(res.data);
             })
             .catch((err) => {
                 console.log("----------OnLoad Error---------");
@@ -236,6 +236,12 @@ const EditBlog : React.FC = () => {
         }
     }
 
+    const onBlogContentChange = (args) => {
+        // Update the state with the new value
+        setBlogContent(args.value);
+    };
+    
+
     const onContentImageUploading = (args) => {
         console.log("Image uploading event triggered. Adding custom form data."); 
         const originalFile = args.fileData;
@@ -243,7 +249,7 @@ const EditBlog : React.FC = () => {
     
         // Create a new unique filename
         console.log("-----------newFileName-----------.");
-        const newFileName = `blogContentImage_${blogId}_${originalFile.name}`;
+        const newFileName = `blogContentImage_${currentBlog.blogId}_${originalFile.name}`;
         console.log(newFileName);
 
         //This changes the filename that the server will receive
@@ -255,7 +261,7 @@ const EditBlog : React.FC = () => {
             { 'uiAction': 'blogContentImage' },
             { 'userId': 'rajaramans' },
             { 'targetFileName': newFileName },
-            { 'blogId': blogId }
+            { 'blogId': currentBlog.blogId }
         ];
     }
 
@@ -334,11 +340,11 @@ const EditBlog : React.FC = () => {
             const s3APIUrl =  config.API_URL + '/api/uploadRichText';
             const richTextContent = {
                 content: htmlContent,
-                blogId: blogId
+                blogId: currentBlog.blogId
             };
             console.log("----------------------formData-----------------");
             console.log(formData);
-            /*axios.post(s3APIUrl, richTextContent)
+            axios.post(s3APIUrl, richTextContent)
             .then((res) => {
                 console.log(res.data);
                 apiStatus.status = res.data.status;   
@@ -350,7 +356,10 @@ const EditBlog : React.FC = () => {
                     const API_URL = config.API_URL;
                     const computedUrl = `${API_URL}/api/saveBlog/?_id=${currentBlog._id}`;
                     //formData.set('blogImage', blogImage);
-                    formData.blogImage = blogImage;
+                    if (isNewFileSelected)
+                        formData.blogImage = blogImage;
+                    else
+                        formData.blogImage = currentBlog.blogImage;
                     console.log(formData);
                     
                     axios({
@@ -374,7 +383,7 @@ const EditBlog : React.FC = () => {
                         console.log(err);
                     });
                 }
-            })*/
+            })
         }
     };
 
@@ -438,7 +447,7 @@ const EditBlog : React.FC = () => {
                     <FileUpload name="blogImage" url="http://localhost:5000/api/uploadBlogImageToBucket" 
                         onUpload={onBlogImageUpload} onBeforeUpload={({ formData }) => {
                             formData.append('uiAction', 'UpdateBlogHeaderImage');
-                            formData.append('blogId', blogId);
+                            formData.append('blogId', currentBlog.blogId);
                         }}
                         onRemove={onBlogImageRemove}
                         accept="image/*" maxFileSize={2000000}
@@ -495,9 +504,10 @@ const EditBlog : React.FC = () => {
 
                 {/* ---------------------------Blog Content Control--------------------- */}
                  <RichTextEditorComponent ref={richTextEditorRef}
-                        value={content}  
+                        value={blogContent}  
                         height={450} 
                         toolbarSettings={toolbarSettings} quickToolbarSettings={quickToolbarSettings}
+                        change={onBlogContentChange}
                         insertImageSettings={insertImageSettings}
                         imageUploading={onContentImageUploading}
                         imageUploadSuccess={onContentImageUploadSuccess}
