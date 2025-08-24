@@ -17,6 +17,7 @@ import { Card } from 'primereact/card';
 import { FileUpload, FileUploadUploadEvent, FileUploadRemoveEvent} from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
 import { Image as BlogHeaderImage } from 'primereact/image';
+import { Message } from 'primereact/message';
 
 /*********************************3: Imports / syncFusion ********************************/
 import { 
@@ -40,7 +41,7 @@ import '../assets/css/createBlog.css';
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
 interface BlogData {
-    id: string;
+    _id: string;
     blogId: string;
     title: string;
     shortDescription: string;
@@ -48,7 +49,7 @@ interface BlogData {
     blogImage: string;
     authorIcon: string;
     author: string;
-    publicationDate:string;
+    publicationDate:Date;
 }
 
 // 1. Define TypeScript interfaces for your data
@@ -65,12 +66,11 @@ const EditBlog : React.FC = () => {
     const hasRun = useRef(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentBlog, setCurrentBlog] = useState<BlogData | null>(null);
-    const [publicationDateValue, setPublicationDateValue] = useState<Date | null>(null);
     const [content, setContent] = useState(null);
 
     const [initialFile, setInitialFile] = useState<InitialFile | null>(null);
     const [showUploader, setShowUploader] = useState<boolean>(false);
-    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [isNewFileSelected, setIsNewFileSelected] = useState<boolean>(false);
     const [loading, setLoading] = useState(true);
 
     //React Hooks for Component OnLoad() 
@@ -83,33 +83,6 @@ const EditBlog : React.FC = () => {
             //const { blogId } = useParams<BlogParams>();
             //console.log("-------Edit Blog Component has loaded-----------");
             hasRun.current = true;
-            
-            /*------Get BlogData------*/
-            axios({
-                // Endpoint to send files
-                url: `${config.API_URL}/api/blogs/getBlogByBlogId/${blogId}`,
-                method: "GET",
-                headers: {
-                    // Add any auth token here
-                    //authorization: "your token comes here",
-                },
-            })
-            .then((res) => {
-                console.log("----------process.env---------");
-                //console.log(process.env.NODE_ENV);
-                console.log(res.data);
-                setBlogId(res.data);
-                setCurrentBlog(res.data);
-                if (res.data.publicationDate) {
-                    const parsedDate = new Date(res.data.publicationDate);
-                    console.log('------parsedDate----');
-                    console.log(parsedDate);
-                    setPublicationDateValue(parsedDate);
-            }})
-            .catch((err) => {
-                console.log("----------OnLoad Error---------");
-                console.log(err);
-            });
 
             /*------Get Lookup Tags------*/
             axios({
@@ -130,6 +103,38 @@ const EditBlog : React.FC = () => {
                 console.log("----------OnLoad Error---------");
                 console.log(err);
             });
+            
+            /*------Get BlogData------*/
+            axios({
+                // Endpoint to send files
+                url: `${config.API_URL}/api/blogs/getBlogByBlogId/${blogId}`,
+                method: "GET",
+                headers: {
+                    // Add any auth token here
+                    //authorization: "your token comes here",
+                },
+            })
+            .then((res) => {
+                console.log("----------Get Blog Data---------");
+                //console.log(process.env.NODE_ENV);
+
+                const retrievedBlogData = res.data;
+                console.log(retrievedBlogData);
+                //setBlogId(res.data.blogId)
+                if (retrievedBlogData.publicationDate) {
+                    const parsedDate = new Date(retrievedBlogData.publicationDate);
+                    retrievedBlogData.publicationDate = parsedDate;
+
+                setCurrentBlog(retrievedBlogData);
+                // Reset the form with the data from the API call
+                reset(retrievedBlogData); 
+            }})
+            .catch((err) => {
+                console.log("----------OnLoad Error---------");
+                console.log(err);
+            });
+
+            
              
             /*------Get Blog Content------*/
             const fileKey = `BlogContent_${blogId}.html`
@@ -184,25 +189,6 @@ const EditBlog : React.FC = () => {
         maxFileSize: 5000000, // 5MB,
     }
 
-    // This template function customizes the drag-and-drop area
-    const emptyFileUploadTemplate = () => {
-        return (
-            <div className="flex flex-column align-items-center justify-content-center">
-                <i className="pi pi-cloud-upload border-2 border-circle p-5 text-8xl text-400 border-400"></i>
-                <div className="mt-4">
-                    {uploadedFiles.length > 0 ? (
-                        <>
-                            <h5 className="font-semibold text-center">{uploadedFiles[0].name}</h5>
-                            <Button label="Remove File" className="p-button-danger p-button-sm mt-3" onClick={onClearBlogImages} />
-                        </>
-                    ) : (
-                        <p className="m-0 text-center">Drag and drop files to upload here.</p>
-                    )}
-                </div>
-            </div>
-        );
-    };
-
     /*---------------------5.2.2: UI Models  ------------------------*/
     const maxCharacters = 250;
 
@@ -224,7 +210,7 @@ const EditBlog : React.FC = () => {
     const [tags, setTags] = useState([]);
     const [formData, setFormData] = useState({});
     const [showMessage, setShowMessage] = useState(false);
-    const {control, register, formState: { errors }, handleSubmit, reset } = useForm({defaultValues});
+    const {control, formState: { errors }, handleSubmit, reset } = useForm({defaultValues});
     const uploadToast = useRef(null);
     
     const getFormErrorMessage = (name) => {
@@ -313,18 +299,17 @@ const EditBlog : React.FC = () => {
             console.error('onImageRemoving event args are null.');
     };
 
-    const onBlogImageSelect = (e) => {
-        setUploadedFiles(e.files);
-    };
-
-    const onBlogImageRemove = () => {
-        setUploadedFiles([]);
+    const onBlogImageSelect = () => {
+        setIsNewFileSelected(true);
     };
 
     const onClearBlogImages = () => {
-        setUploadedFiles([]);
+        setIsNewFileSelected(false);
     };
 
+    const onBlogImageRemove = () => {
+        //setUploadedFiles([]);
+    };
     const apiStatus = {
         status:false,
         statusMessage:false
@@ -351,42 +336,45 @@ const EditBlog : React.FC = () => {
                 content: htmlContent,
                 blogId: blogId
             };
-            axios.post(s3APIUrl, richTextContent)
-                .then((res) => {
-                    console.log(res.data);
-                    apiStatus.status = res.data.status;   
-                    apiStatus.statusMessage  = res.data.message;
-                    if (res.data.status == false)
-                       setShowMessage(true)
-                    else{
-                        console.log('---------------------Save Blog-----------------');
-                        const API_URL = config.API_URL;
-                        const computedUrl = `${API_URL}/api/saveBlog/?blogId=${blogId}`;
-                        //formData.set('blogImage', blogImage);
-                        formData.blogImage = blogImage;
-                        console.log(formData);
-                        
-                        axios({
-                                url: computedUrl,
-                                method: "POST",
-                                data: formData, // Attaching the form data
-                            })
-                            .then((res) => {
-                                //console.log("--------------logged---------------");
-                                //console.log(res.data.success);
-                                //console.log(res.data.message);
-                                apiStatus.status = res.data.status;   
-                                apiStatus.statusMessage  = res.data.message;
-                                if (res.data.status == false)
-                                    setShowMessage(true);
-                                else
-                                    redirectToBlogs();   
+            console.log("----------------------formData-----------------");
+            console.log(formData);
+            /*axios.post(s3APIUrl, richTextContent)
+            .then((res) => {
+                console.log(res.data);
+                apiStatus.status = res.data.status;   
+                apiStatus.statusMessage  = res.data.message;
+                if (res.data.status == false)
+                    setShowMessage(true)
+                else{
+                    console.log('---------------------Save Blog-----------------');
+                    const API_URL = config.API_URL;
+                    const computedUrl = `${API_URL}/api/saveBlog/?_id=${currentBlog._id}`;
+                    //formData.set('blogImage', blogImage);
+                    formData.blogImage = blogImage;
+                    console.log(formData);
+                    
+                    axios({
+                            url: computedUrl,
+                            method: "POST",
+                            data: formData, // Attaching the form data
                         })
-                        .catch((err) => {
-                            console.log(err);
-                        });
-                    }
-                });
+                        .then((res) => {
+                            //console.log("--------------logged---------------");
+                            //console.log(res.data.success);
+                            //console.log(res.data.message);
+                            apiStatus.status = res.data.status;   
+                            apiStatus.statusMessage  = res.data.message;
+                            if (res.data.status == false)
+                                setShowMessage(true);
+                            else
+                                redirectToBlogs();   
+                    })
+                    .catch((err) => {
+                        console.log("--------------Blog-Save() failed----------------");
+                        console.log(err);
+                    });
+                }
+            })*/
         }
     };
 
@@ -412,12 +400,12 @@ const EditBlog : React.FC = () => {
                 <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="p-fluid">
                 {/*---Hidden variable: This input is not visible to the user------*/}
                 
+                <span>ObjectId : {currentBlog?._id}</span>
                 {/*---<span>{blogId}</span>------*/}
                 <div className="field">
                     <span className="p-float-label">
                         <Controller name="title" control={control} rules={{ required: 'Title is required.' }} render={({ field, fieldState }) => (
-                            <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} 
-                                value={currentBlog?.title} />
+                            <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
                         )} />
                         <label htmlFor="name" className={classNames({ 'p-error': errors.title })}>Title*</label>
                     </span>
@@ -427,8 +415,7 @@ const EditBlog : React.FC = () => {
                 <div className="field">
                     <span className="p-float-label">
                         <Controller name="shortDescription" control={control} rules={{ required: 'Short Description is required.' }} render={({ field, fieldState }) => (
-                            <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} maxLength={maxCharacters}
-                            value={currentBlog?.shortDescription} />
+                            <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} maxLength={maxCharacters}/>
                         )} />
                         <label htmlFor="name" className={classNames({ 'p-error': errors.shortDescription })}>ShortDescription* (Only 250 Characters)</label>
                     </span>
@@ -443,36 +430,59 @@ const EditBlog : React.FC = () => {
                     alt="Image" width="100%" height="200" preview />
                 </div>
 
+
                 <div className="field">
-                    <span>Blog Header Image</span>
-                    <FileUpload name="blogImage" mode="advanced" customUpload
-                        url="http://localhost:5000/api/uploadBlogImageToBucket" 
+                    <div className="col-12 md:col-12">
+                        <Message severity="info" style={{textAlign:'left'}} text="IF you need to upload a new Banner 'Upload' a new Banner below. Only .png, .jpeg, .jpg files below 1MB are supported. Upload a Image 640 X 200 !" />
+                    </div>
+                    <FileUpload name="blogImage" url="http://localhost:5000/api/uploadBlogImageToBucket" 
                         onUpload={onBlogImageUpload} onBeforeUpload={({ formData }) => {
-                            //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
-                            formData.append('uiAction', 'blogImage');
+                            formData.append('uiAction', 'UpdateBlogHeaderImage');
                             formData.append('blogId', blogId);
                         }}
                         onRemove={onBlogImageRemove}
-                        onSelect={onBlogImageSelect}
-                        onClear={onClearBlogImages}
                         accept="image/*" maxFileSize={2000000}
-                        emptyTemplate={emptyFileUploadTemplate} />
+                        emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
                 </div>
                 <br/>
                 <div className="field">
                     <span className="p-float-label">
-                        <Controller name="publicationDate" control={control} render={({ field }) => (
-                            <Calendar id={field.name} value={publicationDateValue} onChange={(e) => field.onChange(e.value)} dateFormat="mm/dd/yy" mask="99/99/9999" showIcon />
-                        )} />
+                        <Controller
+                            name="publicationDate"
+                            control={control}
+                            render={({ field }) => (
+                                <Calendar
+                                // This is the crucial part: spreading the field object
+                                {...field} 
+                                
+                                // You can still add your other custom props
+                                id={field.name}
+                                dateFormat="mm/dd/yy"
+                                mask="99/99/9999"
+                                showIcon
+                                />
+                            )}
+                            />
                         <label htmlFor="publicationDate">Publication Date</label>
                     </span>
                 </div>
                 <br/>
                 <div className="field">
                     <span className="p-float-label">
-                        <Controller name="tag" control={control} render={({ field }) => (
-                            <Dropdown id={field.name} value={currentBlog?.tag} onChange={(e) => field.onChange(e.value)} options={tags} optionLabel="name" />
-                        )} />
+                        <Controller name="tag" control={control} 
+                         render={({ field }) => (
+                            <Dropdown
+                            // Spreading the `field` object is the key.
+                            // This automatically passes `value={field.value}`,
+                            // `onChange={field.onChange}`, `onBlur={field.onBlur}`, and `ref={field.ref}`.
+                                {...field}
+                                options={tags}
+                                optionLabel="name"
+                                optionValue="value"
+                                // PrimeReact requires an `id` prop for accessibility
+                                id={field.name}/>
+                            )}
+                        />
                         <label htmlFor="tag">Tag</label>
                     </span>
                 </div>
