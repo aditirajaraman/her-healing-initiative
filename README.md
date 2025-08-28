@@ -107,3 +107,4 @@ np
 ### npm install @syncfusion/ej2-react-richtexteditor --force
 
 ### REacht Hook form : https://react-hook-form.com/get-started#Registerfields
+

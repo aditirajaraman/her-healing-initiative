@@ -33,7 +33,7 @@ const Login : React.FC = () => {
   const onSubmit = (formData) => {
     axios({
         // Endpoint to send files
-        url: config.API_URL + "/api/users/validateUser",
+        url: config.API_URL + "/api/users/login",
         method: "POST",
         data: formData
     })
