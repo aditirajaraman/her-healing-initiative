@@ -16,7 +16,6 @@ import { Dialog } from 'primereact/dialog';
 import { Card } from 'primereact/card';
 import { FileUpload, FileUploadUploadEvent, FileUploadRemoveEvent} from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
-import { Fieldset } from 'primereact/fieldset';
 
 /*********************************3: Imports / syncFusion ********************************/
 import { 
@@ -28,9 +27,7 @@ import {
     RichTextEditorComponent, 
     Toolbar, 
     Table,
-    PasteCleanup,
-    ImportExport,
-    CommandName
+    PasteCleanup
 } 
 from '@syncfusion/ej2-react-richtexteditor';
 
@@ -57,7 +54,7 @@ const CreateBlog = () => {
             hasRun.current = true;
             axios({
                 // Endpoint to send files
-                url: config.API_URL + "/api/Utils/GetUniqueId",
+                url: config.API_URL + "/Utils/GetUniqueId",
                 method: "GET",
                 headers: {
                     // Add any auth token here
@@ -78,7 +75,7 @@ const CreateBlog = () => {
             /*------Get Tags------*/
              axios({
                 // Endpoint to send files
-                url: config.API_URL + "/api/tags",
+                url: config.API_URL + "/tags",
                 method: "GET",
                 headers: {
                     // Add any auth token here
@@ -121,8 +118,8 @@ const CreateBlog = () => {
     }
 
     const insertImageSettings = {
-        saveUrl: config.API_URL + '/api/uploadBlogContentImage',
-        removeUrl: config.API_URL + '/api/deleteS3Object',
+        saveUrl: config.API_URL + '/s3/',
+        removeUrl: config.API_URL + '/s3/deleteS3Object',
         //path: './uploads/',
         path:config.AWS_S3_URL,
         allowedTypes: ['.png', '.jpg', '.jpeg'],
@@ -281,7 +278,7 @@ const CreateBlog = () => {
             //console.log('--- Editor HTML Content ---');
             //console.log(htmlContent);
 
-            const s3APIUrl =  config.API_URL + '/api/uploadRichText';
+            const s3APIUrl =  config.API_URL + '/s3/uploadRichText';
             const richTextContent = {
                 content: htmlContent,
                 blogId: blogId
@@ -296,7 +293,7 @@ const CreateBlog = () => {
                     else{
                         console.log('---------------------Save Blog-----------------');
                         const API_URL = config.API_URL;
-                        const computedUrl = `${API_URL}/api/createBlog/?blogId=${blogId}`;
+                        const computedUrl = `${API_URL}/blogs/createBlog/?blogId=${blogId}`;
                         //formData.set('blogImage', blogImage);
                         formData.blogImage = blogImage;
                         console.log(formData);
@@ -369,7 +366,7 @@ const CreateBlog = () => {
                 </div>
                 <div className="field">
                     <span>Blog Header Image</span>
-                    <FileUpload name="blogImage" url="http://localhost:5000/api/uploadBlogImageToBucket" 
+                    <FileUpload name="blogImage" url={`${config.API_URL}/s3/uploadBlogImageToBucket}`} 
                         onUpload={onBlogImageUpload} onBeforeUpload={({ formData }) => {
                             //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
                             formData.append('uiAction', 'blogImage');

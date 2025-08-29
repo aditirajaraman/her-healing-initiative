@@ -13,7 +13,7 @@ const EventInterest = ({eventData}) => {
         //console.log(eventData);
         console.log(process.env.NODE_ENV?.trim());
         axios({
-            url: config.API_URL + "/api/events/" + eventData.id,
+            url: config.API_URL + "/events/" + eventData.id,
             method: "GET",
             })
             .then((res) => {

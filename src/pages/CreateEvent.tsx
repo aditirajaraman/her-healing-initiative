@@ -286,7 +286,7 @@ const CreateEvent = () => {
     //console.log("----------Loaded ViewEvent-----------");
     //console.log(eventData);
     axios({
-        url: config.API_URL + "/api/users/GetUserEventOrganizer",
+        url: config.API_URL + "/users/GetUserEventOrganizer",
         method: "GET",
         })
         .then((res) => {
@@ -304,7 +304,7 @@ const CreateEvent = () => {
       console.log(formData);
       axios({
         // Endpoint to send files
-        url: config.API_URL + "/api/events",
+        url: config.API_URL + "/events/createEvent",
         method: "POST",
         data: formData, // Attaching the form data
         })
@@ -369,9 +369,9 @@ const CreateEvent = () => {
         {/* ---------------------------Event Media --------------------- */}
         <Panel header="Event Media" toggleable>
           <FileUpload ref={fileUploadRef} name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" multiple accept="image/*" maxFileSize={1000000}
-                    onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
-                    headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
-                    chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} />
+              onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+              headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+              chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} />
         </Panel>
 
         {/* ---------------------------Event Overview --------------------- */}

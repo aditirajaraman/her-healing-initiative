@@ -1,6 +1,6 @@
 /*********************************1: Imports / react *************************************/
 import React, { useEffect, useState }  from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 
@@ -12,17 +12,25 @@ import { Password } from 'primereact/password';
 import { Checkbox } from 'primereact/checkbox';
 import { classNames } from 'primereact/utils';
 
+import { useAuth } from '../context/AuthContext';
+
 /*********************************3: Imports / primereact ********************************/
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
 /*********************************3: Imports / primereact ********************************/
+
 const Login : React.FC = () => {
+  const location = useLocation(); // Get the location object
   const navigate = useNavigate();
   const defaultValues = {
       username: '',
       password: ''
   }
   const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+  
+  // Get the `from` state, or null if it doesn't exist.
+  const from = location.state?.from?.pathname || '/';
+  
   useEffect(() => {
     console.log("-------------------On Form Load-------------------");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -30,10 +38,12 @@ const Login : React.FC = () => {
       return errors[name] && <small className="p-error">{errors[name].message}</small>
   };
   const [error, setError] = useState('');
+  const { login } = useAuth();
   const onSubmit = (formData) => {
+    console.log("-----login submitted------");
     axios({
         // Endpoint to send files
-        url: config.API_URL + "/api/users/login",
+        url: config.API_URL + "/users/login",
         method: "POST",
         data: formData
     })
@@ -41,7 +51,11 @@ const Login : React.FC = () => {
         console.log("----------OnSubmit Response---------");
         //console.log(process.env.NODE_ENV);
         if (Boolean(res.data.success))
-          navigate('/'); 
+        {
+          login(res.data.token);
+          navigate('/profile');
+          //navigate(from, { replace: true });
+        }
         else
         {
           console.log("-----not authenticated------");

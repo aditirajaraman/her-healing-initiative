@@ -54,7 +54,7 @@ export const Register = () => {
       console.log(apiKey);
       axios({
         // Endpoint to send files
-        url: config.API_URL + "/api/countries",
+        url: config.API_URL + "/countries",
         method: "GET"
         })
         .then((res) => {
@@ -72,7 +72,7 @@ export const Register = () => {
       setFormData(formData);
       axios({
         // Endpoint to send files
-        url: config.API_URL + "/api/users",
+        url: config.API_URL + "/users",
         method: "POST",
         data: formData,
         })

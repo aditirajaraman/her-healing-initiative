@@ -73,6 +73,8 @@ const EditBlog : React.FC = () => {
     const [isNewFileSelected, setIsNewFileSelected] = useState<boolean>(false);
     const [loading, setLoading] = useState(true);
 
+    const uploadUrl = `${config.API_URL}/s3/uploadBlogImageToBucket`;
+
     //React Hooks for Component OnLoad() 
     useEffect(() => {
         if (!hasRun.current) {       
@@ -87,7 +89,7 @@ const EditBlog : React.FC = () => {
             /*------Get Lookup Tags------*/
             axios({
                 // Endpoint to send files
-                url: config.API_URL + "/api/tags",
+                url: config.API_URL + "/tags",
                 method: "GET",
                 headers: {
                     // Add any auth token here
@@ -107,7 +109,7 @@ const EditBlog : React.FC = () => {
             /*------Get BlogData------*/
             axios({
                 // Endpoint to send files
-                url: `${config.API_URL}/api/blogs/getBlogByBlogId/${blogId}`,
+                url: `${config.API_URL}/blogs/getBlogByBlogId/${blogId}`,
                 method: "GET",
                 headers: {
                     // Add any auth token here
@@ -138,7 +140,7 @@ const EditBlog : React.FC = () => {
              
             /*------Get Blog Content------*/
             const fileKey = `BlogContent_${blogId}.html`
-            const s3APIUrl =  `${config.API_URL}/api/getContent?key=${fileKey}`;
+            const s3APIUrl =  `${config.API_URL}/s3/getContent?key=${fileKey}`;
             axios({
                 // Endpoint to send files
                 url: s3APIUrl,
@@ -182,8 +184,8 @@ const EditBlog : React.FC = () => {
     }
 
     const insertImageSettings = {
-        saveUrl: config.API_URL + '/api/uploadBlogContentImage',
-        removeUrl: config.API_URL + '/api/deleteS3Object',
+        saveUrl: config.API_URL + '/s3/uploadBlogContentImage',
+        removeUrl: config.API_URL + '/deleteS3Object',
         path:config.AWS_S3_URL,
         allowedTypes: ['.png', '.jpg', '.jpeg'],
         maxFileSize: 5000000, // 5MB,
@@ -337,7 +339,7 @@ const EditBlog : React.FC = () => {
             //console.log('--- Editor HTML Content ---');
             //console.log(htmlContent);
 
-            const s3APIUrl =  config.API_URL + '/api/uploadRichText';
+            const s3APIUrl =  config.API_URL + '/s3/uploadRichText';
             const richTextContent = {
                 content: htmlContent,
                 blogId: currentBlog.blogId
@@ -354,7 +356,7 @@ const EditBlog : React.FC = () => {
                 else{
                     console.log('---------------------Save Blog-----------------');
                     const API_URL = config.API_URL;
-                    const computedUrl = `${API_URL}/api/saveBlog/?_id=${currentBlog._id}`;
+                    const computedUrl = `${API_URL}/blogs/saveBlog/?_id=${currentBlog._id}`;
                     //formData.set('blogImage', blogImage);
                     if (isNewFileSelected)
                         formData.blogImage = blogImage;
@@ -444,7 +446,7 @@ const EditBlog : React.FC = () => {
                     <div className="col-12 md:col-12">
                         <Message severity="info" style={{textAlign:'left'}} text="IF you need to upload a new Banner 'Upload' a new Banner below. Only .png, .jpeg, .jpg files below 1MB are supported. Upload a Image 640 X 200 !" />
                     </div>
-                    <FileUpload name="blogImage" url="http://localhost:5000/api/uploadBlogImageToBucket" 
+                    <FileUpload name="blogImage" url={uploadUrl} 
                         onUpload={onBlogImageUpload} onBeforeUpload={({ formData }) => {
                             formData.append('uiAction', 'UpdateBlogHeaderImage');
                             formData.append('blogId', currentBlog.blogId);

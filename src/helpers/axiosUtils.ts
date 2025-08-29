@@ -11,14 +11,10 @@ const errorStates: ErrorState[] = [
   { id: 5, name: 'UnhandlerdError', description: 'UnExpectedError.' },
 ];
 
-const navigate = useNavigate();
-const redirectToLogin = () => {
-    navigate('/login'); 
-};
-
+const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: config.API_URL,
   withCredentials: true,
 });
 
@@ -26,6 +22,11 @@ const axiosInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
+    const navigate = useNavigate();
+    const redirectToLogin = () => {
+        navigate('/login'); 
+    };
+
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     
     // Check for the error response and status code

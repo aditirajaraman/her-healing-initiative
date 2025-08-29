@@ -92,7 +92,7 @@ const ViewBlog: React.FC = () => {
     const fetchBlogData = async () => {
       try {
         const response = await axios.get(
-          config.API_URL + "/api/blogs/" + currentBlogState.id,
+          config.API_URL + "/blogs/" + currentBlogState.id,
           {
             headers: {
               'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -117,7 +117,7 @@ const ViewBlog: React.FC = () => {
         //const url = `https://${bucket}.s3.${region}.amazonaws.com/blogs/${blogId}.json`;
         //const url = 'https://blog.her-healing-initiative.org/BlogContent_e482eccf-066f-4c5c-9e6d-1628900c5988.html';
         const filename = `BlogContent_${currentBlogState.blogId}.html`
-        const s3APIUrl =  `${config.API_URL}/api/getContent?key=${filename}`;
+        const s3APIUrl =  `${config.API_URL}/s3/getContent?key=${filename}`;
         const response = await axios.get(s3APIUrl);
         //console.log(response.data);
         setContent(response.data);

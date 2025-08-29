@@ -24,7 +24,7 @@ const Navigationbar = () => {
                     <NavDropdown.Item as={Link} to="/register">Register</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item as={Link} to="/login">Sign in</NavDropdown.Item>
-                    <NavDropdown.Item as={Link} to="/account">Sign Out</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/logout">Sign Out</NavDropdown.Item>
                 </NavDropdown>
             </Nav>
         </Navbar.Collapse>               

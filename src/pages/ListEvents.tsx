@@ -31,7 +31,7 @@ const ListEvents = () => {
     useEffect(() => {
         axios({
         // Endpoint to send files
-        url: config.API_URL + "/api/events",
+        url: config.API_URL + "/events",
         method: "GET",
         headers: {
             // Add any auth token here

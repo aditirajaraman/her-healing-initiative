@@ -19,6 +19,7 @@ import '../assets/css/eventView.css';
 
 /*********************************4: Imports Utils ********************************/
 import { truncateString } from '../helpers/stringUtils';
+import axiosInstance from '../helpers/axiosUtils'; 
 
 /*********************************5: Imports / Views ********************************/
 import ViewBlog from './ViewBlog';
@@ -34,14 +35,9 @@ const ListBlogs = () => {
     useEffect(() => {
         axios({
             // Endpoint to send files
-            url: config.API_URL + "/api/blogs",
-            method: "GET",
-            headers: {
-                // Add any auth token here
-                //authorization: "your token comes here",
-            },
+            url: config.API_URL + "/blogs",
+            method: "GET"
         })
-        // Handle the response from backend here
         .then((res) => {
             console.log("----------process.env---------");
             console.log(process.env.NODE_ENV);
