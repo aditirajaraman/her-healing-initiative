@@ -19,7 +19,7 @@ const Profile: React.FC = () => {
             } catch (error) {
                 console.error('Failed to fetch profile', error);
                 logout();
-                navigate('/users/login');
+                navigate('/login');
             }
         };
         if (token) {

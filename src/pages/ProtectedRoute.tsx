@@ -13,7 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   
   if (!token) {
     // If there's no token, redirect to the login page
-    return <Navigate to="/users/login" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
   else{
     console.log('--------------------Found token----------------');

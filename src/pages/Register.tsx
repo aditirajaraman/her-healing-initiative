@@ -72,7 +72,7 @@ export const Register = () => {
       setFormData(formData);
       axios({
         // Endpoint to send files
-        url: config.API_URL + "/users",
+        url: config.API_URL + "/users/register",
         method: "POST",
         data: formData,
         })
