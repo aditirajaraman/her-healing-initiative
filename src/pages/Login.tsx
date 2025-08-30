@@ -52,7 +52,7 @@ const Login : React.FC = () => {
         //console.log(process.env.NODE_ENV);
         if (Boolean(res.data.success))
         {
-          login(res.data.token);
+          login(res.data.user, res.data.token);
           navigate('/profile');
           //navigate(from, { replace: true });
         }

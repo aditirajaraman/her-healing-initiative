@@ -1,10 +1,14 @@
-import React, { Component } from 'react';
+import React, { useRef  } from 'react';
 import { Nav, Navbar, NavLink, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { Tooltip } from 'primereact/tooltip';
 import { Avatar } from 'primereact/avatar';
-const userAvatar =  require("../assets/images/aditi.jpg");
+
+import { useAuth } from '../context/AuthContext';
 
 const Navigationbar = () => {
+    const { user, token } = useAuth();
+    const avatarUrl = `https://blog.her-healing-initiative.org/${user?.avatar}`;
     return (
         <Navbar collapseOnSelect expand="sm" bg="light" data-bs-theme="light">
         <Navbar.Brand href="#home">
@@ -30,7 +34,20 @@ const Navigationbar = () => {
         </Navbar.Collapse>               
         <div id="wrapper">
             <div id="right">
-                <Avatar image={userAvatar} className="mr-2" size="large" shape="circle" />
+                <Tooltip target=".registered-user" />
+                {/* This code block will only render if the token is not null */}
+                {token && (
+                <div className="flex align-items-center">
+                    <Avatar 
+                        className="registered-user mr-2" 
+                        image={avatarUrl} // Use a default image if avatar is not available
+                        size="large" 
+                        shape="circle" 
+                        data-pr-tooltip={user?.name} 
+                        data-pr-position="left"
+                    />
+                </div>
+                )}
             </div>
         </div>  
     </Navbar>

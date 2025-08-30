@@ -38,8 +38,8 @@ import { AuthProvider } from './context/AuthContext';
 function App() {
   return (
     <div className="App">
+      <AuthProvider>
       <Navigationbar />
-       <AuthProvider>
         <Routes>
          {/* Public routes - anyone can access these */}
         <Route path="/" element={<Home />} />

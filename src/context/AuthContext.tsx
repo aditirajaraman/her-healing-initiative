@@ -1,12 +1,7 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import axios from 'axios';
-
-interface AuthContextType {
-    token: string | null;
-    login: (token: string) => void;
-    logout: () => void;
-}
+import { User, AuthContextType } from '../types/UserContext';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -16,20 +11,30 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+    // Use a function to initialize state from localStorage only once
+    const [token, setToken] = useState<string | null>(() => {
+        return localStorage.getItem('token');
+    });
+
+    const [user, setUser] = useState<User | null>(() => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    })
 
     // --- Add the login and logout functions here ---
-    const login = (newToken: string) => {
+    const login = (userData: User, newToken: string) => {
+        setUser(userData);
         setToken(newToken);
+        localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('token', newToken);
     };
 
     const logout = () => {
+        setUser(null);
         setToken(null);
+        localStorage.removeItem('user');
         localStorage.removeItem('token');
     };
-    // -----------------------------------------------
-
 
     // It's a good practice to handle side effects like Axios interceptors
     // inside a useEffect hook to manage their lifecycle.
@@ -50,6 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // Create the value object to pass to the provider
     const value = {
+        user,
         token,
         login,
         logout,
