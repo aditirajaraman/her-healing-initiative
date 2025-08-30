@@ -30,6 +30,7 @@ import Logout from './pages/Logout';
 import Profile from './pages/Profile';
 import ForgotUserNamePassword from './pages/ForgotUserNamePassword';
 import ErrorDisplay from './pages/ErrorDisplay';
+import Team from './pages/Team';
 
 // Import the ProtectedRoute component
 import ProtectedRoute from './pages/ProtectedRoute'; 
@@ -44,6 +45,7 @@ function App() {
          {/* Public routes - anyone can access these */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/team" element={<Team />} />
         <Route path="/listevents" element={<ListEvents />} />
         <Route path="/listblogs" element={<ListBlogs />} />
         <Route path="/viewBlog" element={<ViewBlog />} />

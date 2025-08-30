@@ -1,0 +1,41 @@
+/* CardStyles.css */
+
+/* Target the nested .p-card-body and .p-card-content classes.
+  The !important rule is used to override PrimeReact's default inline styles.
+*/
+.no-padding-card .p-card-body,
+.no-padding-card .p-card-content {
+  padding: 0 !important;
+}
+
+.no-border-card.p-card {
+    border: none;
+    box-shadow: none; /* Optional: also remove the shadow */
+}
+
+.partyforher-image-after::after {
+    /* Insert a new content block after every <p> tag */
+    content: url('https://lirp.cdn-website.com/1976464f/dms3rep/multi/opt/customIcon_present-1920w.png');
+    /* Set display to block to place the image on its own line */
+    display: block;
+    /* Optional: Add spacing */
+    margin-top: 10px;
+}
+
+.giftforher-image-after::after {
+    /* Insert a new content block after every <p> tag */
+    content: url('https://lirp.cdn-website.com/1976464f/dms3rep/multi/opt/customIcon_dollar-1920w.png');
+    /* Set display to block to place the image on its own line */
+    display: block;
+    /* Optional: Add spacing */
+    margin-top: 10px;
+}
+
+.socialforher-image-after::after {
+    /* Insert a new content block after every <p> tag */
+    content: url('https://lirp.cdn-website.com/1976464f/dms3rep/multi/opt/customIcon_social+%281%29-1920w.png');
+    /* Set display to block to place the image on its own line */
+    display: block;
+    /* Optional: Add spacing */
+    margin-top: 10px;
+}
