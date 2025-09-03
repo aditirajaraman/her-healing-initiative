@@ -118,7 +118,7 @@ const CreateBlog = () => {
     }
 
     const insertImageSettings = {
-        saveUrl: config.API_URL + '/s3/',
+        saveUrl: config.API_URL + '/s3/uploadBlogContentImage',
         removeUrl: config.API_URL + '/s3/deleteS3Object',
         //path: './uploads/',
         path:config.AWS_S3_URL,
