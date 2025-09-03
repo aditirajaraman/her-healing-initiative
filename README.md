@@ -25,23 +25,23 @@ Create .tsconfig
 //Include bootstrap 
 npm install react-bootstrap bootstrap@4.6.0 --force
 
-## RunTime Commands
+### RunTime Commands
 npm start
 npm test
 npm run build //Build React Applicaition
 npm run eject
 
-# primereact setup
+### primereact setup
 npm install primereact primeicons --force
 npm install primeflex --force
 npm install primeicons  --force
 npm install react-bootstrap bootstrap --force
 
-# Setup React Routers
+### Setup React Routers
 npm install -S react-router-dom --force
 npm install react-hook-form --force
 
-# Setup API Framework 
+### Setup API Framework 
 npm install axios --force
 
 ### Layouts
