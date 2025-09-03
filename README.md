@@ -89,8 +89,8 @@ npm run dev
 #### -----------------------DEPLOYMENT------------------------------###
 
 ### Prerequisites 
-## Read and Execute Permissions for the following account for App Folders : IIS_IUSRS & IUSR 
-## setx NODE_ENV "production"
+> Read and Execute Permissions for the following account for App Folders : IIS_IUSRS & IUSR 
+> setx NODE_ENV "production"
 
 1) copy backup C:\inetpub\her-healing-initiative-web to her-healing-initiative-web_backup_07262025
 2) launch IIS Stop Web her-healing-initiative
