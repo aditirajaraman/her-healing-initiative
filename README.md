@@ -123,3 +123,22 @@ np
 ### 4) copy all files ( except web.config ) from Apps\her-healing-initiative\build to Web Server Folder C:\inetpub\her-healing-initiative-web
 ### 5) copy package.json to Web Server 
 ### 6) delete node_modules and run => npm run install -force
+
+#### -----------------------PENDING FEATURES(As of Sep 3, 2025)--------------####
+> Event Management
+1) Create Event
+2) Edit Event
+3) Delete Event
+4) View Event
+
+> Donations
+1) Save Donation
+
+> Social Networking
+1) Likes
+2) Registered Users
+3) Interested Users
+
+> FAQ
+
+> Contact Page
