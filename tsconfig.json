@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es5", // Specify ECMAScript target version
+    "target": "ESNext", // Specify ECMAScript target version
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "ESNext"
     ], // List of library files to be included in the compilation
     "allowJs": true, // Allow JavaScript files to be compiled
     "skipLibCheck": true, // Skip type checking of all declaration files
@@ -17,7 +17,7 @@
     "strictNullChecks": false,
     "strict": true,
     "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file.
-    "module": "esnext", // Specify module code generation
+    "module": "ESNext", // Specify module code generation
     "moduleResolution": "node", // Resolve modules using Node.js style
     "isolatedModules": true, // Unconditionally emit imports for unresolved files
     "resolveJsonModule": true, // Include modules imported with .json extension

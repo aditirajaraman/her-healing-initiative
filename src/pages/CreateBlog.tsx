@@ -366,7 +366,7 @@ const CreateBlog = () => {
                 </div>
                 <div className="field">
                     <span>Blog Header Image</span>
-                    <FileUpload name="blogImage" url={`${config.API_URL}/s3/uploadBlogImageToBucket}`} 
+                    <FileUpload name="blogImage" url={`${config.API_URL}/s3/uploadBlogImageToBucket`} 
                         onUpload={onBlogImageUpload} onBeforeUpload={({ formData }) => {
                             //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
                             formData.append('uiAction', 'blogImage');

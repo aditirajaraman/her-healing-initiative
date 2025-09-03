@@ -1,3 +1,5 @@
 {
-    "API_URL" : "http://her-healing-initiative-api.org"
+    "API_URL" : "http://her-healing-initiative-api.org/api",
+    "AWS_S3_URL" : "https://blog.her-healing-initiative.org/",
+    "AWS_S3_BUKCET" : "her-healing-initiative-blogcontents"
 }
