@@ -106,5 +106,19 @@ np
 #### Install syncfusion - https://ej2.syncfusion.com/react/documentation/introduction
 ### npm install @syncfusion/ej2-react-richtexteditor --force
 
-### REacht Hook form : https://react-hook-form.com/get-started#Registerfields
+### React Hook form : https://react-hook-form.com/get-started#Registerfields
 
+
+#### -----------------------DEPLOYMENT------------------------------###
+
+### Prerequisites 
+## Read and Execute Permissions for the following account for App Folders : IIS_IUSRS & IUSR 
+
+### 1) copy backup C:\inetpub\her-healing-initiative-web to her-healing-initiative-web_backup_07262025
+### 2) launch IIS Stop Web her-healing-initiative
+### 3) local machine 
+###	    3a : get Latest fromm github 
+###	    3b : build code : npm run build_prod
+### 4) copy all files ( except web.config ) from Apps\her-healing-initiative\build to Web Server Folder C:\inetpub\her-healing-initiative-web
+### 5) copy package.json to Web Server 
+### 6) delete node_modules and run => npm run install -force
