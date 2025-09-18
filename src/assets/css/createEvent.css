@@ -1,0 +1,68 @@
+/* CreateBlog.css */
+
+.form-event .card {
+    min-width: 80%;
+}
+.form-event .card form {
+    margin: 2rem;
+}
+.form-event .card .field {
+    margin-bottom: 1.5rem;
+}
+@media screen and (max-width: 960px) {
+    .form-event .card {
+        width: 80%;
+    }
+}
+@media screen and (max-width: 640px) {
+    .form-event .card {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+.separator {
+  border-right: 1px solid #ccc; /* Or choose a different style */
+  margin: 0 5px; /* Adjust spacing as needed */
+  height: 20px; /* Adjust height to match other toolbar buttons */
+  display: inline-block; /* Ensure proper positioning */
+  vertical-align: middle; /* Align with other buttons */
+}
+
+p-card {
+    border-radius: 10px;
+}
+
+.cardStyle {
+  width:90%;
+  border: 1px solid blueviolet; /* Sets border to 1px solid blue */
+  border-radius: 0.5rem;
+  text-align:left;
+}
+
+.my-thick-divider.p-divider-horizontal .p-divider-content {
+  border-width: 3px !important;
+}
+
+/* This selector targets the icon element within the FileUpload buttons */
+.my-rounded-fileupload .p-button .p-button-icon {
+    border-radius: 50% !important;
+}
+
+/* You might also want to apply it to the buttons themselves for a fully rounded look */
+.my-rounded-fileupload .p-button {
+    border-radius: 50% !important;
+    padding: 0.5rem; /* Adjust padding to make the circle even */
+    height: 2.5rem; /* Set a fixed height and width */
+    width: 2.5rem;
+}
+
+.my-custom-divider.p-divider-horizontal {
+  border-color: #007ad9 !important;
+}
+
+.p-button.p-button-icon-only.p-button-rounded {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
+}

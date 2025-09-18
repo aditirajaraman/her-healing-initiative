@@ -6,6 +6,7 @@ import axios from 'axios';
 /*********************************2: Imports / primereact ********************************/
 import { classNames } from 'primereact/utils';
 import { SelectButton } from 'primereact/selectbutton';
+import { Calendar } from 'primereact/calendar';
 import { Panel } from 'primereact/panel';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -17,8 +18,10 @@ import { useNavigate } from 'react-router-dom';
 import { FileUpload } from 'primereact/fileupload';
 import { ProgressBar } from 'primereact/progressbar';
 import { Tag } from 'primereact/tag';
+import { Card } from 'primereact/card';
 
 /*********************************3: Imports / custom css ********************************/
+import '../assets/css/createEvent.css';
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
 /*********************************4: Start : Application Code ****************************/
@@ -69,35 +72,6 @@ const CreateEvent = () => {
   const [agendaStartTime, setAgendaStartTime] = useState<Date | null | undefined>(new Date());
   const [agendaEndTime, setAgendaEndTime] = useState<Date | null | undefined>(new Date());
 
-  const [selectedCities2, setSelectedCities2] = useState(null);
-  const cities = [
-    { name: 'New York', code: 'NY' },
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Paris', code: 'PRS' }
-  ];
-
-  const states = [
-    { name: 'New York', code: 'NY' },
-    { name: 'New Jersey', code: 'RM' },
-    { name: 'Utah', code: 'LDN' },
-    { name: 'California', code: 'PRS' }
-  ];
-
-  const countries = [
-    { name: 'Australia', code: 'AU' },
-    { name: 'Brazil', code: 'BR' },
-    { name: 'China', code: 'CN' },
-    { name: 'Egypt', code: 'EG' },
-    { name: 'France', code: 'FR' },
-    { name: 'Germany', code: 'DE' },
-    { name: 'India', code: 'IN' },
-    { name: 'Japan', code: 'JP' },
-    { name: 'Spain', code: 'ES' },
-    { name: 'United States', code: 'US' }
-  ];
-
   const groupedEventTags = [
     {
         label: 'Life Sciences', code: 'LS',
@@ -141,6 +115,12 @@ const CreateEvent = () => {
     ];
     const [eventOrganizerTypeOption, setEventOrganizerTypeOptions] = useState('Individuals');
 
+    const eventLocationTypeOptions = [
+      {name: 'Venue', value: 'Venue'},
+      {name: 'Online Event', value: 'OnlineEvent'}
+    ];
+    const [eventLocationTypeOption, setEventLocationTypeOptions] = useState('Venue');
+
     let today = new Date();
     let month = today.getMonth();
     let year = today.getFullYear();
@@ -161,7 +141,7 @@ const CreateEvent = () => {
       setSelectedCountry(e.value);
     }
 
-        const [selectedGroupedEventTags, setSelectedGroupedEventTags] = useState(null);
+    const [selectedGroupedEventTags, setSelectedGroupedEventTags] = useState(null);
     const groupedItemTemplate = (option) => {
       return (
           <div className="flex align-items-center">
@@ -181,24 +161,13 @@ const CreateEvent = () => {
       eventTags: '',
       eventOrganizerType:'',
       eventOrganizer:'',
-      /*eventOption: null,
       eventDate : null,
-      startEventTime : null,
-      endEventTime : null,
+      eventStartTime : null,
+      eventEndTime : null,
+      eventLocationType: null,
       eventLocation : null,
-      eventAddress : '',
-      eventCity : '',
-      eventState : '',
-      eventCountry : '',
-      eventZip : null,
-      itineraryHostOrArtist : '',
-      itineraryDescription : '',
-      agendaStartTime: null,
-      agendaEndTime: null,
-      faqQuestion1: '',
-      faqAnswer1: '',
-      faqQuestion2: '',
-      faqAnswer2: ''*/
+      faqQuestion: '',
+      faqAnswer: ''
     }
 
     const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
@@ -350,9 +319,7 @@ const CreateEvent = () => {
 
   /*----------------------4.2.5: Start : Form Setup---------------------- */
   return (
-    <div className="container">
-
-      {/* -------Start Container--------- */}  
+    <div className="form-event">
 
       {/* ---------------------------Dialog Message : Submission --------------------- */}
       <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
@@ -366,98 +333,192 @@ const CreateEvent = () => {
         </div>
       </Dialog>
 
-      {/* -------Start Form--------- */} 
-      <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
-          {/* ---------------------------Event Media --------------------- */}
-          <Panel header="Event Media" toggleable>
-            <FileUpload ref={fileUploadRef} name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" multiple accept="image/*" maxFileSize={1000000}
-                onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
-                headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
-                chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} />
-          </Panel>
-
-          {/* ---------------------------Event Overview --------------------- */}
-          <Panel header="Event Overview" style={{fontWeight:'bold', fontSize:'20px'}} toggleable>
-          <div className="p-fluid grid formgrid">
-            <div className="field col-12 md:col-12">
-              <span className="p-float-label">
+      {/* -------Start Event Form--------- */} 
+      <div className="flex flex-wrap align-items-center justify-content-center">
+        <Card className="cardStyle" title="Create Event">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
+              {/* ---------------------------Event Media --------------------- */}
+              <Divider align="left" >
+                <div className="inline-flex align-items-center">
+                    <i className="pi pi-image mr-2"></i>
+                    <b>Event Media</b>
+                </div>
+              </Divider>
+              <FileUpload ref={fileUploadRef} name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" 
+                  className="my-rounded-fileupload"
+                  multiple accept="image/*" maxFileSize={1000000}
+                  onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                  headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+                  chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} />
+              
+              
+            {/* ---------------------------Event Overview --------------------- */}
+             <Divider align="left">
+                <div className="inline-flex align-items-center">
+                    <i className="pi pi-id-card mr-2"></i>
+                    <b>Event Overview</b>
+                </div>
+            </Divider>
+            <div className="p-fluid grid formgrid">
+              <div className="field col-12 md:col-12">
+                <span className="p-float-label">
                     <Controller name="eventTitle" control={control} rules={{ required: 'Event Title is required.' }} render={({ field, fieldState }) => (
                         <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
                     )} />
                     <label htmlFor="eventTitle" className={classNames({ 'p-error': errors.eventTitle })}>Event Title*</label>
-              </span>
-              {getFormErrorMessage('eventTitle')}
-            </div>
-            <div className="field col-12 md:col-12">
-              <span className="p-float-label">
-                    <Controller name="eventSubTitle" control={control} rules={{ required: 'Event Sub Title is required.' }} render={({ field, fieldState }) => (
+                </span>
+                {getFormErrorMessage('eventTitle')}
+              </div>
+              <div className="field col-12 md:col-12">
+                <span className="p-float-label">
+                      <Controller name="eventSubTitle" control={control} rules={{ required: 'Event Sub Title is required.' }} render={({ field, fieldState }) => (
+                          <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                      )} />
+                      <label htmlFor="eventSubTitle" className={classNames({ 'p-error': errors.eventTitle })}>Event Sub Title*</label>
+                </span>
+                {getFormErrorMessage('eventSubTitle')}
+              </div>
+              <div className="field col-12 md:col-12">
+                <span className="p-float-label">
+                      <Controller name="eventSummary" control={control} rules={{ required: 'Event Summary is required.' }} render={({ field, fieldState }) => (
+                          <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80}/>
+                      )} />
+                      <label htmlFor="eventSummary" className={classNames({ 'p-error': errors.eventTitle })}>Event Summary*</label>
+                </span>
+                {getFormErrorMessage('eventSummary')}
+              </div>
+              <div className="field col-6 md:col-6">
+                <span className="p-float-label">
+                      <Controller name="eventTags" control={control} rules={{ required: 'Event Tag is required.' }} render={({ field, fieldState }) => (
+                          <MultiSelect id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                          value={selectedGroupedEventTags} options={groupedEventTags} onChange={(e) => setSelectedGroupedEventTags(e.value)} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items"
+                          optionGroupTemplate={groupedItemTemplate} placeholder="Select Event Tags"  display="chip" />
+                      )} />
+                      <label htmlFor="eventTags" className={classNames({ 'p-error': errors.eventTags })}>Event Tag*</label>
+                </span>
+                {getFormErrorMessage('eventTags')}
+              </div>
+              <div className="field col-6 md:col-6"/>
+              <div className="field col-6 md:col-6">
+                <label htmlFor="eventOrganizerType">Event Organizer*</label>
+                <span className="p-float-label">
+                      <Controller name="eventOrganizerType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
+                          <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                            value={eventOrganizerTypeOption} options={eventOrganizerTypeOptions} onChange={(e) => setEventOrganizerTypeOptions(e.value)} optionLabel="name"/>
+                      )} />
+                </span>
+                {getFormErrorMessage('eventOrganizerType')}
+              </div>
+              <div className="field col-6 md:col-6"/>
+              <div className="field col-6 md:col-6">
+                <span className="p-float-label">
+                      <Controller name="eventOrganizer" control={control} rules={{ required: 'Event Organizer is required.' }} render={({ field, fieldState }) => (
+                          <MultiSelect  id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                            placeholder="Select Event Organizer" maxSelectedLabels={3}
+                            value={eventOrganizer} options={userEventOrganizers} onChange={(e) => setEventOrganizer(e.value)} optionLabel="name"/>
+                      )} />
+                </span>
+                {getFormErrorMessage('eventOrganizer')}
+              </div>
+              
+              {/* ---------------------------Event Schedule --------------------- */}
+              <Divider align="left">
+                <div className="inline-flex align-items-center">
+                    <i className="pi pi-calendar-times mr-2"></i>
+                    <b>Event Schedule</b>
+                </div>
+              </Divider>
+              <div className="field col-4 md:col-4">
+                <label htmlFor="eventDate">Event Date</label>
+                <Controller name="eventDate" control={control} render={({ field }) => (
+                  <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} dateFormat="dd/mm/yy" mask="99/99/9999" showIcon />
+                )} />
+                {getFormErrorMessage('eventDate')}
+              </div>
+              <div className="field col-4 md:col-4">
+                <label htmlFor="eventStartTime">Start Time</label>
+                <Controller name="eventStartTime" control={control} render={({ field }) => (
+                  <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" />
+                )} />
+                {getFormErrorMessage('eventStartTime')}
+              </div>
+              <div className="field col-4 md:col-4">
+                <label htmlFor="eventEndTime">End Time</label>
+                <Controller name="eventEndTime" control={control} render={({ field }) => (
+                  <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" />
+                )} />
+                {getFormErrorMessage('eventEndTime')}
+              </div>
+              <div className="field col-4 md:col-4">
+                <label htmlFor="eventLocationType">Location*</label>
+                <span className="p-float-label">
+                      <Controller name="eventLocationType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
+                          <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                            value={eventLocationTypeOption} options={eventLocationTypeOptions} onChange={(e) => setEventLocationTypeOptions(e.value)} optionLabel="name"/>
+                      )} />
+                </span>
+                {getFormErrorMessage('eventLocationType')}
+              </div>
+              <div className="field col-4 md:col-4"></div>
+              <div className="field col-4 md:col-4"></div>
+              <div className="field col-4 md:col-4">
+                <span className="p-float-label">
+                    <Controller name="eventLocation" control={control} rules={{ required: 'Event Title is required.' }} render={({ field, fieldState }) => (
                         <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
                     )} />
-                    <label htmlFor="eventSubTitle" className={classNames({ 'p-error': errors.eventTitle })}>Event Sub Title*</label>
-              </span>
-              {getFormErrorMessage('eventSubTitle')}
-            </div>
-            <div className="field col-12 md:col-12">
-              <span className="p-float-label">
-                    <Controller name="eventSummary" control={control} rules={{ required: 'Event Summary is required.' }} render={({ field, fieldState }) => (
-                        <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80}/>
-                    )} />
-                    <label htmlFor="eventSummary" className={classNames({ 'p-error': errors.eventTitle })}>Event Summary*</label>
-              </span>
-              {getFormErrorMessage('eventSummary')}
-            </div>
-            <div className="field col-6 md:col-6">
-              <span className="p-float-label">
-                    <Controller name="eventTags" control={control} rules={{ required: 'Event Tag is required.' }} render={({ field, fieldState }) => (
-                        <MultiSelect id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                        value={selectedGroupedEventTags} options={groupedEventTags} onChange={(e) => setSelectedGroupedEventTags(e.value)} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items"
-                        optionGroupTemplate={groupedItemTemplate} placeholder="Select Event Tags"  display="chip" />
-                    )} />
-                    <label htmlFor="eventTags" className={classNames({ 'p-error': errors.eventTags })}>Event Tag*</label>
-              </span>
-              {getFormErrorMessage('eventTags')}
-            </div>
-            <div className="field col-6 md:col-6"/>
-            <div className="field col-6 md:col-6">
-              <label htmlFor="eventOrganizerType">Event Organizer*</label>
-              <span className="p-float-label">
-                    <Controller name="eventOrganizerType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
-                        <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                          value={eventOrganizerTypeOption} options={eventOrganizerTypeOptions} onChange={(e) => setEventOrganizerTypeOptions(e.value)} optionLabel="name"/>
-                    )} />
-              </span>
-              {getFormErrorMessage('eventOrganizerType')}
-            </div>
-            <div className="field col-6 md:col-6"/>
-            <div className="field col-6 md:col-6">
-              <span className="p-float-label">
-                    <Controller name="eventOrganizer" control={control} rules={{ required: 'Event Organizer is required.' }} render={({ field, fieldState }) => (
-                        <MultiSelect  id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                          placeholder="Select EVent Organizer" maxSelectedLabels={3}
-                          value={eventOrganizer} options={userEventOrganizers} onChange={(e) => setEventOrganizer(e.value)} optionLabel="name"/>
-                    )} />
-              </span>
-              {getFormErrorMessage('eventOrganizer')}
-            </div>
-          
-          {/* ---------------------------Event Schedule --------------------- */}
+                    <label htmlFor="eventTitle" className={classNames({ 'p-error': errors.eventLocation })}>Event Location*</label>
+                </span>
+                {getFormErrorMessage('eventLocation')}
+              </div>
 
-          {/* ---------------------------Event Itinerary --------------------- */}
 
-          {/* ---------------------------Event FAQs --------------------- */}
+              {/* ---------------------------Event Itinerary --------------------- */}
+              <Divider align="left">
+                <div className="inline-flex align-items-center">
+                    <i className="pi pi-book mr-2"></i>
+                    <b>Event Itinerary</b>
+                </div>
+              </Divider>
+             
 
-          </div>
-          </Panel>
-          <div className="p-fluid grid formgrid">
-            <div className="field col-3 md:col-3"></div>
-            <div className="field col-3 md:col-3">
-              <Button type="submit" label="Submit" className="p-button-success" />
-            </div>
-            <div className="field col-3 md:col-3">
-              <Button type="reset" label="Cancel" className="p-button-danger" />
-            </div>
-          </div>
-      </form>
+              {/* ---------------------------Event FAQs --------------------- */}
+              <Divider align="left">
+                <div className="inline-flex align-items-center">
+                    <i className="pi pi-question mr-2"></i>
+                    <b>Event FAQs</b>
+                </div>
+              </Divider>
+              <div className="field col-8 md:col-8">
+                <span className="p-float-label">
+                    <Controller name="faqQuestion" control={control} rules={{ required: 'FAQ Query is required.' }} render={({ field, fieldState }) => (
+                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                    )} />
+                    <label htmlFor="faqQuestion" className={classNames({ 'p-error': errors.faqQuestion })}>Question</label>
+                </span>
+              </div>
+              <div className="field col-4 md:col-4"><Button  label="Add Question" link /></div>
+              <div className="field col-8 md:col-8">
+                <span className="p-float-label">
+                  <Controller name="faqAnswer" control={control} rules={{ required: 'Event Summary is required.' }} render={({ field, fieldState }) => (
+                      <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80}/>
+                  )} />
+                  <label htmlFor="faqAnswer" className={classNames({ 'p-error': errors.faqAnswer })}>Answer*</label>
+                </span>
+              </div>
+              <div className="field col-4 md:col-4"></div>
+              </div>
+              <div className="p-fluid grid formgrid">
+                <div className="field col-3 md:col-3"></div>
+                <div className="field col-3 md:col-3">
+                  <Button type="submit" label="Submit" className="p-button-success" />
+                </div>
+                <div className="field col-3 md:col-3">
+                  <Button type="reset" label="Cancel" className="p-button-danger" />
+                </div>
+             </div>
+          </form>
+        </Card>
+      </div>
       {/* -------End Form--------- */} 
 
       {/* -------End Container--------- */}   
