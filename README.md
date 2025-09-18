@@ -70,7 +70,15 @@ npm install --save-dev babel-loader --force
 https://stackoverflow.com/questions/52759220/importing-images-in-typescript-react-cannot-find-module
 
 ### Install syncfusion - https://ej2.syncfusion.com/react/documentation/introduction
-### npm install @syncfusion/ej2-react-richtexteditor --force
+
+#### npm install @syncfusion/ej2-react-base --force
+#### npm install @syncfusion/ej2-react-richtexteditor --force
+#### npm install @syncfusion/ej2-react-schedule --force
+#### npm install @syncfusion/ej2-react-buttons --force
+#### npm install @syncfusion/ej2-react-calendars --force
+#### npm install @syncfusion/ej2-react-dropdowns --force
+#### npm install @syncfusion/ej2-react-inputs --force
+
 ### React Hook form : https://react-hook-form.com/get-started#Registerfields
 
 <img src={require(getImagePath(data.eventImage)).default}/>

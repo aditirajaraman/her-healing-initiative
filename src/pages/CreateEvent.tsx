@@ -20,6 +20,9 @@ import { ProgressBar } from 'primereact/progressbar';
 import { Tag } from 'primereact/tag';
 import { Card } from 'primereact/card';
 
+/*********************************3 Imports / syncfusion ********************************/
+import { ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, Inject } from '@syncfusion/ej2-react-schedule';
+
 /*********************************3: Imports / custom css ********************************/
 import '../assets/css/createEvent.css';
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
@@ -479,7 +482,11 @@ const CreateEvent = () => {
                     <b>Event Itinerary</b>
                 </div>
               </Divider>
-             
+              <div className="field col-12 md:col-12">
+                <ScheduleComponent>
+                  <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
+                </ScheduleComponent>
+              </div>
 
               {/* ---------------------------Event FAQs --------------------- */}
               <Divider align="left">

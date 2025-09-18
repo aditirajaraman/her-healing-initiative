@@ -1,20 +1,21 @@
+/* --------------react imports------------- */
 import React from 'react';
 import { 
   Routes, 
   Route
 } from "react-router-dom";
+
+/* -----------------------------app styleshjeets-------------------------- */
 import './App.css';
 
-import Navigationbar from './pages/Navigationbar';
-
-
+/* -----------------------------primereact imports-------------------------- */
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
-
 import 'primeicons/primeicons.css';
-
 import 'primeflex/primeflex.css';
 
+/* -----------------------------application imports-------------------------- */
+import Navigationbar from './pages/Navigationbar'
 import Home from './pages/Home';
 import About from './pages/About';
 import ListEvents from './pages/ListEvents';
@@ -31,8 +32,6 @@ import Profile from './pages/Profile';
 import ForgotUserNamePassword from './pages/ForgotUserNamePassword';
 import ErrorDisplay from './pages/ErrorDisplay';
 import Team from './pages/Team';
-
-// Import the ProtectedRoute component
 import ProtectedRoute from './pages/ProtectedRoute'; 
 import { AuthProvider } from './context/AuthContext';
 
