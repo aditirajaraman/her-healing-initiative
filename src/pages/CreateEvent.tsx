@@ -1,6 +1,6 @@
 /*********************************1: Imports / react *************************************/
 import React, { useState, useEffect, useRef }  from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import axios from 'axios';
 
 /*********************************2: Imports / primereact ********************************/
@@ -169,11 +169,17 @@ const CreateEvent = () => {
       eventEndTime : null,
       eventLocationType: null,
       eventLocation : null,
-      faqQuestion: '',
-      faqAnswer: ''
+      faqs: [{ question: '', answer: '' }]
     }
 
+   
     const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+    // for FAQs
+    const { fields, append, remove } = useFieldArray({
+      control,
+      name: "faqs"
+    });
+
     const getFormErrorMessage = (name) => {
       return errors[name] && <small className="p-error">{errors[name].message}</small>
     };
@@ -336,9 +342,10 @@ const CreateEvent = () => {
         </div>
       </Dialog>
 
-      {/* -------Start Event Form--------- */} 
+      
       <div className="flex flex-wrap align-items-center justify-content-center">
         <Card className="cardStyle" title="Create Event">
+          {/* -------Start Event Form--------- */} 
           <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
               {/* ---------------------------Event Media --------------------- */}
               <Divider align="left" >
@@ -363,171 +370,212 @@ const CreateEvent = () => {
                 </div>
             </Divider>
             <div className="p-fluid grid formgrid">
-              <div className="field col-12 md:col-12">
-                <span className="p-float-label">
-                    <Controller name="eventTitle" control={control} rules={{ required: 'Event Title is required.' }} render={({ field, fieldState }) => (
-                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
-                    )} />
-                    <label htmlFor="eventTitle" className={classNames({ 'p-error': errors.eventTitle })}>Event Title*</label>
-                </span>
-                {getFormErrorMessage('eventTitle')}
-              </div>
-              <div className="field col-12 md:col-12">
-                <span className="p-float-label">
-                      <Controller name="eventSubTitle" control={control} rules={{ required: 'Event Sub Title is required.' }} render={({ field, fieldState }) => (
+                <div className="field col-12 md:col-12">
+                  <span className="p-float-label">
+                      <Controller name="eventTitle" control={control} rules={{ required: 'Event Title is required.' }} render={({ field, fieldState }) => (
                           <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
                       )} />
-                      <label htmlFor="eventSubTitle" className={classNames({ 'p-error': errors.eventTitle })}>Event Sub Title*</label>
-                </span>
-                {getFormErrorMessage('eventSubTitle')}
-              </div>
-              <div className="field col-12 md:col-12">
-                <span className="p-float-label">
-                      <Controller name="eventSummary" control={control} rules={{ required: 'Event Summary is required.' }} render={({ field, fieldState }) => (
-                          <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80}/>
-                      )} />
-                      <label htmlFor="eventSummary" className={classNames({ 'p-error': errors.eventTitle })}>Event Summary*</label>
-                </span>
-                {getFormErrorMessage('eventSummary')}
-              </div>
-              <div className="field col-6 md:col-6">
-                <span className="p-float-label">
-                      <Controller name="eventTags" control={control} rules={{ required: 'Event Tag is required.' }} render={({ field, fieldState }) => (
-                          <MultiSelect id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                          value={selectedGroupedEventTags} options={groupedEventTags} onChange={(e) => setSelectedGroupedEventTags(e.value)} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items"
-                          optionGroupTemplate={groupedItemTemplate} placeholder="Select Event Tags"  display="chip" />
-                      )} />
-                      <label htmlFor="eventTags" className={classNames({ 'p-error': errors.eventTags })}>Event Tag*</label>
-                </span>
-                {getFormErrorMessage('eventTags')}
-              </div>
-              <div className="field col-6 md:col-6"/>
-              <div className="field col-6 md:col-6">
-                <label htmlFor="eventOrganizerType">Event Organizer*</label>
-                <span className="p-float-label">
-                      <Controller name="eventOrganizerType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
-                          <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                            value={eventOrganizerTypeOption} options={eventOrganizerTypeOptions} onChange={(e) => setEventOrganizerTypeOptions(e.value)} optionLabel="name"/>
-                      )} />
-                </span>
-                {getFormErrorMessage('eventOrganizerType')}
-              </div>
-              <div className="field col-6 md:col-6"/>
-              <div className="field col-6 md:col-6">
-                <span className="p-float-label">
-                      <Controller name="eventOrganizer" control={control} rules={{ required: 'Event Organizer is required.' }} render={({ field, fieldState }) => (
-                          <MultiSelect  id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                            placeholder="Select Event Organizer" maxSelectedLabels={3}
-                            value={eventOrganizer} options={userEventOrganizers} onChange={(e) => setEventOrganizer(e.value)} optionLabel="name"/>
-                      )} />
-                </span>
-                {getFormErrorMessage('eventOrganizer')}
-              </div>
-              
-              {/* ---------------------------Event Schedule --------------------- */}
-              <Divider align="left">
-                <div className="inline-flex align-items-center">
-                    <i className="pi pi-calendar-times mr-2"></i>
-                    <b>Event Schedule</b>
+                      <label htmlFor="eventTitle" className={classNames({ 'p-error': errors.eventTitle })}>Event Title*</label>
+                  </span>
+                  {getFormErrorMessage('eventTitle')}
                 </div>
-              </Divider>
-              <div className="field col-4 md:col-4">
-                <label htmlFor="eventDate">Event Date</label>
-                <Controller name="eventDate" control={control} render={({ field }) => (
-                  <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} dateFormat="dd/mm/yy" mask="99/99/9999" showIcon />
-                )} />
-                {getFormErrorMessage('eventDate')}
-              </div>
-              <div className="field col-4 md:col-4">
-                <label htmlFor="eventStartTime">Start Time</label>
-                <Controller name="eventStartTime" control={control} render={({ field }) => (
-                  <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" />
-                )} />
-                {getFormErrorMessage('eventStartTime')}
-              </div>
-              <div className="field col-4 md:col-4">
-                <label htmlFor="eventEndTime">End Time</label>
-                <Controller name="eventEndTime" control={control} render={({ field }) => (
-                  <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" />
-                )} />
-                {getFormErrorMessage('eventEndTime')}
-              </div>
-              <div className="field col-4 md:col-4">
-                <label htmlFor="eventLocationType">Location*</label>
-                <span className="p-float-label">
-                      <Controller name="eventLocationType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
-                          <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                            value={eventLocationTypeOption} options={eventLocationTypeOptions} onChange={(e) => setEventLocationTypeOptions(e.value)} optionLabel="name"/>
-                      )} />
-                </span>
-                {getFormErrorMessage('eventLocationType')}
-              </div>
-              <div className="field col-4 md:col-4"></div>
-              <div className="field col-4 md:col-4"></div>
-              <div className="field col-4 md:col-4">
-                <span className="p-float-label">
-                    <Controller name="eventLocation" control={control} rules={{ required: 'Event Title is required.' }} render={({ field, fieldState }) => (
-                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
-                    )} />
-                    <label htmlFor="eventTitle" className={classNames({ 'p-error': errors.eventLocation })}>Event Location*</label>
-                </span>
-                {getFormErrorMessage('eventLocation')}
-              </div>
-
-
-              {/* ---------------------------Event Itinerary --------------------- */}
-              <Divider align="left">
-                <div className="inline-flex align-items-center">
-                    <i className="pi pi-book mr-2"></i>
-                    <b>Event Itinerary</b>
+                <div className="field col-12 md:col-12">
+                  <span className="p-float-label">
+                        <Controller name="eventSubTitle" control={control} rules={{ required: 'Event Sub Title is required.' }} render={({ field, fieldState }) => (
+                            <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                        )} />
+                        <label htmlFor="eventSubTitle" className={classNames({ 'p-error': errors.eventTitle })}>Event Sub Title*</label>
+                  </span>
+                  {getFormErrorMessage('eventSubTitle')}
                 </div>
-              </Divider>
-              <div className="field col-12 md:col-12">
-                <ScheduleComponent>
-                  <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
-                </ScheduleComponent>
-              </div>
-
-              {/* ---------------------------Event FAQs --------------------- */}
-              <Divider align="left">
-                <div className="inline-flex align-items-center">
-                    <i className="pi pi-question mr-2"></i>
-                    <b>Event FAQs</b>
+                <div className="field col-12 md:col-12">
+                  <span className="p-float-label">
+                        <Controller name="eventSummary" control={control} rules={{ required: 'Event Summary is required.' }} render={({ field, fieldState }) => (
+                            <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80}/>
+                        )} />
+                        <label htmlFor="eventSummary" className={classNames({ 'p-error': errors.eventTitle })}>Event Summary*</label>
+                  </span>
+                  {getFormErrorMessage('eventSummary')}
                 </div>
-              </Divider>
-              <div className="field col-8 md:col-8">
-                <span className="p-float-label">
-                    <Controller name="faqQuestion" control={control} rules={{ required: 'FAQ Query is required.' }} render={({ field, fieldState }) => (
-                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
-                    )} />
-                    <label htmlFor="faqQuestion" className={classNames({ 'p-error': errors.faqQuestion })}>Question</label>
-                </span>
-              </div>
-              <div className="field col-4 md:col-4"><Button  label="Add Question" link /></div>
-              <div className="field col-8 md:col-8">
-                <span className="p-float-label">
-                  <Controller name="faqAnswer" control={control} rules={{ required: 'Event Summary is required.' }} render={({ field, fieldState }) => (
-                      <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} rows={5} cols={80}/>
+                <div className="field col-6 md:col-6">
+                  <span className="p-float-label">
+                        <Controller name="eventTags" control={control} rules={{ required: 'Event Tag is required.' }} render={({ field, fieldState }) => (
+                            <MultiSelect id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                            value={selectedGroupedEventTags} options={groupedEventTags} onChange={(e) => setSelectedGroupedEventTags(e.value)} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items"
+                            optionGroupTemplate={groupedItemTemplate} placeholder="Select Event Tags"  display="chip" />
+                        )} />
+                        <label htmlFor="eventTags" className={classNames({ 'p-error': errors.eventTags })}>Event Tag*</label>
+                  </span>
+                  {getFormErrorMessage('eventTags')}
+                </div>
+                <div className="field col-6 md:col-6"/>
+                <div className="field col-6 md:col-6">
+                  <label htmlFor="eventOrganizerType">Event Organizer*</label>
+                  <span className="p-float-label">
+                        <Controller name="eventOrganizerType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
+                            <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                              value={eventOrganizerTypeOption} options={eventOrganizerTypeOptions} onChange={(e) => setEventOrganizerTypeOptions(e.value)} optionLabel="name"/>
+                        )} />
+                  </span>
+                  {getFormErrorMessage('eventOrganizerType')}
+                </div>
+                <div className="field col-6 md:col-6"/>
+                <div className="field col-6 md:col-6">
+                  <span className="p-float-label">
+                        <Controller name="eventOrganizer" control={control} rules={{ required: 'Event Organizer is required.' }} render={({ field, fieldState }) => (
+                            <MultiSelect  id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                              placeholder="Select Event Organizer" maxSelectedLabels={3}
+                              value={eventOrganizer} options={userEventOrganizers} onChange={(e) => setEventOrganizer(e.value)} optionLabel="name"/>
+                        )} />
+                  </span>
+                  {getFormErrorMessage('eventOrganizer')}
+                </div>
+                
+                {/* ---------------------------Event Schedule --------------------- */}
+                <Divider align="left">
+                  <div className="inline-flex align-items-center">
+                      <i className="pi pi-calendar-times mr-2"></i>
+                      <b>Event Schedule</b>
+                  </div>
+                </Divider>
+                <div className="field col-4 md:col-4">
+                  <label htmlFor="eventDate">Event Date</label>
+                  <Controller name="eventDate" control={control} render={({ field }) => (
+                    <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} dateFormat="dd/mm/yy" mask="99/99/9999" showIcon />
                   )} />
-                  <label htmlFor="faqAnswer" className={classNames({ 'p-error': errors.faqAnswer })}>Answer*</label>
-                </span>
-              </div>
-              <div className="field col-4 md:col-4"></div>
-              </div>
-              <div className="p-fluid grid formgrid">
-                <div className="field col-3 md:col-3"></div>
-                <div className="field col-3 md:col-3">
-                  <Button type="submit" label="Submit" className="p-button-success" />
+                  {getFormErrorMessage('eventDate')}
                 </div>
-                <div className="field col-3 md:col-3">
-                  <Button type="reset" label="Cancel" className="p-button-danger" />
+                <div className="field col-4 md:col-4">
+                  <label htmlFor="eventStartTime">Start Time</label>
+                  <Controller name="eventStartTime" control={control} render={({ field }) => (
+                    <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" />
+                  )} />
+                  {getFormErrorMessage('eventStartTime')}
                 </div>
-             </div>
+                <div className="field col-4 md:col-4">
+                  <label htmlFor="eventEndTime">End Time</label>
+                  <Controller name="eventEndTime" control={control} render={({ field }) => (
+                    <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} timeOnly hourFormat="12" />
+                  )} />
+                  {getFormErrorMessage('eventEndTime')}
+                </div>
+                <div className="field col-4 md:col-4">
+                  <label htmlFor="eventLocationType">Location*</label>
+                  <span className="p-float-label">
+                        <Controller name="eventLocationType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
+                            <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
+                              value={eventLocationTypeOption} options={eventLocationTypeOptions} onChange={(e) => setEventLocationTypeOptions(e.value)} optionLabel="name"/>
+                        )} />
+                  </span>
+                  {getFormErrorMessage('eventLocationType')}
+                </div>
+                <div className="field col-4 md:col-4"></div>
+                <div className="field col-4 md:col-4"></div>
+                <div className="field col-4 md:col-4">
+                  <span className="p-float-label">
+                      <Controller name="eventLocation" control={control} rules={{ required: 'Event Title is required.' }} render={({ field, fieldState }) => (
+                          <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                      )} />
+                      <label htmlFor="eventTitle" className={classNames({ 'p-error': errors.eventLocation })}>Event Location*</label>
+                  </span>
+                  {getFormErrorMessage('eventLocation')}
+                </div>
+
+
+                {/* ---------------------------Event Itinerary --------------------- */}
+                <Divider align="left">
+                  <div className="inline-flex align-items-center">
+                      <i className="pi pi-book mr-2"></i>
+                      <b>Event Itinerary</b>
+                  </div>
+                </Divider>
+                <div className="field col-12 md:col-12">
+                  <ScheduleComponent>
+                    <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
+                  </ScheduleComponent>
+                </div>
+
+                {/* ---------------------------Event FAQs --------------------- */}
+                <Divider align="left">
+                  <div className="inline-flex align-items-center">
+                      <i className="pi pi-question mr-2"></i>
+                      <b>Event FAQs</b>
+                  </div>
+                </Divider>
+                <div className="field col-12 md:col-12 flex justify-content-end gap-2 mt-4">
+                  <div className="field col-3 md:col-3">
+                    <Button
+                      type="button"
+                      label="Add Question"
+                      onClick={() => {
+                        append({ question: '', answer: '' });
+                        // Scroll to the last FAQ input after adding
+                        setTimeout(() => {
+                          const faqInputs = document.querySelectorAll('[id^="faqs."][id$=".question"]');
+                          if (faqInputs.length > 0) {
+                            (faqInputs[faqInputs.length - 1] as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            (faqInputs[faqInputs.length - 1] as HTMLElement).focus();
+                          }
+                        }, 100);
+                      }}
+                    />
+                  </div>
+                  <div className="field col-9 md:col-9"></div>
+                </div>
+                {fields.map((item, index) => (
+                   <div key={item.id} className="p-fluid grid formgrid">
+                    <div className="field col-9 md:col-9">
+                      <span className="p-float-label">
+                        <Controller
+                          name={`faqs.${index}.question`}
+                          control={control}
+                          rules={{ required: 'FAQ Query is required.' }}
+                          render={({ field, fieldState }) => (
+                            <InputText id={field.name} {...field} className={classNames({ 'p-invalid': fieldState.invalid })} />
+                          )}
+                        />
+                        <label htmlFor={`faqs.${index}.question`} className={classNames({ 'p-error': errors?.faqs?.[index]?.question })}>Question</label>
+                      </span>
+                      {errors?.faqs?.[index]?.question && <small className="p-error">{errors.faqs[index].question.message}</small>}
+                    </div>
+                    <div className="field col-3 md:col-3">
+                      <Button type="button" label="Remove" className="p-button-danger" onClick={() => remove(index)} />
+                    </div>
+                    <div className="field col-9 md:col-9">
+                      <span className="p-float-label">
+                        <Controller
+                          name={`faqs.${index}.answer`}
+                          control={control}
+                          rules={{ required: 'Answer is required.' }}
+                          render={({ field, fieldState }) => (
+                            <InputTextarea id={field.name} {...field} className={classNames({ 'p-invalid': fieldState.invalid })} rows={3} />
+                          )}
+                        />
+                        <label htmlFor={`faqs.${index}.answer`} className={classNames({ 'p-error': errors?.faqs?.[index]?.answer })}>Answer*</label>
+                      </span>
+                      {errors?.faqs?.[index]?.answer && <small className="p-error">{errors.faqs[index].answer.message}</small>}
+                    </div>
+                    <div className="field col-3 md:col-3"></div>
+                  </div>
+                ))}
+                {/* ---------------------------Event Form Submission --------------------- */}
+                <div className="field col-12 md:col-12 flex justify-content-end gap-2 mt-4">
+                  <div className="field col-3 md:col-3"></div>
+                  <div className="field col-3 md:col-3">
+                    <Button type="submit" label="Submit" className="p-button-success p-button-sm" />
+                  </div>
+                  <div className="field col-3 md:col-3">
+                    <Button type="button" label="Reset" className="p-button-secondary p-button-sm" onClick={() => reset()} />
+                  </div>
+                  <div className="field col-3 md:col-3"></div>  
+                </div>
+
+              </div> 
           </form>
+          {/* -------End Form--------- */} 
         </Card>
       </div>
-      {/* -------End Form--------- */} 
-
+       
       {/* -------End Container--------- */}   
     </div> 
   );
