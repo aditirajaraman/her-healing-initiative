@@ -503,7 +503,7 @@ const CreateEvent = () => {
                   </div>
                 </Divider>
                 <div className="field col-12 md:col-12 flex justify-content-end gap-2 mt-4">
-                  <div className="field col-3 md:col-3">
+                  <div className="field col-2 md:col-2">
                     <Button
                       type="button"
                       label="Add Question"
@@ -520,7 +520,7 @@ const CreateEvent = () => {
                       }}
                     />
                   </div>
-                  <div className="field col-9 md:col-9"></div>
+                  <div className="field col-10 md:col-10"></div>
                 </div>
                 {fields.map((item, index) => (
                    <div key={item.id} className="p-fluid grid formgrid">
