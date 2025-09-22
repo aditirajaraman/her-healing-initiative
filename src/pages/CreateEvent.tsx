@@ -7,7 +7,6 @@ import axios from 'axios';
 import { classNames } from 'primereact/utils';
 import { SelectButton } from 'primereact/selectbutton';
 import { Calendar } from 'primereact/calendar';
-import { Panel } from 'primereact/panel';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { MultiSelect } from 'primereact/multiselect';
@@ -15,7 +14,7 @@ import { Button } from 'primereact/button';
 import { Divider } from 'primereact/divider';
 import { Dialog } from 'primereact/dialog';
 import { useNavigate } from 'react-router-dom';
-import { FileUpload } from 'primereact/fileupload';
+import { FileUpload, FileUploadUploadEvent } from 'primereact/fileupload';
 import { ProgressBar } from 'primereact/progressbar';
 import { Tag } from 'primereact/tag';
 import { Card } from 'primereact/card';
@@ -30,20 +29,14 @@ const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.js
 /*********************************4: Start : Application Code ****************************/
 const CreateEvent = () => {
 
-  /*---------------------4.2.1: Navigators ---------------------*/
+  /*---------------------4.1: Navigators ---------------------*/
   const navigate = useNavigate();
   const handleCreateEvent = () => {
       navigate('/'); 
   };
 
-  /*---------------------4.2.2: Control References ---------------------*/
-  const fileUploadRef = useRef(null);
+  /*---------------------4.2: State Management ------------------------*/
   const [totalSize, setTotalSize] = useState(0);
-  const toast = useRef(null);
-  const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
-  const uploadOptions = {icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined'};
-  const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
-  
   const [eventTitle, setEventTitle] = useState('');
   const [eventSummary, setEventSummary] = useState('');
 
@@ -51,31 +44,32 @@ const CreateEvent = () => {
   const [startEventTime, setStartEventTime] = useState<Date | null | undefined>(new Date());
   const [endEventTime, setEndEventTime] = useState<Date | null | undefined>(new Date());
 
-  const [address, setAddress] = useState('');
   const [selectedCity, setSelectedCity] = useState<any>(null);
   const [selectedState, setSelectedState] = useState<any>(null);
   const [selectedCountry, setSelectedCountry] = useState<any>(null);
-  const [zip, setZip] = useState('');
 
   const [HostOrArtist, setHostOrArtist] = useState('');
   const [ItenaryTitle, setItenaryTitle] = useState('');
   const [ItenaryDescription, setItenaryDescription] = useState('');
 
-  const [FAQ1, setFAQ1] = useState('');
-  const [FAQ2, setFAQ2] = useState('');
-  const [Answer1, setAnswer1] = useState('');
-  const [Answer2, setAnswer2] = useState('');
-
-  const eventOptions = ['Single Event', 'Recurring Event'];
+  const [eventTags, setEventTags] = useState();
   const [eventType, setEventType] = useState('Single Event');
-  
-  const locationOptions = ['Venue', 'Online Event', 'To be Announced'];
   const [eventLocation, setEventLocation] = useState('Venue');
 
   const [agendaStartTime, setAgendaStartTime] = useState<Date | null | undefined>(new Date());
   const [agendaEndTime, setAgendaEndTime] = useState<Date | null | undefined>(new Date());
+  const [eventImage, setEventImage] = useState<string | null>(null);
+  const [eventId, seteventId] = useState<string | null>(null);
+  
+  /*---------------------4.3: Control References ---------------------*/
 
-  const groupedEventTags = [
+  const fileUploadRef = useRef(null);
+  const toast = useRef(null);
+  const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
+  const uploadOptions = {icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined'};
+  const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
+  
+  /*const groupedEventTags = [
     {
         label: 'Life Sciences', code: 'LS',
         items: [
@@ -110,7 +104,7 @@ const CreateEvent = () => {
             { label: 'App Development', value: 'AppDevelopment' },
             { label: 'Robotics', value: 'Robotics' }
         ]
-    }];
+    }];*/
 
     const eventOrganizerTypeOptions = [
       {name: 'Group', value: 'Group'},
@@ -194,12 +188,25 @@ const CreateEvent = () => {
 
     const [userEventOrganizers, setUserEventOrganizers] = useState(null);
     const [eventOrganizer, setEventOrganizer] = useState(null);
+    const uploadToast = useRef(null);
 
-    /*---------------------4.2.3: Control Event Handlers ---------------------*/
+    /*---------------------4.4: Control Event Handlers ---------------------*/
 
-    const onUpload = () => {
-      toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
+    const onEventImageUpload = (event: FileUploadUploadEvent) => {
+      console.log('-----------------Upload completed-----------------');
+      console.log(event.xhr.response);
+      const responseData = JSON.parse(event.xhr.response);
+      if (Boolean(responseData.status))
+      {
+          uploadToast.current.show({severity: 'info', summary: 'Success', detail: `File Uploaded ${responseData.key}`, life: 4000});
+          let computedBlogImageurl = `${config.AWS_S3_URL}${responseData.key}`;
+          setEventImage(computedBlogImageurl);
+      }
+      else{
+          uploadToast.current.show({severity: 'error', summary: 'Error Message', detail: `File Uploaded ${responseData.message}`, life: 6000});
+      }
     }
+
     const onTemplateSelect = (e) => {
       let _totalSize = totalSize;
       e.files.forEach(file => {
@@ -228,7 +235,7 @@ const CreateEvent = () => {
         setTotalSize(0);
     }
     
-     useEffect(() => {
+    useEffect(() => {
       //console.log("----------Loaded ViewEvent-----------");
       //console.log(eventData);
       axios({
@@ -239,6 +246,18 @@ const CreateEvent = () => {
               console.log("----------Load Event Organizers-----------");
               console.log(res.data);
               setUserEventOrganizers(res.data);
+          })
+          .catch((err) => {
+              console.log(err);
+      });
+      axios({
+          url: config.API_URL + "/eventTags",
+          method: "GET",
+          })
+          .then((res) => {
+              console.log("----------Load Event Tags-----------");
+              console.log(res.data);
+              setEventTags(res.data);
           })
           .catch((err) => {
               console.log(err);
@@ -270,7 +289,7 @@ const CreateEvent = () => {
     };
 
 
-    /*---------------------4.2.4: Control Event Templates ---------------------*/
+    /*---------------------4.5: Control Event Templates ---------------------*/
     const headerTemplate = (options) => {
       const { className, chooseButton, uploadButton, cancelButton } = options;
       const value = totalSize/10000;
@@ -326,7 +345,7 @@ const CreateEvent = () => {
         </React.Fragment>
     ); 
 
-  /*----------------------4.2.5: Start : Form Setup---------------------- */
+  /*----------------------4.6: Start : Form Setup---------------------- */
   return (
     <div className="form-event">
 
@@ -354,14 +373,19 @@ const CreateEvent = () => {
                     <b>Event Media</b>
                 </div>
               </Divider>
-              <FileUpload ref={fileUploadRef} name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" 
+              <FileUpload name="eventImage" url={`${config.API_URL}/s3/uploadEventImageToBucket`} 
                   className="my-rounded-fileupload"
-                  multiple accept="image/*" maxFileSize={1000000}
-                  onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                  accept="image/*" maxFileSize={1000000}
+                  onUpload={onEventImageUpload} 
+                  onBeforeUpload={({ formData }) => {
+                    //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
+                    formData.append('uiAction', 'eventImage');
+                    formData.append('eventId', eventId);
+                  }}
+                  onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
                   headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                   chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} />
-              
-              
+            
             {/* ---------------------------Event Overview --------------------- */}
              <Divider align="left">
                 <div className="inline-flex align-items-center">
@@ -401,7 +425,7 @@ const CreateEvent = () => {
                   <span className="p-float-label">
                         <Controller name="eventTags" control={control} rules={{ required: 'Event Tag is required.' }} render={({ field, fieldState }) => (
                             <MultiSelect id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                            value={selectedGroupedEventTags} options={groupedEventTags} onChange={(e) => setSelectedGroupedEventTags(e.value)} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items"
+                            value={selectedGroupedEventTags} options={eventTags} onChange={(e) => setSelectedGroupedEventTags(e.value)} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items"
                             optionGroupTemplate={groupedItemTemplate} placeholder="Select Event Tags"  display="chip" />
                         )} />
                         <label htmlFor="eventTags" className={classNames({ 'p-error': errors.eventTags })}>Event Tag*</label>
@@ -579,7 +603,7 @@ const CreateEvent = () => {
       {/* -------End Container--------- */}   
     </div> 
   );
-  /*----------------------4.2.5: End : Form Setup---------------------- */
+  /*----------------------4.6: End : Form Setup---------------------- */
 };
 
 export default CreateEvent;
