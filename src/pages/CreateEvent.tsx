@@ -18,6 +18,7 @@ import { FileUpload, FileUploadUploadEvent } from 'primereact/fileupload';
 import { ProgressBar } from 'primereact/progressbar';
 import { Tag } from 'primereact/tag';
 import { Card } from 'primereact/card';
+import { Toast } from 'primereact/toast';
 
 /*********************************3 Imports / syncfusion ********************************/
 import { ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, Inject } from '@syncfusion/ej2-react-schedule';
@@ -36,6 +37,8 @@ const CreateEvent = () => {
   };
 
   /*---------------------4.2: State Management ------------------------*/
+  const hasRun = useRef(false);
+  const [eventId, setEventId] = useState<string | null>(null);
   const [totalSize, setTotalSize] = useState(0);
   const [eventTitle, setEventTitle] = useState('');
   const [eventSummary, setEventSummary] = useState('');
@@ -59,7 +62,6 @@ const CreateEvent = () => {
   const [agendaStartTime, setAgendaStartTime] = useState<Date | null | undefined>(new Date());
   const [agendaEndTime, setAgendaEndTime] = useState<Date | null | undefined>(new Date());
   const [eventImage, setEventImage] = useState<string | null>(null);
-  const [eventId, seteventId] = useState<string | null>(null);
   
   /*---------------------4.3: Control References ---------------------*/
 
@@ -235,57 +237,79 @@ const CreateEvent = () => {
         setTotalSize(0);
     }
     
+    //Start : React Hooks for Component OnLoad() 
     useEffect(() => {
-      //console.log("----------Loaded ViewEvent-----------");
-      //console.log(eventData);
-      axios({
-          url: config.API_URL + "/users/GetUserEventOrganizer",
-          method: "GET",
-          })
-          .then((res) => {
-              console.log("----------Load Event Organizers-----------");
-              console.log(res.data);
-              setUserEventOrganizers(res.data);
-          })
-          .catch((err) => {
-              console.log(err);
-      });
-      axios({
-          url: config.API_URL + "/eventTags",
-          method: "GET",
-          })
-          .then((res) => {
-              console.log("----------Load Event Tags-----------");
-              console.log(res.data);
-              setEventTags(res.data);
-          })
-          .catch((err) => {
-              console.log(err);
-      });
-    }, []);  
-
-    const onSubmit = (formData:any) => {
-        setFormData(formData);
-        console.log(formData);
+      if (!hasRun.current) {
+        //console.log("----------Loaded ViewEvent-----------");
+        //console.log(eventData);
+        hasRun.current = true;
         axios({
           // Endpoint to send files
-          url: config.API_URL + "/events/createEvent",
-          method: "POST",
-          data: formData, // Attaching the form data
-          })
-          .then((res) => {
-              //console.log("--------------logged---------------");
-              //console.log(res.data.success);
-              //console.log(res.data.message);
-              eventStatus.status = res.data.success;   
-              eventStatus.statusMessage  = res.data.message;
-              eventStatus.eventTitle  = formData["eventTitle"];
-              setShowMessage(true);
-          })
-          .catch((err) => {
-              console.log(err);
-              setShowMessage(true);
+          url: config.API_URL + "/Utils/GetUniqueId",
+          method: "GET",
+          headers: {
+              // Add any auth token here
+              //authorization: "your token comes here",
+          },
+        })
+        .then((res) => {
+          console.log("----------GET Event Id---------");
+          //console.log(process.env.NODE_ENV);
+          console.log(res.data);
+          setEventId(res.data);
+        })
+        axios({
+            url: config.API_URL + "/users/GetUserEventOrganizer",
+            method: "GET",
+            })
+            .then((res) => {
+                console.log("----------Load Event Organizers-----------");
+                console.log(res.data);
+                setUserEventOrganizers(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
         });
+        axios({
+            url: config.API_URL + "/eventTags",
+            method: "GET",
+            })
+            .then((res) => {
+                console.log("----------Load Event Tags-----------");
+                console.log(res.data);
+                setEventTags(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+        });
+      }
+    }, []);
+    //End : React Hooks for Component OnLoad() 
+
+
+    const onSubmit = (formData:any) => {
+      console.log("-------Component has loaded-----------");
+      setFormData(formData);
+      //console.log(formData);
+      axios({
+        // Endpoint to send files
+        url: config.API_URL + "/events/createEvent",
+        method: "POST",
+        data: formData, // Attaching the form data
+        })
+        .then((res) => {
+            //console.log("--------------logged---------------");
+            //console.log(res.data.success);
+            //console.log(res.data.message);
+            eventStatus.status = res.data.success;   
+            eventStatus.statusMessage  = res.data.message;
+            eventStatus.eventTitle  = formData["eventTitle"];
+            setShowMessage(true);
+        })
+        .catch((err) => {
+            console.log(err);
+            setShowMessage(true);
+      });
     };
 
 
@@ -373,7 +397,7 @@ const CreateEvent = () => {
                     <b>Event Media</b>
                 </div>
               </Divider>
-              <FileUpload name="eventImage" url={`${config.API_URL}/s3/uploadEventImageToBucket`} 
+              <FileUpload ref={fileUploadRef} name="eventImage" url={`${config.API_URL}/s3/uploadEventImageToBucket`} 
                   className="my-rounded-fileupload"
                   accept="image/*" maxFileSize={1000000}
                   onUpload={onEventImageUpload} 
@@ -599,7 +623,7 @@ const CreateEvent = () => {
           {/* -------End Form--------- */} 
         </Card>
       </div>
-       
+      <Toast ref={uploadToast} /> 
       {/* -------End Container--------- */}   
     </div> 
   );
