@@ -70,304 +70,260 @@ const CreateEvent = () => {
   const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
   const uploadOptions = {icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined'};
   const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
+
+  const eventOrganizerTypeOptions = [
+    {name: 'Group', value: 'Group'},
+    {name: 'Individuals', value: 'Individuals'}
+  ];
+
+  const eventLocationTypeOptions = [
+    {name: 'Venue', value: 'Venue'},
+    {name: 'Online Event', value: 'OnlineEvent'}
+  ];
+
+  let today = new Date();
+  let month = today.getMonth();
+  let year = today.getFullYear();
+  let prevMonth = (month === 0) ? 11 : month - 1;
+  let prevYear = (prevMonth === 11) ? year - 1 : year;
+  let nextMonth = (month === 11) ? 0 : month + 1;
+  let nextYear = (nextMonth === 0) ? year + 1 : year;
+
+  const onCityChange = (e: { value: any}) => {
+    setSelectedCity(e.value);
+  }
+
+  const onStateChange = (e: { value: any}) => {
+    setSelectedState(e.value);
+  }
+
+  const onCountryChange = (e: { value: any}) => {
+    setSelectedCountry(e.value);
+  }
+
+  const groupedItemTemplate = (option) => {
+    return (
+        <div className="flex align-items-center">
+            <div>{option.label}</div>
+        </div>
+    );
+  }
+
+  const [showMessage, setShowMessage] = useState(false);
   
-  /*const groupedEventTags = [
-    {
-        label: 'Life Sciences', code: 'LS',
-        items: [
-            { label: 'Microbiology', value: 'Microbiology' },
-            { label: 'BioChemistry', value: 'BioChemistry' },
-            { label: 'Ecology', value: 'Ecology' },
-            { label: 'Genomics', value: 'Genomics' },
-            { label: 'Neuroscience', value: 'Neuroscience' }
-        ]
-    },
-    {
-        label: 'AI', code: 'AI',
-        items: [
-            { label: 'NLP', value: 'NLP' },
-            { label: 'Computer Vision', value: 'ComputerVision' },
-            { label: 'Generative AI', value: 'GenAI' },
-            { label: 'Deep Learning', value: 'DeepLearning' }
-        ]
-    },
-    {
-      label: 'Arts & Writing', code: 'ArtsWriting',
-      items: [
-          { label: 'Self-Help', value: 'Self-Help' },
-          { label: 'Poetry', value: 'Poetry' },
-          { label: 'Short Story', value: 'ShortSory' }
-      ]
-    },
-    {
-        label: 'Competitions', code: 'Comp',
-        items: [
-            { label: 'Hackathons', value: 'Hackathons' },
-            { label: 'App Development', value: 'AppDevelopment' },
-            { label: 'Robotics', value: 'Robotics' }
-        ]
-    }];*/
-
-    const eventOrganizerTypeOptions = [
-      {name: 'Group', value: 'Group'},
-      {name: 'Individuals', value: 'Individuals'}
-    ];
-    const [eventOrganizerTypeOption, setEventOrganizerTypeOptions] = useState('Individuals');
-
-    const eventLocationTypeOptions = [
-      {name: 'Venue', value: 'Venue'},
-      {name: 'Online Event', value: 'OnlineEvent'}
-    ];
-    const [eventLocationTypeOption, setEventLocationTypeOptions] = useState('Venue');
-
-    let today = new Date();
-    let month = today.getMonth();
-    let year = today.getFullYear();
-    let prevMonth = (month === 0) ? 11 : month - 1;
-    let prevYear = (prevMonth === 11) ? year - 1 : year;
-    let nextMonth = (month === 11) ? 0 : month + 1;
-    let nextYear = (nextMonth === 0) ? year + 1 : year;
-
-    const onCityChange = (e: { value: any}) => {
-      setSelectedCity(e.value);
-    }
-
-    const onStateChange = (e: { value: any}) => {
-      setSelectedState(e.value);
-    }
-
-    const onCountryChange = (e: { value: any}) => {
-      setSelectedCountry(e.value);
-    }
-
-    const [selectedGroupedEventTags, setSelectedGroupedEventTags] = useState(null);
-    const groupedItemTemplate = (option) => {
-      return (
-          <div className="flex align-items-center">
-              <div>{option.label}</div>
-          </div>
-      );
-    }
-
-    const [showMessage, setShowMessage] = useState(false);
-    
-    const [formData, setFormData] = useState({});
-    const defaultValues = {
-      eventTitle: '',
-      eventSubTitle: '',
-      eventSummary: '',
-      eventCategory: '',
-      eventTags: '',
-      eventOrganizerType:'',
-      eventOrganizer:'',
-      eventDate : null,
-      eventStartTime : null,
-      eventEndTime : null,
-      eventLocationType: null,
-      eventLocation : null,
-      faqs: [{ question: '', answer: '' }]
-    }
+  const [formData, setFormData] = useState({});
+  const defaultValues = {
+    eventTitle: '',
+    eventSubTitle: '',
+    eventSummary: '',
+    eventCategory: '',
+    eventTags: '',
+    eventOrganizerType:'',
+    eventOrganizer:'',
+    eventDate : null,
+    eventStartTime : null,
+    eventEndTime : null,
+    eventLocationType: null,
+    eventLocation : null,
+    faqs: [{ question: '', answer: '' }]
+  }
 
    
-    const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
-    // for FAQs
-    const { fields, append, remove } = useFieldArray({
-      control,
-      name: "faqs"
+  const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+  // for FAQs
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "faqs"
+  });
+
+  const getFormErrorMessage = (name) => {
+    return errors[name] && <small className="p-error">{errors[name].message}</small>
+  };
+
+  const createEventStatus = {
+    status:false,
+    statusMessage:false,
+    eventTitle:'' 
+  };
+
+  const [eventStatus, setEventStatus] = useState(createEventStatus);
+
+  const [userEventOrganizers, setUserEventOrganizers] = useState(null);
+  const uploadToast = useRef(null);
+
+  /*---------------------4.4: Control Event Handlers ---------------------*/
+
+  const onEventImageUpload = (event: FileUploadUploadEvent) => {
+    console.log('-----------------Upload completed-----------------');
+    console.log(event.xhr.response);
+    const responseData = JSON.parse(event.xhr.response);
+    if (Boolean(responseData.status))
+    {
+        uploadToast.current.show({severity: 'info', summary: 'Success', detail: `File Uploaded ${responseData.key}`, life: 4000});
+        let computedBlogImageurl = `${config.AWS_S3_URL}${responseData.key}`;
+        setEventImage(computedBlogImageurl);
+    }
+    else{
+        uploadToast.current.show({severity: 'error', summary: 'Error Message', detail: `File Uploaded ${responseData.message}`, life: 6000});
+    }
+  }
+
+  const onTemplateSelect = (e) => {
+    let _totalSize = totalSize;
+    e.files.forEach(file => {
+        _totalSize += file.size;
     });
 
-    const getFormErrorMessage = (name) => {
-      return errors[name] && <small className="p-error">{errors[name].message}</small>
-    };
+    setTotalSize(_totalSize);
+  }
 
-    const createEventStatus = {
-      status:false,
-      statusMessage:false,
-      eventTitle:'' 
-    };
-
-    const [eventStatus, setEventStatus] = useState(createEventStatus);
-
-    const [userEventOrganizers, setUserEventOrganizers] = useState(null);
-    const [eventOrganizer, setEventOrganizer] = useState(null);
-    const uploadToast = useRef(null);
-
-    /*---------------------4.4: Control Event Handlers ---------------------*/
-
-    const onEventImageUpload = (event: FileUploadUploadEvent) => {
-      console.log('-----------------Upload completed-----------------');
-      console.log(event.xhr.response);
-      const responseData = JSON.parse(event.xhr.response);
-      if (Boolean(responseData.status))
-      {
-          uploadToast.current.show({severity: 'info', summary: 'Success', detail: `File Uploaded ${responseData.key}`, life: 4000});
-          let computedBlogImageurl = `${config.AWS_S3_URL}${responseData.key}`;
-          setEventImage(computedBlogImageurl);
-      }
-      else{
-          uploadToast.current.show({severity: 'error', summary: 'Error Message', detail: `File Uploaded ${responseData.message}`, life: 6000});
-      }
-    }
-
-    const onTemplateSelect = (e) => {
-      let _totalSize = totalSize;
+  const onTemplateUpload = (e) => {
+      let _totalSize = 0;
       e.files.forEach(file => {
-          _totalSize += file.size;
+          _totalSize += (file.size || 0);
       });
 
       setTotalSize(_totalSize);
-    }
+      toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
+  }
 
-    const onTemplateUpload = (e) => {
-        let _totalSize = 0;
-        e.files.forEach(file => {
-            _totalSize += (file.size || 0);
-        });
+  const onTemplateRemove = (file, callback) => {
+      setTotalSize(totalSize - file.size);
+      callback();
+  }
 
-        setTotalSize(_totalSize);
-        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
-    }
-
-    const onTemplateRemove = (file, callback) => {
-        setTotalSize(totalSize - file.size);
-        callback();
-    }
-
-    const onTemplateClear = () => {
-        setTotalSize(0);
-    }
-    
-    //Start : React Hooks for Component OnLoad() 
-    useEffect(() => {
-      if (!hasRun.current) {
-        //console.log("----------Loaded ViewEvent-----------");
-        //console.log(eventData);
-        hasRun.current = true;
-        axios({
-          // Endpoint to send files
-          url: config.API_URL + "/Utils/GetUniqueId",
-          method: "GET",
-          headers: {
-              // Add any auth token here
-              //authorization: "your token comes here",
-          },
-        })
-        .then((res) => {
-          console.log("----------GET Event Id---------");
-          //console.log(process.env.NODE_ENV);
-          console.log(res.data);
-          setEventId(res.data);
-        })
-        axios({
-            url: config.API_URL + "/users/GetUserEventOrganizer",
-            method: "GET",
-            })
-            .then((res) => {
-                console.log("----------Load Event Organizers-----------");
-                console.log(res.data);
-                setUserEventOrganizers(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-        });
-        axios({
-            url: config.API_URL + "/eventTags",
-            method: "GET",
-            })
-            .then((res) => {
-                console.log("----------Load Event Tags-----------");
-                console.log(res.data);
-                setEventTags(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-        });
-      }
-    }, []);
-    //End : React Hooks for Component OnLoad() 
-
-
-    const onSubmit = (formData:any) => {
-      console.log("-------Component has loaded-----------");
-      setFormData(formData);
-      //console.log(formData);
+  const onTemplateClear = () => {
+      setTotalSize(0);
+  }
+  
+  //Start : React Hooks for Component OnLoad() 
+  useEffect(() => {
+    if (!hasRun.current) {
+      //console.log("----------Loaded ViewEvent-----------");
+      //console.log(eventData);
+      hasRun.current = true;
       axios({
         // Endpoint to send files
-        url: config.API_URL + "/events/createEvent",
-        method: "POST",
-        data: formData, // Attaching the form data
-        })
-        .then((res) => {
-            //console.log("--------------logged---------------");
-            //console.log(res.data.success);
-            //console.log(res.data.message);
-            eventStatus.status = res.data.success;   
-            eventStatus.statusMessage  = res.data.message;
-            eventStatus.eventTitle  = formData["eventTitle"];
-            setShowMessage(true);
-        })
-        .catch((err) => {
-            console.log(err);
-            setShowMessage(true);
+        url: config.API_URL + "/Utils/GetUniqueId",
+        method: "GET",
+        headers: {
+            // Add any auth token here
+            //authorization: "your token comes here",
+        },
+      })
+      .then((res) => {
+        console.log("----------GET Event Id---------");
+        //console.log(process.env.NODE_ENV);
+        console.log(res.data);
+        setEventId(res.data);
+      })
+      axios({
+          url: config.API_URL + "/users/GetUserEventOrganizer",
+          method: "GET",
+          })
+          .then((res) => {
+              console.log("----------Load Event Organizers-----------");
+              console.log(res.data);
+              setUserEventOrganizers(res.data);
+          })
+          .catch((err) => {
+              console.log(err);
       });
-    };
+      axios({
+          url: config.API_URL + "/eventTags",
+          method: "GET",
+          })
+          .then((res) => {
+              console.log("----------Load Event Tags-----------");
+              console.log(res.data);
+              setEventTags(res.data);
+          })
+          .catch((err) => {
+              console.log(err);
+      });
+    }
+  }, []);
+  //End : React Hooks for Component OnLoad() 
+  const onSubmit = (formData:any) => {
+    console.log("-------Component has loaded-----------");
+    setFormData(formData);
+    //console.log(formData);
+    axios({
+      // Endpoint to send files
+      url: config.API_URL + "/events/createEvent",
+      method: "POST",
+      data: formData, // Attaching the form data
+      })
+      .then((res) => {
+          //console.log("--------------logged---------------");
+          //console.log(res.data.success);
+          //console.log(res.data.message);
+          eventStatus.status = res.data.success;   
+          eventStatus.statusMessage  = res.data.message;
+          eventStatus.eventTitle  = formData["eventTitle"];
+          setShowMessage(true);
+      })
+      .catch((err) => {
+          console.log(err);
+          setShowMessage(true);
+    });
+  };
 
+  /*---------------------4.5: Control Event Templates ---------------------*/
+  const headerTemplate = (options) => {
+    const { className, chooseButton, uploadButton, cancelButton } = options;
+    const value = totalSize/10000;
+    const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B';
 
-    /*---------------------4.5: Control Event Templates ---------------------*/
-    const headerTemplate = (options) => {
-      const { className, chooseButton, uploadButton, cancelButton } = options;
-      const value = totalSize/10000;
-      const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B';
+    return (
+        <div className={className} style={{backgroundColor: 'transparent', display: 'flex', alignItems: 'center'}}>
+            {chooseButton}
+            {uploadButton}
+            {cancelButton}
+            <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} / 1 MB`} style={{width: '300px', height: '20px', marginLeft: 'auto'}}></ProgressBar>
+        </div>
+    );
+  }
 
+  const itemTemplate = (file, props) => {
       return (
-          <div className={className} style={{backgroundColor: 'transparent', display: 'flex', alignItems: 'center'}}>
-              {chooseButton}
-              {uploadButton}
-              {cancelButton}
-              <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} / 1 MB`} style={{width: '300px', height: '20px', marginLeft: 'auto'}}></ProgressBar>
+          <div className="flex align-items-center flex-wrap">
+              <div className="flex align-items-center" style={{width: '60%'}}>
+                  <img alt={file.name} role="presentation" src={file.objectURL} width={100} />
+                  <span className="flex flex-column text-left ml-3">
+                      {file.name}
+                      <small>{new Date().toLocaleDateString()}</small>
+                  </span>
+              </div>
+              <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
+              <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
           </div>
-      );
-    }
+      )
+  }
 
-    const itemTemplate = (file, props) => {
-        return (
-            <div className="flex align-items-center flex-wrap">
-                <div className="flex align-items-center" style={{width: '60%'}}>
-                    <img alt={file.name} role="presentation" src={file.objectURL} width={100} />
-                    <span className="flex flex-column text-left ml-3">
-                        {file.name}
-                        <small>{new Date().toLocaleDateString()}</small>
-                    </span>
-                </div>
-                <Tag value={props.formatSize} severity="warning" className="px-3 py-2" />
-                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onTemplateRemove(file, props.onRemove)} />
-            </div>
-        )
-    }
+  const emptyTemplate = () => {
+      return (
+          <div className="flex align-items-center flex-column">
+              <i className="pi pi-image mt-3 p-5" style={{'fontSize': '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)'}}></i>
+              <span style={{'fontSize': '1.2em', color: 'var(--text-color-secondary)'}} className="my-5">Drag and Drop Image Here</span>
+          </div>
+      )
+  }
 
-    const emptyTemplate = () => {
-        return (
-            <div className="flex align-items-center flex-column">
-                <i className="pi pi-image mt-3 p-5" style={{'fontSize': '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)'}}></i>
-                <span style={{'fontSize': '1.2em', color: 'var(--text-color-secondary)'}} className="my-5">Drag and Drop Image Here</span>
-            </div>
-        )
-    }
-
-    const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
-    const titleHeader = <h6>Title cant be left blank</h6>;
-    const passwordFooter = (
-        <React.Fragment>
-            <Divider />
-            <p className="mt-2">Suggestions</p>
-            <ul className="pl-2 ml-2 mt-0" style={{ lineHeight: '1.5' }}>
-                <li>At least one lowercase</li>
-                <li>At least one uppercase</li>
-                <li>At least one numeric</li>
-                <li>Minimum 8 characters</li>
-            </ul>
-        </React.Fragment>
-    ); 
+  const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
+  const titleHeader = <h6>Title cant be left blank</h6>;
+  const passwordFooter = (
+      <React.Fragment>
+          <Divider />
+          <p className="mt-2">Suggestions</p>
+          <ul className="pl-2 ml-2 mt-0" style={{ lineHeight: '1.5' }}>
+              <li>At least one lowercase</li>
+              <li>At least one uppercase</li>
+              <li>At least one numeric</li>
+              <li>Minimum 8 characters</li>
+          </ul>
+      </React.Fragment>
+  ); 
 
   /*----------------------4.6: Start : Form Setup---------------------- */
   return (
@@ -447,10 +403,21 @@ const CreateEvent = () => {
                 </div>
                 <div className="field col-6 md:col-6">
                   <span className="p-float-label">
-                        <Controller name="eventTags" control={control} rules={{ required: 'Event Tag is required.' }} render={({ field, fieldState }) => (
-                            <MultiSelect id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                            value={selectedGroupedEventTags} options={eventTags} onChange={(e) => setSelectedGroupedEventTags(e.value)} optionLabel="label" optionGroupLabel="label" optionGroupChildren="items"
-                            optionGroupTemplate={groupedItemTemplate} placeholder="Select Event Tags"  display="chip" />
+                        <Controller 
+                          name="eventTags" 
+                          control={control} 
+                          rules={{ required: 'Event Tag is required.' }} 
+                          render={({ field, fieldState }) => (
+                            <MultiSelect 
+                              id={field.name} {...field}  
+                              className={classNames({ 'p-invalid': fieldState.invalid })}
+                              options={eventTags} 
+                              optionLabel="label" 
+                              optionGroupLabel="label" 
+                              optionGroupChildren="items"
+                              optionGroupTemplate={groupedItemTemplate} 
+                              placeholder="Select Event Tags"  
+                              display="chip" />
                         )} />
                         <label htmlFor="eventTags" className={classNames({ 'p-error': errors.eventTags })}>Event Tag*</label>
                   </span>
@@ -460,21 +427,36 @@ const CreateEvent = () => {
                 <div className="field col-6 md:col-6">
                   <label htmlFor="eventOrganizerType">Event Organizer*</label>
                   <span className="p-float-label">
-                        <Controller name="eventOrganizerType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
-                            <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                              value={eventOrganizerTypeOption} options={eventOrganizerTypeOptions} onChange={(e) => setEventOrganizerTypeOptions(e.value)} optionLabel="name"/>
-                        )} />
+                      <Controller 
+                        name="eventOrganizerType" 
+                        control={control} 
+                        rules={{ required: 'Event Organizer Type is required.' }} 
+                        render={({ field, fieldState }) => (
+                          <SelectButton 
+                            id={field.name} {...field}  
+                            className={classNames({ 'p-invalid': fieldState.invalid })}
+                            options={eventOrganizerTypeOptions} 
+                            optionLabel="name"/>
+                      )} />
                   </span>
                   {getFormErrorMessage('eventOrganizerType')}
                 </div>
                 <div className="field col-6 md:col-6"/>
                 <div className="field col-6 md:col-6">
                   <span className="p-float-label">
-                        <Controller name="eventOrganizer" control={control} rules={{ required: 'Event Organizer is required.' }} render={({ field, fieldState }) => (
-                            <MultiSelect  id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                              placeholder="Select Event Organizer" maxSelectedLabels={3}
-                              value={eventOrganizer} options={userEventOrganizers} onChange={(e) => setEventOrganizer(e.value)} optionLabel="name"/>
-                        )} />
+                    <Controller 
+                      name="eventOrganizer" 
+                      control={control} 
+                      rules={{ required: 'Event Organizer is required.' }} 
+                      render={({ field, fieldState }) => (
+                        <MultiSelect  
+                          id={field.name} {...field}  
+                          className={classNames({ 'p-invalid': fieldState.invalid })}
+                          placeholder="Select Event Organizer" 
+                          maxSelectedLabels={3}
+                          options={userEventOrganizers} 
+                          optionLabel="name"/>
+                    )} />
                   </span>
                   {getFormErrorMessage('eventOrganizer')}
                 </div>
@@ -510,10 +492,17 @@ const CreateEvent = () => {
                 <div className="field col-4 md:col-4">
                   <label htmlFor="eventLocationType">Location*</label>
                   <span className="p-float-label">
-                        <Controller name="eventLocationType" control={control} rules={{ required: 'Event Organizer Type is required.' }} render={({ field, fieldState }) => (
-                            <SelectButton id={field.name} {...field}  className={classNames({ 'p-invalid': fieldState.invalid })}
-                              value={eventLocationTypeOption} options={eventLocationTypeOptions} onChange={(e) => setEventLocationTypeOptions(e.value)} optionLabel="name"/>
-                        )} />
+                      <Controller 
+                        name="eventLocationType" 
+                        control={control} 
+                        rules={{ required: 'Event Location Type is required.' }} 
+                        render={({ field, fieldState }) => (
+                          <SelectButton 
+                            id={field.name} {...field} 
+                            className={classNames({ 'p-invalid': fieldState.invalid })}
+                            options={eventLocationTypeOptions} 
+                            optionLabel="name"/>
+                      )} />
                   </span>
                   {getFormErrorMessage('eventLocationType')}
                 </div>
