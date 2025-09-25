@@ -62,6 +62,8 @@ const CreateEvent = () => {
   const [agendaStartTime, setAgendaStartTime] = useState<Date | null | undefined>(new Date());
   const [agendaEndTime, setAgendaEndTime] = useState<Date | null | undefined>(new Date());
   const [eventImage, setEventImage] = useState<string | null>(null);
+
+  const [events, setEvents] = useState([]);
   
   /*---------------------4.3: Control References ---------------------*/
 
@@ -116,20 +118,21 @@ const CreateEvent = () => {
     eventTitle: '',
     eventSubTitle: '',
     eventSummary: '',
-    eventCategory: '',
+    eventImage: '',
     eventTags: '',
     eventOrganizerType:'',
-    eventOrganizer:'',
+    eventOrganizers:'',
     eventDate : null,
     eventStartTime : null,
     eventEndTime : null,
     eventLocationType: null,
     eventLocation : null,
+    itenaries:null,
     faqs: [{ question: '', answer: '' }]
   }
 
    
-  const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+  const { control, formState: { errors }, handleSubmit, reset, setValue } = useForm({ defaultValues });
   // for FAQs
   const { fields, append, remove } = useFieldArray({
     control,
@@ -195,6 +198,38 @@ const CreateEvent = () => {
   const onTemplateClear = () => {
       setTotalSize(0);
   }
+
+  const onItenaryActionComplete = (args) => {
+    // Check if the action was an event creation/save
+    /*if (args.requestType === 'eventCreated') {
+      const newRecords = args.addedRecords;
+      if (Array.isArray(newRecords) && newRecords.length > 0) {
+        setEvents(prevEvents => [...prevEvents, ...newRecords]);
+      }
+      } else if (args.requestType === 'eventChanged') {
+        const changedRecords = args.changedRecords;
+        setEvents(prevEvents =>
+          prevEvents.map(ev =>
+            changedRecords.find(cr => cr.Id === ev.Id) || ev
+          )
+        );
+      } else if (args.requestType === 'eventRemoved') {
+        const deletedRecords = args.deletedRecords;
+        setEvents(prevEvents =>
+          prevEvents.filter(ev =>
+            !deletedRecords.some(dr => dr.Id === ev.Id)
+          )
+        );
+      }*/
+     let updatedEvents = [];
+     if (args.data) {
+      updatedEvents = Array.isArray(args.data) ? args.data : [args.data];
+      setEvents(updatedEvents);
+      // args.data is the latest data source after the action
+      setValue('itenaries', updatedEvents); // <-- This updates the form value!
+  }
+    };
+  const eventSettings = { dataSource: events };
   
   //Start : React Hooks for Component OnLoad() 
   useEffect(() => {
@@ -245,9 +280,9 @@ const CreateEvent = () => {
   }, []);
   //End : React Hooks for Component OnLoad() 
   const onSubmit = (formData:any) => {
-    console.log("-------Component has loaded-----------");
+    console.log("-------CreateEvent() / onSubmit  -----------");
     setFormData(formData);
-    //console.log(formData);
+    console.log(formData);
     axios({
       // Endpoint to send files
       url: config.API_URL + "/events/createEvent",
@@ -445,7 +480,7 @@ const CreateEvent = () => {
                 <div className="field col-6 md:col-6">
                   <span className="p-float-label">
                     <Controller 
-                      name="eventOrganizer" 
+                      name="eventOrganizers" 
                       control={control} 
                       rules={{ required: 'Event Organizer is required.' }} 
                       render={({ field, fieldState }) => (
@@ -458,7 +493,7 @@ const CreateEvent = () => {
                           optionLabel="name"/>
                     )} />
                   </span>
-                  {getFormErrorMessage('eventOrganizer')}
+                  {getFormErrorMessage('eventOrganizers')}
                 </div>
                 
                 {/* ---------------------------Event Schedule --------------------- */}
@@ -527,11 +562,18 @@ const CreateEvent = () => {
                   </div>
                 </Divider>
                 <div className="field col-12 md:col-12">
-                  <ScheduleComponent>
-                    <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
-                  </ScheduleComponent>
+                  <Controller
+                    name="itenaries"
+                    control={control}
+                    render={({}) => (
+                      <ScheduleComponent
+                          eventSettings={eventSettings}
+                          actionComplete={onItenaryActionComplete}>
+                        <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
+                      </ScheduleComponent>
+                    )}
+                  />
                 </div>
-
                 {/* ---------------------------Event FAQs --------------------- */}
                 <Divider align="left">
                   <div className="inline-flex align-items-center">
