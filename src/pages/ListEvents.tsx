@@ -89,7 +89,7 @@ const ListEvents = () => {
         return (
             <div className="col-12">
                 <div className="product-list-item">
-                    <img src={require( `../assets/images/events/${data.eventImage}.png`)}/>
+                    <img src={data.eventImage}/>
                     <div className="product-list-detail">
                         <div className="product-name">{data.eventTitle}</div>
                         <div className="product-description">{data.eventSummary}</div>
@@ -106,7 +106,7 @@ const ListEvents = () => {
             <div className="col-12 md:col-4">
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content"> 
-                        <img src={require( `../assets/images/events/${data.eventImage}.png`)}/>
+                        <img src={data.eventImage}/>
                         <div className="product-name" onClick={() => handleEventClick('displayEvent', 'center', data._id,  data.eventTitle)}  style={{cursor:'pointer'}}>{truncateString(data.eventTitle, 35)}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.eventTag}</span>
