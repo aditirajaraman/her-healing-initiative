@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import { Accordion, AccordionTab } from 'primereact/accordion';
-import { SelectButton } from 'primereact/selectbutton';
+import { Card } from 'primereact/card';
 
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
@@ -53,26 +53,43 @@ const ViewEvent = ({eventData}) => {
             </div>
             </AccordionTab>
             <AccordionTab header="Event Schedule">
-            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-                architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
-                voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.</p>
+                <div className="grid">
+                    <div className="col-3">
+                        <b>Event Date</b>
+                    </div>
+                    <div className="col-9">
+                        {currentEvent?.eventDate}
+                    </div>
+                        <div className="col-3">
+                        <b>Event Start Time</b>
+                    </div>
+                    <div className="col-9">
+                        {currentEvent?.eventStartTime}
+                    </div>
+                     <div className="col-3">
+                        <b>End Time</b>
+                    </div>
+                    <div className="col-9">
+                        {currentEvent?.eventEndTime}
+                    </div>
+                </div>
             </AccordionTab>
             <AccordionTab header="Event Itinerary">
-            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-                architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
-                voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.</p>
-            </AccordionTab>
-            <AccordionTab header="Event Management">
-            <div className="grid">
-                <div className=" col-12 md:col-12">
-                    <SelectButton value={eventState} options={eventStateOptions} onChange={(e) => setEventState(e.value)} />
-                </div>
-            </div>
+                {currentEvent?.itenaries?.map((itenary) => (
+                    <Card title={itenary.title} style={{ width: '25rem', marginBottom: '2em' }}>
+                        <p>{itenary.description}</p>
+                    </Card>
+                ))}
             </AccordionTab>
             <AccordionTab header="FAQs">
-            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
-                cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
-                Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.</p>
+                <ol className="pl-3">
+                    {currentEvent?.faqs?.map((faq, index) => (
+                    <li key={index} className="mb-3">
+                        <b>{faq.question}</b>
+                        <p>{faq.answer}</p>
+                    </li>
+                    ))}
+                </ol>
             </AccordionTab>
         </Accordion>
     </div>

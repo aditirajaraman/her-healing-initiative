@@ -93,7 +93,7 @@ const ListEvents = () => {
                     <div className="product-list-detail">
                         <div className="product-name">{data.eventTitle}</div>
                         <div className="product-description">{data.eventSummary}</div>
-                        <Avatar image={require( `../assets/images/event-organizers/${data.eventOrganizer}.png`)} className="mr-2" size="normal" shape="circle" />
+                        <Avatar image={require( `../assets/images/event-organizers/amyelsner.png`)} className="mr-2" size="normal" shape="circle" />
                         <i className="pi pi-tag product-category-icon"></i><span className="product-category">{data.eventTag}</span>
                     </div>
                 </div>
