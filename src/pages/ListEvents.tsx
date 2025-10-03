@@ -18,7 +18,7 @@ import { truncateString } from '../helpers/stringUtils';
 
 import axios from 'axios';
 
-import ViewEvent from './ViewEvent';
+//import ViewEvent from './ViewEvent';
 
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
@@ -107,7 +107,7 @@ const ListEvents = () => {
                 <div className="product-grid-item card">
                     <div className="product-grid-item-content"> 
                         <img src={data.eventImage}/>
-                        <div className="product-name" onClick={() => handleEventClick('displayEvent', 'center', data._id,  data.eventTitle)}  style={{cursor:'pointer'}}>{truncateString(data.eventTitle, 35)}</div>
+                        <div className="product-name" style={{cursor:'pointer'}} onClick={() => handleEventClick(data._id, data.eventId)}>{truncateString(data.eventTitle, 35)}</div>
                         <i className="pi pi-tag product-category-icon"></i>
                         <span className="product-category">{data.eventTag}</span>
                         <div className="product-description">{data.eventSummary}</div>
@@ -120,7 +120,7 @@ const ListEvents = () => {
                         <Tooltip target=".liked" />
                         <i className="liked pi pi-thumbs-up mr-4 p-text-secondary p-overlay-badge" data-pr-tooltip="Likes !" data-pr-position="bottom" data-pr-at="right+5 top" data-pr-my="left center-2"  style={{ fontSize: '2rem', float: 'left', cursor: 'pointer' }}><Badge value="100"></Badge></i>
                     </div>
-            </div>
+                </div>
             </div>
         );
     }
@@ -159,17 +159,19 @@ const ListEvents = () => {
         'displayEvent': setDisplayEvent
     }
 
-    const handleEventClick = (name, position, id, eventTitle) => {
+    interface EventData {
+        id:string,
+        eventId:string;
+    };
+
+    const handleEventClick = (id, eventId) => {
         //console.log(id)
-        currentEventData.id = id;
-        currentEventData.eventTitle = eventTitle;
-        setCurrentEvent(currentEventData);
-
-        dialogFuncMap[`${name}`](true);
-
-        if (position) {
-            setPosition(position);
+        let currentEventData:EventData = {
+            id : id,
+            eventId : eventId
         }
+        //console.log(currentEventData);
+        navigate('/viewEvent', { state: { eventData : currentEventData } }); 
     }
 
     const onHide = (name) => {
@@ -187,14 +189,7 @@ const ListEvents = () => {
     }
     
   return (
-    
      <div className="grid">
-        {/* ---------------------------View Event --------------------- */}
-        <Dialog header={currentEvent.eventTitle} visible={displayEvent} style={{ width: '60vw' }} footer={renderFooter('displayEvent')} onHide={() => onHide('displayEvent')}>
-        <br></br>
-        <ViewEvent eventData={currentEvent}/>
-      </Dialog>  
-
       {/* ---------------------------Upcoming Events --------------------- */}
       <Divider align="left">
           <div className="inline-flex align-items-center">

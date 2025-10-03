@@ -21,6 +21,7 @@ import About from './pages/About';
 import ListEvents from './pages/ListEvents';
 import ListBlogs from './pages/ListBlogs';
 import CreateEvent from './pages/CreateEvent';
+import ViewEvent from './pages/ViewEvent';
 import Donate from './pages/Donate';
 import Register from './pages/Register';
 import CreateBlog from './pages/CreateBlog';
@@ -46,6 +47,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/team" element={<Team />} />
         <Route path="/listevents" element={<ListEvents />} />
+        <Route path="/viewEvent" element={<ViewEvent />} />
         <Route path="/listblogs" element={<ListBlogs />} />
         <Route path="/viewBlog" element={<ViewBlog />} />
         <Route path="/donate" element={<Donate />} />

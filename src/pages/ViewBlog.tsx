@@ -42,7 +42,6 @@ const ViewBlog: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [content, setContent] = useState(null);
-  const [loadingContent, setLoadingContent] = useState<boolean>(true);
 
   const location = useLocation();
   const currentBlogState = location.state?.blogData as BlogData;

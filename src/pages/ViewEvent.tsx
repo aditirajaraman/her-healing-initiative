@@ -1,97 +1,224 @@
 import React, { useState, useEffect } from 'react';
-import Button from 'react-bootstrap/Button';
+import { useLocation } from 'react-router-dom';
+import { Button } from 'primereact/button';
 import axios from 'axios';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Card } from 'primereact/card';
+import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
+import { Avatar } from 'primereact/avatar';
+import { Fieldset } from 'primereact/fieldset';
+
+import '../assets/css/prime-styles.css';
+import '../assets/css/viewEvent.css';
 
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
-const ViewEvent = ({eventData}) => {
-    const [currentEvent, setCurrentEvent] = useState(null);
-    useEffect(() => {
-        //console.log("----------Loaded ViewEvent-----------");
-        //console.log(eventData);
-        console.log(process.env.NODE_ENV?.trim());
-        axios({
-            url: config.API_URL + "/events/" + eventData.id,
-            method: "GET",
-            })
-        .then((res) => {
-            console.log("----------Loaded Event Data-----------");
-            console.log(res.data);
-            setCurrentEvent(res.data);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    }, []);  
-    const [eventState, setEventState] = useState('Withdraw');
-    const eventStateOptions = ['Withdraw Event', 'Resume Event', 'Cancel Event'];
-    return (
-    <div>
-        <Accordion activeIndex={0} multiple>
-            <AccordionTab header="Event Summary">
-            <div className="grid">
-                <div className="col-3">
-                    <b>Event Title</b>
-                </div>
-                <div className="col-9">
-                    {currentEvent?.eventTitle}
-                </div>
-                <div className="col-3">
-                    <b>Event SubTitle</b>
-                </div>
-                <div className="col-9">
-                    {currentEvent?.eventSubTitle}
-                </div>
-                <div className="col-3">
-                    <b>Event Summary</b>
-                </div>
-                <div className="col-9">
-                    {currentEvent?.eventSummary}
+interface EventData {
+  id: string;
+  eventId: string;
+  eventImage: string;
+  eventTitle: string;
+  eventSubTitle: string;
+  eventSummary: string;
+  eventDate: string;
+  eventStartTime: string;
+  eventEndTime: string;
+  eventLocationType: string;
+  eventLocation: string;
+  eventOrganizers:string[];
+  eventOrganizersFullNames:string[];
+  itenaries:any[];
+  faqs:any[];
+}
+
+const ViewEvent : React.FC = () => {
+    const location = useLocation();
+    const currentEventState = location.state?.eventData as EventData;
+
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [currentEvent, setCurrentEvent] = useState<EventData | null>(null);
+
+    const formatTime = (isoString: string) => {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const itemTemplate = (event) => {
+        return renderListItem(event);
+    }
+
+    const renderListItem = (data) => {
+        return (
+            <div className="col-12">
+                <div className="event-list-item">
+                    <img src="https://blog.her-healing-initiative.org/arts.png"/>
+                    <div className="event-list-detail">
+                        <div className="event-name" style={{cursor:'pointer'}}>{data.title}</div>
+                        <div className="event-description">{data.description}</div>
+                        <div className="event-description"><b>Location</b> :<i>{data.location}</i></div>
+                        <div className="event-description">
+                            <b>Start Time</b> : {formatTime(data.startTime)} &nbsp; | &nbsp;
+                            <b>End Time</b> : {formatTime(data.endTime)}
+                        </div>
+                        <Avatar style={{'paddingLeft':'25px'}}image={require( `../assets/images/event-organizers/elwinsharvill.png`)} className="mr-2" size="normal" shape="circle" />
+                    </div>
                 </div>
             </div>
-            </AccordionTab>
-            <AccordionTab header="Event Schedule">
+        );
+    }
+
+    // Add this utility function at the top (inside or outside the component)
+    const formatToDate = (isoString: string) => {
+        if (!isoString) return '';
+            const date = new Date(isoString);
+            return date.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+        }).replace(/ /g, ' ');
+    };
+
+    const formatToTime = (isoString: string) => {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+    };
+    
+    useEffect(() => {
+    // Only fetch data if blogData exists
+    if (!currentEventState) {
+        setError("No Event data passed to this page.");
+        setLoading(false);
+        return;
+    }
+    //console.log("----------Loaded ViewEvent-----------");
+    //console.log(eventData);
+    // Async function to handle the API call
+    const fetchEventData = async () => {
+        try {
+            const response = await axios.get(
+                config.API_URL + "/events/" + currentEventState.id,
+                {
+                    headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                    }
+                }
+            );
+            // Correct: Set state only after the data has been successfully fetched
+            setCurrentEvent(response.data);
+        } catch (err) {
+                console.error("Failed to fetch event data:", err);
+                setError("Failed to load event. Please try again later.");
+        } finally {
+            // Correct: Always set loading to false when the request completes
+            setLoading(false);
+        }
+    };
+    fetchEventData();
+    }, [currentEventState]);
+    if (loading) {
+        return <div>Loading Event...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    if (!currentEvent) {
+        return <div>Event not found.</div>;
+    }  
+    return (
+    <div className="w-90" style={{padding:'2rem'}}>
+        <div className="grid">
+            {/* ---------------------------------Banner------------------------------------ */} 
+            <div className="col-12">
+                <img src={currentEvent.eventImage} style={{width:'100%', height:'300px'}}/>
+            </div> 
+        </div>
+         <div className="card">
+            <Fieldset legend="Event Summary" className="left-align-legend" toggleable>
+                <h5>{currentEvent?.eventTitle.toUpperCase()}</h5>
+                <Button icon="pi pi-tag" className="p-button-rounded p-button-secondary p-button-text">
+                    &nbsp;{currentEvent?.eventSubTitle}
+                </Button>
+                <br/>
+                <br/>
+                <p>{currentEvent?.eventSummary}</p>
+            </Fieldset>
+            <Fieldset legend="Event Organizers" className="left-align-legend" toggleable>
+                <ol className="pl-3">
+                    {currentEvent?.eventOrganizersFullNames?.map((eventOrganizer) => (
+                    <li className="mb-3">
+                        <b>{eventOrganizer}</b>
+                    </li>
+                    ))}
+                </ol>
+            </Fieldset>
+            <Fieldset legend="Event Location" className="left-align-legend" toggleable>
                 <div className="grid">
-                    <div className="col-3">
+                    <div className="col-2">
+                        <b>Location Type</b>
+                    </div>
+                    <div className="col-10">
+                        {currentEvent?.eventLocationType}
+                    </div>
+                    {currentEvent?.eventLocationType == 'Venue' && (
+                        <div className="col-2">
+                            <b>Event Location</b>
+                        </div>
+                    )}
+                    {currentEvent?.eventLocationType == 'Venue' && (
+                        <div className="col-2">
+                           {currentEvent?.eventLocation}
+                        </div>
+                    )}
+                </div>
+            </Fieldset>  
+            <Fieldset legend="Event Schedule" className="left-align-legend" toggleable>
+                <div className="grid">
+                    <div className="col-2">
                         <b>Event Date</b>
                     </div>
-                    <div className="col-9">
-                        {currentEvent?.eventDate}
+                    <div className="col-10">
+                        {formatToDate(currentEvent?.eventDate)}
                     </div>
-                        <div className="col-3">
-                        <b>Event Start Time</b>
+                        <div className="col-2">
+                        <b>Start Time</b>
                     </div>
-                    <div className="col-9">
-                        {currentEvent?.eventStartTime}
+                    <div className="col-10">
+                        {formatToTime(currentEvent?.eventStartTime)}
                     </div>
-                     <div className="col-3">
+                     <div className="col-2">
                         <b>End Time</b>
                     </div>
-                    <div className="col-9">
-                        {currentEvent?.eventEndTime}
+                    <div className="col-10">
+                        {formatToTime(currentEvent?.eventEndTime)}
                     </div>
                 </div>
-            </AccordionTab>
-            <AccordionTab header="Event Itinerary">
-                {currentEvent?.itenaries?.map((itenary) => (
-                    <Card title={itenary.title} style={{ width: '25rem', marginBottom: '2em' }}>
-                        <p>{itenary.description}</p>
-                    </Card>
-                ))}
-            </AccordionTab>
-            <AccordionTab header="FAQs">
+            </Fieldset>
+            <Fieldset legend="Event Itenary" className="left-align-legend" toggleable>
+                <div className="dataview-event">
+                    <DataView layout={'list'}
+                        value={currentEvent?.itenaries}
+                        itemTemplate={itemTemplate}
+                        paginator rows={9}/>
+                </div>
+            </Fieldset>
+            <Fieldset legend="FAQS" className="left-align-legend" toggleable>
                 <ol className="pl-3">
-                    {currentEvent?.faqs?.map((faq, index) => (
-                    <li key={index} className="mb-3">
+                    {currentEvent?.faqs?.map((faq) => (
+                    <li className="mb-3">
                         <b>{faq.question}</b>
                         <p>{faq.answer}</p>
                     </li>
                     ))}
                 </ol>
-            </AccordionTab>
-        </Accordion>
+            </Fieldset>
+        </div>
     </div>
     );
 };
