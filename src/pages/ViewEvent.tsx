@@ -1,15 +1,21 @@
+/*********************************1: Imports / react *************************************/
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Button } from 'primereact/button';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Accordion, AccordionTab } from 'primereact/accordion';
-import { Card } from 'primereact/card';
+
+/*********************************2: Prime React Imports ********************************/
+import { Button } from 'primereact/button';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Avatar } from 'primereact/avatar';
 import { Fieldset } from 'primereact/fieldset';
+import { Toolbar } from 'primereact/toolbar';
 
+/*********************************3: Imports / custom css *******************************/
 import '../assets/css/prime-styles.css';
 import '../assets/css/viewEvent.css';
+
+/*********************************4: Start : Application Code ***************************/
+// 4.1 : Configuration
 
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
@@ -31,13 +37,19 @@ interface EventData {
   faqs:any[];
 }
 
+interface SelectedEvent {
+    eventId:string;
+};
+
 const ViewEvent : React.FC = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const currentEventState = location.state?.eventData as EventData;
 
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [currentEvent, setCurrentEvent] = useState<EventData | null>(null);
+    const [eventId, setEventId] = useState<string>();
 
     const formatTime = (isoString: string) => {
         if (!isoString) return '';
@@ -87,39 +99,41 @@ const ViewEvent : React.FC = () => {
     };
     
     useEffect(() => {
-    // Only fetch data if blogData exists
-    if (!currentEventState) {
-        setError("No Event data passed to this page.");
-        setLoading(false);
-        return;
-    }
-    //console.log("----------Loaded ViewEvent-----------");
-    //console.log(eventData);
-    // Async function to handle the API call
-    const fetchEventData = async () => {
-        try {
-            const response = await axios.get(
-                config.API_URL + "/events/" + currentEventState.id,
-                {
-                    headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                    }
-                }
-            );
-            // Correct: Set state only after the data has been successfully fetched
-            setCurrentEvent(response.data);
-        } catch (err) {
-                console.error("Failed to fetch event data:", err);
-                setError("Failed to load event. Please try again later.");
-        } finally {
-            // Correct: Always set loading to false when the request completes
+        // Only fetch data if blogData exists
+        if (!currentEventState) {
+            setError("No Event data passed to this page.");
             setLoading(false);
+            return;
         }
-    };
-    fetchEventData();
+        console.log("----------Loaded ViewEvent-----------");
+        console.log(currentEventState.id);
+        // Async function to handle the API call
+        const fetchEventData = async () => {
+            try {
+                const response = await axios.get(
+                    config.API_URL + "/events/" + currentEventState.id,
+                    {
+                        headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                        }
+                    }
+                );
+                // Correct: Set state only after the data has been successfully fetched
+                setCurrentEvent(response.data);
+                setEventId(currentEventState.id);
+            } catch (err) {
+                    console.error("Failed to fetch event data:", err);
+                    setError("Failed to load event. Please try again later.");
+            } finally {
+                // Correct: Always set loading to false when the request completes
+                setLoading(false);
+            }
+        };
+        fetchEventData();
     }, [currentEventState]);
+
     if (loading) {
         return <div>Loading Event...</div>;
     }
@@ -130,9 +144,38 @@ const ViewEvent : React.FC = () => {
 
     if (!currentEvent) {
         return <div>Event not found.</div>;
-    }  
+    }
+
+    const handleEdit = () => {
+        //console.log('-------Edit Event Clicked--------');
+        //console.log(eventId);
+        navigate(`/editEvent?eventId=${eventId}`);
+    };
+
+    const handleDelete = () => {
+        //navigate('/createEvent'); 
+    };
+
+    const handleBookmark = () => {
+        //navigate('/createEvent'); 
+    };
+
+    const rightContents = () => {
+        return (
+            <React.Fragment>
+                <Button icon="pi pi-user-edit" className="p-button-success mr-2" onClick={() => handleEdit()} />
+                <Button icon="pi pi-trash" className="p-button-danger mr-2" onClick={handleDelete}/>
+                <Button icon="pi pi-bookmark" className="p-button-info" onClick={handleBookmark}/>
+            </React.Fragment>
+        );
+    }
+   
     return (
     <div className="w-90" style={{padding:'2rem'}}>
+        <div>
+            <Toolbar end={rightContents} style={{backgroundColor: 'lightsteelblue'}}/>
+        </div>
+        <br></br>
         <div className="grid">
             {/* ---------------------------------Banner------------------------------------ */} 
             <div className="col-12">
@@ -141,7 +184,7 @@ const ViewEvent : React.FC = () => {
         </div>
          <div className="card">
             <Fieldset legend="Event Summary" className="left-align-legend" toggleable>
-                <h5>{currentEvent?.eventTitle.toUpperCase()}</h5>
+                <h5>{currentEvent?.eventTitle.toUpperCase()}:{currentEvent.eventId}</h5>
                 <Button icon="pi pi-tag" className="p-button-rounded p-button-secondary p-button-text">
                     &nbsp;{currentEvent?.eventSubTitle}
                 </Button>

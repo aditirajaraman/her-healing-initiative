@@ -91,18 +91,6 @@ const CreateEvent = () => {
   let nextMonth = (month === 11) ? 0 : month + 1;
   let nextYear = (nextMonth === 0) ? year + 1 : year;
 
-  const onCityChange = (e: { value: any}) => {
-    setSelectedCity(e.value);
-  }
-
-  const onStateChange = (e: { value: any}) => {
-    setSelectedState(e.value);
-  }
-
-  const onCountryChange = (e: { value: any}) => {
-    setSelectedCountry(e.value);
-  }
-
   const groupedItemTemplate = (option) => {
     return (
         <div className="flex align-items-center">

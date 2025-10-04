@@ -173,20 +173,6 @@ const ListEvents = () => {
         //console.log(currentEventData);
         navigate('/viewEvent', { state: { eventData : currentEventData } }); 
     }
-
-    const onHide = (name) => {
-        dialogFuncMap[`${name}`](false);
-    }
-
-    const renderFooter = (name) => {
-        return (
-            <div>
-                <Button label="Edit Event" icon="pi pi-pencil" onClick={() => onHide(name)} autoFocus />
-                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>    
-                <Button label="Delete Event" icon="pi pi-trash" severity='danger' onClick={() => onHide(name)}/>
-            </div>
-        );
-    }
     
   return (
      <div className="grid">

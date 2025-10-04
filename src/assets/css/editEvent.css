@@ -1,0 +1,41 @@
+/* CreateBlog.css */
+
+.form-demo .card {
+    min-width: 80%;
+}
+.form-demo .card form {
+    margin: 2rem;
+}
+.form-demo .card .field {
+    margin-bottom: 1.5rem;
+}
+@media screen and (max-width: 960px) {
+    .form-demo .card {
+        width: 80%;
+    }
+}
+@media screen and (max-width: 640px) {
+    .form-demo .card {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+.separator {
+  border-right: 1px solid #ccc; /* Or choose a different style */
+  margin: 0 px; /* Adjust spacing as needed */
+  height: 20px; /* Adjust height to match other toolbar buttons */
+  display: inline-block; /* Ensure proper positioning */
+  vertical-align: middle; /* Align with other buttons */
+}
+
+p-card {
+    border-radius: 10px;
+}
+
+.cardStyle {
+  width:90%;
+  border: 1px solid lightslategrey; /* Sets border to 1px solid blue */
+  border-radius: 0.5rem;
+  text-align:left;
+}

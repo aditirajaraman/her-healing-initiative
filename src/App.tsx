@@ -22,6 +22,7 @@ import ListEvents from './pages/ListEvents';
 import ListBlogs from './pages/ListBlogs';
 import CreateEvent from './pages/CreateEvent';
 import ViewEvent from './pages/ViewEvent';
+import EditEvent from './pages/EditEvent';
 import Donate from './pages/Donate';
 import Register from './pages/Register';
 import CreateBlog from './pages/CreateBlog';
@@ -88,6 +89,14 @@ function App() {
           element={
             <ProtectedRoute>
               <EditBlog />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/editEvent"
+          element={
+            <ProtectedRoute>
+              <EditEvent />
             </ProtectedRoute>
           }
         />

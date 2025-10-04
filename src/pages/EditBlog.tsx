@@ -410,9 +410,7 @@ const EditBlog : React.FC = () => {
             <Card className="cardStyle" title="Edit Blog">
                 <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="p-fluid">
                 {/*---Hidden variable: This input is not visible to the user------*/}
-                
-                <span>ObjectId : {currentBlog?._id}</span>
-                {/*---<span>{blogId}</span>------*/}
+
                 <div className="field">
                     <span className="p-float-label">
                         <Controller name="title" control={control} rules={{ required: 'Title is required.' }} render={({ field, fieldState }) => (
