@@ -19,6 +19,7 @@ import '../assets/css/viewEvent.css';
 
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
+/*********************************5: Interfaces *******************************/
 interface EventData {
   id: string;
   eventId: string;
@@ -37,20 +38,51 @@ interface EventData {
   faqs:any[];
 }
 
-interface SelectedEvent {
-    eventId:string;
-};
-
+/*********************************6: Component : View *******************************/
 const ViewEvent : React.FC = () => {
+    
+    // 6.1 : Navigation
     const navigate = useNavigate();
     const location = useLocation();
-    const currentEventState = location.state?.eventData as EventData;
+        const handleEdit = () => {
+        //console.log('-------Edit Event Clicked--------');
+        //console.log(eventId);
+        navigate(`/editEvent?eventId=${eventId}`);
+    };
 
+    const handleDelete = () => {
+        navigate('/deleteEvent'); 
+    };
+
+    const handleBookmark = () => {
+        navigate('/bookmarkEvent'); 
+    };
+    
+    // 6.2 : State Management
+    const currentEventState = location.state?.eventData as EventData;
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [currentEvent, setCurrentEvent] = useState<EventData | null>(null);
     const [eventId, setEventId] = useState<string>();
 
+    // 4.3 Variables     
+    
+    // 4.3 Utility functions 
+    const formatToDate = (isoString: string) => {
+        if (!isoString) return '';
+            const date = new Date(isoString);
+            return date.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+        }).replace(/ /g, ' ');
+    };
+
+    const formatToTime = (isoString: string) => {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+    };
     const formatTime = (isoString: string) => {
         if (!isoString) return '';
         const date = new Date(isoString);
@@ -61,6 +93,7 @@ const ViewEvent : React.FC = () => {
         return renderListItem(event);
     }
 
+    // 4.4 UI Templates 
     const renderListItem = (data) => {
         return (
             <div className="col-12">
@@ -80,24 +113,18 @@ const ViewEvent : React.FC = () => {
             </div>
         );
     }
+    const rightContents = () => {
+        return (
+            <React.Fragment>
+                <Button icon="pi pi-user-edit" className="p-button-success mr-2" onClick={() => handleEdit()} />
+                <Button icon="pi pi-trash" className="p-button-danger mr-2" onClick={handleDelete}/>
+                <Button icon="pi pi-bookmark" className="p-button-info" onClick={handleBookmark}/>
+            </React.Fragment>
+        );
+    }
 
-    // Add this utility function at the top (inside or outside the component)
-    const formatToDate = (isoString: string) => {
-        if (!isoString) return '';
-            const date = new Date(isoString);
-            return date.toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-        }).replace(/ /g, ' ');
-    };
-
-    const formatToTime = (isoString: string) => {
-        if (!isoString) return '';
-        const date = new Date(isoString);
-        return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-    };
-    
+  
+    // 4.5 React Hooks for Component OnLoad() 
     useEffect(() => {
         // Only fetch data if blogData exists
         if (!currentEventState) {
@@ -105,13 +132,13 @@ const ViewEvent : React.FC = () => {
             setLoading(false);
             return;
         }
-        console.log("----------Loaded ViewEvent-----------");
-        console.log(currentEventState.id);
+        //console.log("----------Loaded ViewEvent-----------");
+        //console.log(currentEventState.id);
         // Async function to handle the API call
         const fetchEventData = async () => {
             try {
                 const response = await axios.get(
-                    config.API_URL + "/events/" + currentEventState.id,
+                    config.API_URL + "/events/" + currentEventState.eventId,
                     {
                         headers: {
                         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -122,7 +149,7 @@ const ViewEvent : React.FC = () => {
                 );
                 // Correct: Set state only after the data has been successfully fetched
                 setCurrentEvent(response.data);
-                setEventId(currentEventState.id);
+                setEventId(currentEventState.eventId);
             } catch (err) {
                     console.error("Failed to fetch event data:", err);
                     setError("Failed to load event. Please try again later.");
@@ -134,6 +161,7 @@ const ViewEvent : React.FC = () => {
         fetchEventData();
     }, [currentEventState]);
 
+    // 4.6 : Page Handlers and Logic
     if (loading) {
         return <div>Loading Event...</div>;
     }
@@ -146,30 +174,6 @@ const ViewEvent : React.FC = () => {
         return <div>Event not found.</div>;
     }
 
-    const handleEdit = () => {
-        //console.log('-------Edit Event Clicked--------');
-        //console.log(eventId);
-        navigate(`/editEvent?eventId=${eventId}`);
-    };
-
-    const handleDelete = () => {
-        //navigate('/createEvent'); 
-    };
-
-    const handleBookmark = () => {
-        //navigate('/createEvent'); 
-    };
-
-    const rightContents = () => {
-        return (
-            <React.Fragment>
-                <Button icon="pi pi-user-edit" className="p-button-success mr-2" onClick={() => handleEdit()} />
-                <Button icon="pi pi-trash" className="p-button-danger mr-2" onClick={handleDelete}/>
-                <Button icon="pi pi-bookmark" className="p-button-info" onClick={handleBookmark}/>
-            </React.Fragment>
-        );
-    }
-   
     return (
     <div className="w-90" style={{padding:'2rem'}}>
         <div>
@@ -184,7 +188,7 @@ const ViewEvent : React.FC = () => {
         </div>
          <div className="card">
             <Fieldset legend="Event Summary" className="left-align-legend" toggleable>
-                <h5>{currentEvent?.eventTitle.toUpperCase()}:{currentEvent.eventId}</h5>
+                <h5>{currentEvent?.eventTitle.toUpperCase()}</h5>
                 <Button icon="pi pi-tag" className="p-button-rounded p-button-secondary p-button-text">
                     &nbsp;{currentEvent?.eventSubTitle}
                 </Button>

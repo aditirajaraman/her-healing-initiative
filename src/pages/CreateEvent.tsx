@@ -103,6 +103,7 @@ const CreateEvent = () => {
   
   const [formData, setFormData] = useState({});
   const defaultValues = {
+    eventId: '',
     eventTitle: '',
     eventSubTitle: '',
     eventSummary: '',

@@ -1,90 +1,60 @@
-import React, { useState, useEffect } from 'react';
+/*********************************1: Imports / react *************************************/
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+/*********************************2: Prime React Imports ********************************/
 import { Avatar } from 'primereact/avatar';
 import { Tooltip } from 'primereact/tooltip';
-
 import { Divider } from 'primereact/divider';
 import { Button } from 'primereact/button';
-import '../assets/css/prime-styles.css';
-import '../assets/css/eventView.css';
-
-import { Card } from 'primereact/card';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Dropdown } from 'primereact/dropdown';
 import { Badge } from 'primereact/badge';
-import { Dialog } from 'primereact/dialog';
-
-import { truncateString } from '../helpers/stringUtils';
-
 import axios from 'axios';
 
-//import ViewEvent from './ViewEvent';
+/*********************************3: Imports / custom css *******************************/
+import '../assets/css/prime-styles.css';
+import '../assets/css/eventView.css';
 
+/*********************************4: Imports / utils *******************************/
+import { truncateString } from '../helpers/stringUtils';
+
+/*********************************5: Imports / config *******************************/
 const config = require('../config/config_' + process.env.NODE_ENV?.trim() + '.json');
 
+/*********************************6: Interfaces *******************************/
+interface EventData {
+    id:string,
+    eventId:string;
+};
+
+/*********************************7: Component : View *******************************/
 const ListEvents = () => {
+    // 7.1 : Navigation
     const navigate = useNavigate();
     const handleCreateEvent = () => {
         navigate('/createEvent'); 
     };
-
-    useEffect(() => {
-        axios({
-        // Endpoint to send files
-        url: config.API_URL + "/events",
-        method: "GET",
-        headers: {
-            // Add any auth token here
-            //authorization: "your token comes here",
-        },
-        })
-        // Handle the response from backend here
-        .then((res) => {
-            console.log("----------process.env---------");
-            console.log(process.env.NODE_ENV);
-            console.log(res.data);
-            setEvents(res.data);
-            setLayout("grid");
-        })
-        .catch((err) => {
-            console.log("----------process.env---------");
-            console.log(process.env.NODE_ENV);
-            console.log(err);
-        });
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
+    
+    // 7.2 Variables  
+    const currentEventData = {
+        id:'',
+        eventTitle:''
+    };
+    
+    // 7.3 : State Management
+    const hasRun = useRef(false);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
     const [events, setEvents] = useState(null);
     const [layout, setLayout] = useState(null);
     const [sortKey, setSortKey] = useState(null);
     const [sortOrder, setSortOrder] = useState(null);
     const [sortField, setSortField] = useState(null);
-    const currentEventData = {
-        id:'',
-        eventTitle:''
-    };
-    const [currentEvent, setCurrentEvent] = useState(currentEventData);
 
-    const sortOptions = [
-        {label: 'Event Date', value: 'date'},
-        {label: 'Event Category', value: 'category'},
-        {label: 'Event Name', value: 'name'}
-    ];
+    // 7.4 Utility functions 
 
-    const onSortChange = (event) => {
-        const value = event.value;
-
-        if (value.indexOf('!') === 0) {
-            setSortOrder(-1);
-            setSortField(value.substring(1, value.length));
-            setSortKey(value);
-        }
-        else {
-            setSortOrder(1);
-            setSortField(value);
-            setSortKey(value);
-        }
-    }
-
+    // 7.5 UI Templates
     const renderListItem = (data) => {
         return (
             <div className="col-12">
@@ -96,6 +66,22 @@ const ListEvents = () => {
                         <Avatar image={require( `../assets/images/event-organizers/amyelsner.png`)} className="mr-2" size="normal" shape="circle" />
                         <i className="pi pi-tag product-category-icon"></i><span className="product-category">{data.eventTag}</span>
                     </div>
+                </div>
+            </div>
+        );
+    }
+
+    const renderHeader = () => {
+        return (
+            <div className="grid grid-nogutter">
+                <div className="col-2">
+                    <Dropdown options={sortOptions} value={sortKey} optionLabel="label" placeholder="Sort By Event" onChange={onSortChange}/>
+                </div>
+                <div className="col-2">
+                    <Button style={{float: 'left'}} label="Host Event" className="p-button-raised p-button-warning" onClick={handleCreateEvent}/>
+                </div>
+                <div className="col-8" style={{float: 'right'}}>
+                    <DataViewLayoutOptions style={{float: 'right'}} layout={layout} onChange={(e) => setLayout(e.value)} />
                 </div>
             </div>
         );
@@ -125,7 +111,7 @@ const ListEvents = () => {
         );
     }
 
-    const itemTemplate = (event, layout) => {
+    const renderItem = (event, layout) => {
         if (layout === 'list')
             return renderListItem(event);
         else if (layout === 'grid')
@@ -134,35 +120,27 @@ const ListEvents = () => {
             return null;
     }
 
+    const sortOptions = [
+        {label: 'Event Date', value: 'date'},
+        {label: 'Event Category', value: 'category'},
+        {label: 'Event Name', value: 'name'}
+    ];
 
-    const renderHeader = () => {
-        return (
-            <div className="grid grid-nogutter">
-                <div className="col-2">
-                    <Dropdown options={sortOptions} value={sortKey} optionLabel="label" placeholder="Sort By Event" onChange={onSortChange}/>
-                </div>
-                <div className="col-2">
-                    <Button style={{float: 'left'}} label="Host Event" className="p-button-raised p-button-warning" onClick={handleCreateEvent}/>
-                </div>
-                <div className="col-8" style={{float: 'right'}}>
-                    <DataViewLayoutOptions style={{float: 'right'}} layout={layout} onChange={(e) => setLayout(e.value)} />
-                </div>
-            </div>
-        );
+    // 7.6: Event Handlers
+    const onSortChange = (event) => {
+        const value = event.value;
+
+        if (value.indexOf('!') === 0) {
+            setSortOrder(-1);
+            setSortField(value.substring(1, value.length));
+            setSortKey(value);
+        }
+        else {
+            setSortOrder(1);
+            setSortField(value);
+            setSortKey(value);
+        }
     }
-
-    const header = renderHeader();
-
-    const [displayEvent, setDisplayEvent] = useState(false);
-    const [position, setPosition] = useState('center');
-    const dialogFuncMap = {
-        'displayEvent': setDisplayEvent
-    }
-
-    interface EventData {
-        id:string,
-        eventId:string;
-    };
 
     const handleEventClick = (id, eventId) => {
         //console.log(id)
@@ -172,6 +150,46 @@ const ListEvents = () => {
         }
         //console.log(currentEventData);
         navigate('/viewEvent', { state: { eventData : currentEventData } }); 
+    }
+
+    // 7.7 React Hooks for Component OnLoad() 
+    useEffect(() => {
+        setLoading(true);
+
+        axios({
+        // Endpoint to send files
+        url: config.API_URL + "/events",
+        method: "GET",
+        headers: {
+            // Add any auth token here
+            //authorization: "your token comes here",
+        },
+        })
+        // Handle the response from backend here
+        .then((res) => {
+            console.log("----------process.env---------");
+            console.log(process.env.NODE_ENV);
+            console.log(res.data);
+            setEvents(res.data);
+            setLayout("grid");
+            setLoading(false); // Stop loading after data is fetched
+        })
+        .catch(() => {
+            //console.log("----------process.env---------");
+            //console.log(process.env.NODE_ENV);
+            //console.log(err);
+            setError("Failed to load events.");
+            setLoading(false); // Stop loading on error
+        });
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // 7.8 : Page Handlers and Logic
+    if (loading) {
+        return <div>Loading Events...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
     }
     
   return (
@@ -188,8 +206,8 @@ const ListEvents = () => {
         <div className="card">
             <DataView layout={layout} 
                 value={events}
-                header={header}
-                itemTemplate={itemTemplate}
+                header={renderHeader()}
+                itemTemplate={(event, layout) => renderItem(event, layout)}
                 paginator rows={9}
                 sortOrder={sortOrder} sortField={sortField} />
         </div>
