@@ -44,11 +44,11 @@ const Team = () => {
       <div className="col-12">
         <img src="https://blog.her-healing-initiative.org/ourteambannerpurple.png" style={{width: '100%'}}></img>
       </div>
-      <div className="col-12">
+      <div className="col-12" style={{textAlign:'center'}}>
         <h6 style={{ fontFamily:'Brush Script MT, cursive', fontSize:'35px', color: 'grey' }}>Meet our staff, businesses for Her, and our lead influencers — the amazing women !</h6>
       </div>
       <div className="col-12">
-        <h1 className="display-5">OUR TEAM</h1>
+        <h1 className="display-5" style={{textAlign:'center'}}>OUR TEAM</h1>
         <hr style={{ border: '1px solid purple', width: '7%' }}></hr>
       </div>
       <div className="col-2">
@@ -81,7 +81,7 @@ const Team = () => {
           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL7G0f7azjJHKJzLk-bMlgt3FW7y4nrDp-hQ&s" style={{width: '100%', height:'300px'}}></img>
         </Card>
       </div>
-      <div className="col-12" style={{ backgroundColor: 'whitesmoke', paddingTop:'20px', marginTop:'40px'}}>
+      <div className="col-12" style={{ backgroundColor: 'whitesmoke', paddingTop:'20px', marginTop:'40px', textAlign:'center' }}>
         <div className="card" style={{ backgroundColor: 'whitesmoke', border:'0px'}}>
             <h2>WHAT YOU CAN DO FOR HER !</h2><h2/>
             <br></br>
@@ -101,7 +101,7 @@ const Team = () => {
         </div>
       </div>
       <div className="col-12">&nbsp;</div>
-      <div className="col-12">
+      <div className="col-12" style={{textAlign:'center'}}>
         <h1 className="display-5">TESTIMONIALS</h1>
         <hr style={{ border: '1px solid green', width: '9%' }}></hr>
       </div>
