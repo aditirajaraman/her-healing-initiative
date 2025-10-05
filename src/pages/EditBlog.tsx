@@ -307,14 +307,6 @@ const EditBlog : React.FC = () => {
             console.error('onImageRemoving event args are null.');
     };
 
-    const onBlogImageSelect = () => {
-        setIsNewFileSelected(true);
-    };
-
-    const onClearBlogImages = () => {
-        setIsNewFileSelected(false);
-    };
-
     const onBlogImageRemove = () => {
         //setUploadedFiles([]);
     };

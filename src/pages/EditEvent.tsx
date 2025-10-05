@@ -18,6 +18,7 @@ import { ProgressBar } from 'primereact/progressbar';
 import { Tag } from 'primereact/tag';
 import { Message } from 'primereact/message';
 import { Image as EventHeaderImage } from 'primereact/image';
+import { Dialog } from 'primereact/dialog';
 import { classNames } from 'primereact/utils';
 
 /*********************************3 Imports / syncfusion ********************************/
@@ -48,11 +49,16 @@ interface EventData {
   faqs:any[];
 }
 
+interface CurrentEventData {
+    id:string,
+    eventId:string;
+};
+
 const EditEvent : React.FC = () => {
     // 4.2 : Navigation
     const navigate = useNavigate();
     const redirectToEvents = () => {
-        navigate('/listblogs'); 
+        navigate('/listevents'); 
     };
     
     // 4.3 : Variables    
@@ -80,14 +86,11 @@ const EditEvent : React.FC = () => {
         {name: 'Group', value: 'Group'},
         {name: 'Individuals', value: 'Individuals'}
     ];
-
-    const formatTime = (isoString: string) => {
-        if (!isoString) return '';
-        const date = new Date(isoString);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const apiStatus = {
+        status:false,
+        statusMessage:false
     };
     
-
     // 4.4 : State Management
     const fileUploadRef = useRef(null);
     const hasRun = useRef(false);
@@ -103,16 +106,18 @@ const EditEvent : React.FC = () => {
     const [currentEvent, setCurrentEvent] = useState<EventData | null>(null);
     const [userEventOrganizers, setUserEventOrganizers] = useState(null);
     // for FAQs
-      const { fields, append, remove } = useFieldArray({
-        control,
-        name: "faqs"
-      });
-    const [eventId, setEventId] = useState<string | null>(null);
+    const { fields, append, remove } = useFieldArray({
+    control,
+    name: "faqs"
+    });
+    const [currentEventData, setCurrentEventData] = useState<CurrentEventData | null>(null);
     const [events, setEvents] = useState([]);
     const [eventTags, setEventTags] = useState();
     const [eventDate, setEventDate] = useState<Date | null | undefined>(new Date());
     const [startEventTime, setStartEventTime] = useState<Date | null | undefined>(new Date());
     const selectedItenaryDate = events && events.length > 0 && events[0].StartTime ? events[0].StartTime : new Date();
+    const [formData, setFormData] = useState({});
+    const [showMessage, setShowMessage] = useState(false);
     
     // 4.5 : UI Templates  
     const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
@@ -213,9 +218,37 @@ const EditEvent : React.FC = () => {
     const onTemplateClear = () => {
         setTotalSize(0);
     }
+
+    const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
     
     const onSubmit = (formData) => {
-        console.log('Form Data: ', formData);    
+        console.log('---------------------formdata-----------------');
+        setFormData(formData);
+        console.log(formData);
+        console.log('---------------------currenEvent-----------------');
+        console.log(currentEvent);
+        const API_URL = config.API_URL;
+        const computedUrl = `${API_URL}/blogs/saveEvent/?id=${currentEventData?.id}&eventId=${formData.id}`;
+        axios({
+            url: computedUrl,
+            method: "POST",
+            data: formData, // Attaching the form data
+        })
+        .then((res) => {
+            //console.log("--------------logged---------------");
+            //console.log(res.data.success);
+            //console.log(res.data.message);
+            apiStatus.status = res.data.status;   
+            apiStatus.statusMessage  = res.data.message;
+            if (res.data.status == false)
+                setShowMessage(true);
+            else
+                redirectToEvents();   
+        })
+        .catch((err) => {
+            console.log("--------------Blog-Save() failed----------------");
+            console.log(err);
+        });
     };
 
     // 4.7 : React Hooks for Component OnLoad() 
@@ -223,7 +256,6 @@ const EditEvent : React.FC = () => {
         if (!hasRun.current) {       
             // Get a single query parameter
             const eventId = searchParams.get('eventId');
-            setEventId(eventId);
             console.log('----------eventId------');
             console.log(eventId);
 
@@ -247,6 +279,7 @@ const EditEvent : React.FC = () => {
 
                 const eventDataResponse = res.data;
                 console.log(eventDataResponse);
+                setCurrentEventData({ id: eventDataResponse.id, eventId: eventId });
 
                 // --- Convert all itenary StartTime/EndTime to Date objects ---
                 console.log('----------eventDataResponse.itenaries  ---------');
@@ -312,6 +345,17 @@ const EditEvent : React.FC = () => {
 
     return(
     <div className="form-demo">
+        {/* --------------------------- UI Dialogs--------------------- */}
+        <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
+            <div className="flex justify-content-center flex-column pt-6 px-3">
+                <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
+                <h5>Blog Status!</h5>
+                <p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
+                        Your Event <b>{formData["title"]}</b> Save : {apiStatus.status}
+                        Message : {apiStatus.statusMessage}
+                </p>
+            </div>
+        </Dialog>
          <div className="flex flex-wrap align-items-center justify-content-center">
             <Card className="cardStyle" title="Edit Event">
                 <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="p-fluid">
@@ -341,7 +385,7 @@ const EditEvent : React.FC = () => {
                             onBeforeUpload={({ formData }) => {
                             //xhr.setRequestHeader('Authorization', `Bearer ${userToken}`);
                             formData.append('uiAction', 'eventImage');
-                            formData.append('eventId', eventId);
+                            formData.append('eventId', currentEventData?.eventId);
                         }}
                         onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
                         headerTemplate={fileUploadHeaderTemplate} itemTemplate={fileUploadItemTemplate} emptyTemplate={fileUploadEmptyTemplate}
