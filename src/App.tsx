@@ -18,6 +18,7 @@ import 'primeflex/primeflex.css';
 import Navigationbar from './pages/Navigationbar'
 import Home from './pages/Home';
 import About from './pages/About';
+import Contact from './pages/Contact';
 import FAQS from './pages/FAQS';
 import ListEvents from './pages/ListEvents';
 import ListBlogs from './pages/ListBlogs';
@@ -47,6 +48,7 @@ function App() {
          {/* Public routes - anyone can access these */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact/>} />
         <Route path="/faqs" element={<FAQS/>} />
         <Route path="/team" element={<Team />} />
         <Route path="/listevents" element={<ListEvents />} />
