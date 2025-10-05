@@ -26,7 +26,7 @@ const Home = () => {
     <Container fluid>
     <Row>
       <Col>
-        <div className="p-5 mb-4 rounded-3" style={{ color:'white',  background: 'linear-gradient(135deg, rgba(177, 156, 215, 1.0), rgba(206, 194, 235, 1.0))' }}>
+        <div className="p-5 mb-4 rounded-3" style={{ textAlign:'center', color:'white',  background: 'linear-gradient(135deg, rgba(177, 156, 215, 1.0), rgba(206, 194, 235, 1.0))' }}>
           <h1 className="display-4" style={{ fontFamily:'Brush Script MT, cursive'}}>Welcome to HerHealing Initiative!</h1>
           <p className="lead">Female Health Education / Fundraising for Women / Non-Profit</p>
           <p><h5>We are HerHealing Initiative, a nonprofit organization dedicated to helping underpriviliged women gain access to sanitary products and educate others on female health.</h5></p>
@@ -42,18 +42,18 @@ const Home = () => {
     </Row>
     <Row>
       <Col>
-       <div className="p-5 mb-4 rounded-3">
-          <h1 className="display-5">CLOTHED IN STRENGTH & DIGNITY</h1>
+       <div className="p-5 mb-4 rounded-3" style={{textAlign:'center'}}>
+          <h1 className="display-5" >CLOTHED IN STRENGTH & DIGNITY</h1>
           <hr style={{ border: '1px solid green', width: '5%' }}></hr>
-          <p className="lead" style={{ marginTop: '1.5em', marginBottom: '2.0em', textAlign: 'center' }}>We want women around the world to know that they have purpose and they are worthy of love just by being who they are. Often, however, in the developing world, women feel a lack of dignity, not just about feminine hygiene but because of the mistreatment they frequently face. We believe nothing should steal away a woman’s value or dignity.</p>
-          <p className="lead" style={{ marginTop: '1.5em', marginBottom: '2.0em', textAlign: 'center'}}>“Clothed in Strength and Dignity” is Healing Water International’s Health and Hygiene Program that exists to educate and inspire women to care for themselves and their families, ultimately protecting them from water-related diseases. It also encourages them to build relationships in a safe space with other women in their community.</p>
-          <img src='https://lirp.cdn-website.com/1976464f/dms3rep/multi/opt/customIcon_slashes2-100x100-15f7b11c-1920w.png'></img>
+          <p className="lead" style={{ marginTop: '1.5em', marginBottom: '2.0em'}}>We want women around the world to know that they have purpose and they are worthy of love just by being who they are. Often, however, in the developing world, women feel a lack of dignity, not just about feminine hygiene but because of the mistreatment they frequently face. We believe nothing should steal away a woman’s value or dignity.</p>
+          <p className="lead" style={{ marginTop: '1.5em', marginBottom: '2.0em'}}>“Clothed in Strength and Dignity” is Healing Water International’s Health and Hygiene Program that exists to educate and inspire women to care for themselves and their families, ultimately protecting them from water-related diseases. It also encourages them to build relationships in a safe space with other women in their community.</p>
+          <img src='https://lirp.cdn-website.com/1976464f/dms3rep/multi/opt/customIcon_slashes2-100x100-15f7b11c-1920w.png' className="mx-auto d-block"></img>
         </div>
       </Col>
      </Row>
      <Row>
       <Col>
-       <div className="p-5 mb-4 rounded-3" style={{ backgroundColor: 'whitesmoke'}}>
+       <div className="p-5 mb-4 rounded-3" style={{ backgroundColor: 'whitesmoke', textAlign:'center'}}>
           <h1 className="display-5">FACTS</h1>
           <hr style={{ border: '1px solid green', width: '5%' }}></hr>
            <div className="grid grid-nogutter">
@@ -72,7 +72,7 @@ const Home = () => {
                   <h5 className="display-5">INADEQUATE HYGEINE</h5>
                   <p className="lead" style={{ marginTop: '1.5em', marginBottom: '2.0em', textAlign: 'center' }}>he use of unhygienic materials for managing menstruation can lead to a range of infections, including urinary tract infections (UTIs) and bacterial vaginosis</p>
               </div>
-               <div className="col-12">
+               <div className="col-12" style={{textAlign:'center'}}>
                   <img src='https://lirp.cdn-website.com/1976464f/dms3rep/multi/opt/house-2-1920w.png'></img>
                   <h5 className="display-5">ACCESS TO SANITATION</h5>
                   <p className="lead" style={{ marginTop: '1.5em', marginBottom: '2.0em', textAlign: 'center' }}>Globally, 1.5 billion people lack access to a toilet with a handwashing facility with soap and water.</p>
@@ -83,7 +83,7 @@ const Home = () => {
      </Row>
     <Row>
       <Col>
-        <h1 className="display-5">WALK IN HER LIFE</h1>
+        <h1 className="display-5" style={{textAlign:'center'}}>WALK IN HER LIFE</h1>
         <hr style={{ border: '1px solid green', width: '5%' }}></hr>
       </Col>
     </Row>
