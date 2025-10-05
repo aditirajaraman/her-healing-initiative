@@ -33,6 +33,7 @@ interface EventData {
   eventLocationType: string;
   eventLocation: string;
   eventOrganizers:string[];
+  eventTags:string[];
   eventOrganizersFullNames:string[];
   itenaries:any[];
   faqs:any[];
@@ -187,7 +188,7 @@ const ViewEvent : React.FC = () => {
             </div> 
         </div>
          <div className="card">
-            <Fieldset legend="Event Summary" className="left-align-legend" toggleable>
+            <Fieldset legend="Event Overview" className="left-align-legend" toggleable>
                 <h5>{currentEvent?.eventTitle.toUpperCase()}</h5>
                 <Button icon="pi pi-tag" className="p-button-rounded p-button-secondary p-button-text">
                     &nbsp;{currentEvent?.eventSubTitle}
@@ -195,6 +196,15 @@ const ViewEvent : React.FC = () => {
                 <br/>
                 <br/>
                 <p>{currentEvent?.eventSummary}</p>
+                <br/>
+                <h6><b>Event Tags</b></h6>
+                <ol className="pl-3">
+                    {currentEvent?.eventTags?.map((eventTag) => (
+                    <li className="mb-3">
+                        <b>{eventTag}</b>
+                    </li>
+                    ))}
+                </ol>
             </Fieldset>
             <Fieldset legend="Event Organizers" className="left-align-legend" toggleable>
                 <ol className="pl-3">
