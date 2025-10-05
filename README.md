@@ -117,13 +117,13 @@ npm run dev
 4) View Event
 
 > Donations
-1) Save Donation
+1) Save Donation - https://give.healingwaters.org/give/386248/#!/donation/checkout
+
+> FAQ - https://www.eventbrite.com/l/frequently-asked-questions/
+
+> Contact Page - https://healingwaters.org/contact/
 
 > Social Networking
 1) Likes
 2) Registered Users
 3) Interested Users
-
-> FAQ
-
-> Contact Page
