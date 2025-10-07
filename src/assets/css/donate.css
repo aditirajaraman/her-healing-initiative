@@ -1,0 +1,8 @@
+.p-selectbutton .p-button.p-highlight {
+    background-color: #007bff !important; /* or any color you want */
+    color: #fff !important;
+    border-color: #007bff !important;
+}
+.p-selectbutton .p-button {
+    border-radius: 20px !important;
+}
