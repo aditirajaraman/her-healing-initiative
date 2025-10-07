@@ -44,6 +44,7 @@ const Donate = () => {
         donationType: '',
         donationFrequency: donationFrequencies[0],
         donationReason: '',
+        otherAmountCurrency: '',
         firstName: '',
         lastName: '',
         email: '',
@@ -56,8 +57,6 @@ const Donate = () => {
         comments:'',
         otherAmount:null
     }
-
-   
 
     /*---------------------4.3: State Management ------------------------*/
     const options = ['One-Time', 'Recurring'];
@@ -74,23 +73,12 @@ const Donate = () => {
     };
 
     /*---------------------4.5: Control Event Handlers -------------------*/
-    const setDonationFrequencyChange = (e: {value: any}) => {
-        console.log("-------------payment frequency changed----------");
-        
-        setSelectedPaymentFrequency(e.value);
-        console.log(e.value);
-    }
-
-    const onCurrencyChange = (e: {value: any}) => {
-        setSelectedCurrency(e.value);
-    }
-    
-    const countryOptionTemplate = (option: any) => {
-    return (
-        <div className="country-item">
-            <div>{option.code} | {option.country}</div>
-        </div>
-    );
+    const currencyOptionTemplate = (option: any) => {
+        return (
+            <div className="currency-item">
+                <div>{option.code} | {option.country}</div>
+            </div>
+        );
     }
 
     const onSubmit = (formData) => {
@@ -143,32 +131,73 @@ const Donate = () => {
                     </div> 
                     <div className="field col-3 md:col-3"></div>
                 </div>
-                    {donationType === "Recurring" && (
-                    <div>
-                        <div className="field col-12 md:col-12">
-                            <span className="p-float-label">
-                                <Controller name="donationFrequency" control={control} rules={{ required: 'Donation frequency is required.' }} render={({ field}) => (  
-                                    <Dropdown id={field.name} value={field.value} options={donationFrequencies} optionLabel="name" 
-                                    onChange={(e) => {
-                                        field.onChange(e.value);              // update form value
-                                        setSelectedPaymentFrequency(e.value); // update local state for display
-                                    }}/>
-                                )} />
-                                <label htmlFor="donationFrequency" className={classNames({ 'p-error': errors.donationFrequency })} style={{fontSize: '15px'}}>Donation Frequency*</label>
-                            </span>
-                            {getFormErrorMessage('donationFrequency')}
-                        </div>
-                        <div className="field col-12 md:col-12" style={{ textAlign: 'center' }}>
-                            Choose a&nbsp;<b>{selectedPaymentFrequency.name}</b>&nbsp;amount.
-                        </div>
-                    </div>
-                    )}
-                    {donationType === "One-Time" && (
-                        <div className="field col-12 md:col-12">
-                            Choose a &nbsp;<b>one-time</b>&nbsp;amount.
-                        </div>
-                    )}
 
+                {/* ---------------------------Start : Donation Frequency--------------------- */}
+                {donationType === "Recurring" && (
+                <div>
+                    <div className="field col-12 md:col-12">
+                        <span className="p-float-label">
+                            <Controller name="donationFrequency" control={control} rules={{ required: 'Donation frequency is required.' }} render={({ field}) => (  
+                                <Dropdown id={field.name} value={field.value} options={donationFrequencies} optionLabel="name" 
+                                onChange={(e) => {
+                                    field.onChange(e.value);              // update form value
+                                    setSelectedPaymentFrequency(e.value); // update local state for display
+                                }}/>
+                            )} />
+                            <label htmlFor="donationFrequency" className={classNames({ 'p-error': errors.donationFrequency })} style={{fontSize: '15px'}}>Donation Frequency*</label>
+                        </span>
+                        {getFormErrorMessage('donationFrequency')}
+                    </div>
+                    <div className="field col-12 md:col-12" style={{ textAlign: 'center' }}>
+                        Choose a&nbsp;<b>{selectedPaymentFrequency.name}</b>&nbsp;amount.
+                    </div>
+                </div>
+                )}
+                {donationType === "One-Time" && (
+                    <div className="field col-12 md:col-12">
+                        Choose a &nbsp;<b>one-time</b>&nbsp;amount.
+                    </div>
+                )}
+                {/* -------------------------End: Donation Frequency--------------------- */}
+
+                <div className="p-fluid grid formgrid pt-5">
+                    <div className="field col-2 md:col-2">
+                        <Button label="$250" className="p-button-raised p-button-info" style={{backgroundColor: 'slateblue', color: '#fff', border: 'none'}}/>
+                    </div>
+                    <div className="field col-2 md:col-2">
+                        <Button label="$200" className="p-button-raised p-button-info" style={{backgroundColor: 'slateblue', color: '#fff', border: 'none'}}/>
+                    </div>
+                    <div className="field col-2 md:col-2">
+                        <Button label="$150" className="p-button-raised p-button-info" style={{backgroundColor: 'slateblue', color: '#fff', border: 'none'}}/>
+                    </div>
+                    <div className="field col-2 md:col-2">
+                        <Button label="$100" className="p-button-raised p-button-info" style={{backgroundColor: 'slateblue', color: '#fff', border: 'none'}}/>
+                    </div>
+                    <div className="field col-2 md:col-2" >
+                         <span className="p-float-label">
+                             <Controller name="otherAmountCurrency" control={control} rules={{ required: 'Currency is required.' }} render={({ field}) => (  
+                                <Dropdown id={field.name} value={field.value} options={currencies} optionLabel="name" filter showClear filterBy="name" placeholder="Select a Currency"
+                                    itemTemplate={currencyOptionTemplate} 
+                                    style={{backgroundColor: 'lightsteelblue'}}
+                                    onChange={(e) => {
+                                        field.onChange(e.value);      // update form value
+                                        setSelectedCurrency(e.value); // update local state for display
+                                    }
+                                }/>
+                            )} />
+                            </span>
+                            {getFormErrorMessage('otherAmountCurrency')}
+                    </div>
+                    <div className="field col-2 md:col-2">
+                        <span className="p-float-label">
+                            <Controller name="otherAmount" control={control} rules={{ required: 'Other Amount is required.' }} render={({ field}) => (  
+                                <InputMask id={field.name} mask="99999" placeholder="9999" {...field} value={field.value} ></InputMask>
+                            )} />
+                            <label htmlFor="otherAmount" className={classNames({ 'p-error': errors.otherAmount })} style={{fontSize: '15px'}}>Other Amount (Numbers Only)</label>
+                        </span>
+                    </div>
+                </div>
+                
                 </form>
             </Card>
         </div>
