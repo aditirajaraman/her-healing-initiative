@@ -6,3 +6,9 @@
 .p-selectbutton .p-button {
     border-radius: 20px !important;
 }
+
+.p-selectbutton .p-button.p-highlight {
+    background-color: #007bff !important; /* Change to your desired selected color */
+    color: #fff !important;
+    border-color: #007bff !important;
+}

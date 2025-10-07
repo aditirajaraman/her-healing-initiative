@@ -1,5 +1,6 @@
 /*********************************1: Imports / react *************************************/
 import React, { useState, useEffect, useRef } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 
 /*********************************2: Imports / primereact ********************************/
@@ -10,7 +11,8 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputMask } from 'primereact/inputmask';
-import { useForm, Controller } from 'react-hook-form';
+import { Calendar } from 'primereact/calendar';
+import { Divider } from 'primereact/divider';
 import { classNames } from 'primereact/utils';
 
 /*********************************3: Imports / custom css ********************************/
@@ -40,6 +42,12 @@ const Donate = () => {
         { name: 'United Nations Womens Fund', code: 'UNfund' }
     ];
 
+    const ccTypes = [
+        { name: 'Mastercard', code: 'MC' },
+        { name: 'Visa', code: 'VI' },
+        { name: 'American Express', code: 'AE' }
+    ];
+
     const defaultValues = {
         donationType: '',
         donationFrequency: donationFrequencies[0],
@@ -56,7 +64,15 @@ const Donate = () => {
         phonenumber:'',
         comments:'',
         otherAmount:null,
-        paymentType: ''
+        paymentType: '',
+        ccNumber:null,
+        ccType:ccTypes[0],
+        ccHolderName:'',
+        cvv:null,
+        ccExpiryDate:null,
+        bankHolderName:'',
+        bankAccountNumber:null,
+        bankRoutingNumber:null
     }
 
     /*---------------------4.3: State Management ------------------------*/
@@ -67,8 +83,10 @@ const Donate = () => {
     const [donationType, setDonationType] = useState<"One-Time" | "Recurring">("Recurring");
     const [paymentType, setPaymentType] = useState<"Credit Card" | "Bank Account">("Credit Card");
     const [selectedPaymentFrequency, setSelectedPaymentFrequency] = useState<any>(donationFrequencies[0]);
+    const [ccType, setCreditCardType] = useState<any>(ccTypes[0]);
     const {control, register, formState: { errors }, handleSubmit, reset } = useForm({defaultValues});
     const [formData, setFormData] = useState({});
+
 
     /*---------------------4.4: Control References ---------------------*/
     const getFormErrorMessage = (name) => {
@@ -217,7 +235,6 @@ const Donate = () => {
                     <div className="field col-12 md:col-12 pt-5">
                         <h4>Your Information</h4>
                     </div>
-
                     <div className="p-fluid grid formgrid pt-5">
                         <div className="field col-6 md:col-6">
                             <span className="p-float-label">
@@ -318,8 +335,7 @@ const Donate = () => {
                         {/* ------------------------Payment Options-------------------- */}
                         <div className="field col-12 md:col-12 pt-5">
                             <h4>Payment Options</h4>
-                        </div>``
-``
+                        </div>
                         <div className="field col-3 md:col-3"></div>
                         <div className="field col-6 md:col-6">
                             <span className="p-float-label">  
@@ -331,9 +347,114 @@ const Donate = () => {
                         </div> 
                         <div className="field col-3 md:col-3"></div>
 
+                        {/* ------------------------Credit Card-------------------- */} 
+                               
+                        {paymentType === "Credit Card" && (
+                            <>
+                                <div className="field col-3 md:col-3"></div>
+                                <div className="field col-6 md:col-6">
+                                    <Card style={{alignContent: 'center', textAlign: 'center', backgroundColor: 'whiteSmoke'}}>
+                                        <div className="grid">
+                                            <div className="field col-12 md:col-12">
+                                                <span className="p-float-label">  
+                                                    <Controller name="ccType" control={control} rules={{ required: 'Credit Card type is required.' }} render={({ field, fieldState }) => (
+                                                        <SelectButton id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} value={ccType} onChange={(e) => setCreditCardType(e.value)} options={ccTypes} optionLabel="name" 
+                                                        style={{width: '95%', backgroundColor: 'aliceBlue'}} />
+                                                    )} />
+                                                </span>
+                                                {getFormErrorMessage('ccType')}
+                                            </div>
+
+                                            <div className="field col-6 md:col-6 pt-5">
+                                                <span className="p-float-label">
+                                                    <Controller name="ccHolderName" control={control} rules={{ required: 'Card Holder Name is required.' }} render={({ field, fieldState }) => (
+                                                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                                    )} />
+                                                    <label htmlFor="ccHolderName" className={classNames({ 'p-error': errors.ccHolderName })}>Card Holder Name*</label>
+                                                </span>
+                                                {getFormErrorMessage('ccHolderName')}
+                                            </div>
+                                            
+                                            <div className="field col-6 md:col-6 pt-5">
+                                                <span className="p-float-label">
+                                                    <Controller name="ccNumber" control={control} rules={{ required: 'Credit Card Number is required.' }} render={({ field }) => (
+                                                        <InputMask id={field.name} mask="9999-9999-9999-9999" placeholder="1234 5678 9012 3456" {...field} value={field.value} ></InputMask>
+                                                    )} />
+                                                    <label htmlFor="ccNumber" className={classNames({ 'p-error': errors.ccNumber })}>Credit Card Number*</label>
+                                                </span>
+                                                {getFormErrorMessage('ccNumber')}
+                                            </div>
+
+                                            <div className="field col-6 md:col-6 pt-3">
+                                                <span className="p-float-label">
+                                                    <Controller name="ccExpiryDate" control={control} rules={{ required: 'Expiry Date is required.' }} render={({ field }) => (
+                                                        <Calendar id={field.name} value={field.value} onChange={(e) => field.onChange(e.value)} dateFormat="dd/mm/yy" mask="99/99/9999" showIcon />
+                                                    )} />
+                                                    <label htmlFor="ccExpiryDate" className={classNames({ 'p-error': errors.ccExpiryDate })}>Expiry Date*</label>
+                                                </span>
+                                                {getFormErrorMessage('ccExpiryDate')}
+                                            </div>
+
+                                            <div className="field col-3 md:col-3 pt-3">
+                                                <span className="p-float-label">
+                                                    <Controller name="cvv" control={control} rules={{ required: 'CVV is required.' }} render={({ field }) => (
+                                                        <InputMask id={field.name} mask="9999" placeholder="9999" {...field} value={field.value} ></InputMask>
+                                                    )} />
+                                                    <label htmlFor="cvv" className={classNames({ 'p-error': errors.cvv })}>CVV*</label>
+                                                </span>
+                                                {getFormErrorMessage('cvv')}
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </div>
+                                <div className="field col-3 md:col-3"></div>
+                            </>
+                        )}
+
+                        {paymentType === "Bank Account" && (
+                             <>
+                                <div className="field col-3 md:col-3"></div>
+                                <div className="field col-6 md:col-6">
+                                    <Card style={{alignContent: 'center', textAlign: 'center', backgroundColor: 'whiteSmoke'}}>
+                                        <div className="grid">
+                                            <div className="field col-12 md:col-12 pt-5">
+                                                    <span className="p-float-label">
+                                                        <Controller name="bankHolderName" control={control} rules={{ required: 'Bank Holder Name is required.' }} render={({ field, fieldState }) => (
+                                                            <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                                        )} />
+                                                        <label htmlFor="bankHolderName" className={classNames({ 'p-error': errors.bankHolderName })}>Bank Holder Name*</label>
+                                                    </span>
+                                                    {getFormErrorMessage('bankHolderName')}
+                                                </div>
+                                                
+                                                <div className="field col-6 md:col-6 pt-5">
+                                                    <span className="p-float-label">
+                                                        <Controller name="bankRoutingNumber" control={control} rules={{ required: 'Bank Routing Number is required.' }} render={({ field }) => (
+                                                            <InputMask id={field.name} mask="999-999-999-999" placeholder="234 567 903" {...field} value={field.value} ></InputMask>
+                                                        )} />
+                                                        <label htmlFor="bankRoutingNumber" className={classNames({ 'p-error': errors.bankRoutingNumber })}>Bank Routing Number*</label>
+                                                    </span>
+                                                    {getFormErrorMessage('bankRoutingNumber')}
+                                                </div>
+
+                                                <div className="field col-6 md:col-6 pt-5">
+                                                    <span className="p-float-label">
+                                                        <Controller name="bankAccountNumber" control={control} rules={{ required: 'Bank Account Number is required.' }} render={({ field }) => (
+                                                            <InputMask id={field.name} mask="9999-9999-9999-9999" placeholder="1234 5678 9012 3456" {...field} value={field.value} ></InputMask>
+                                                        )} />
+                                                        <label htmlFor="bankAccountNumber" className={classNames({ 'p-error': errors.bankAccountNumber })}>Bank Account Number*</label>
+                                                    </span>
+                                                    {getFormErrorMessage('bankAccountNumber')}
+                                                </div>
+                                        </div>
+                                    </Card>
+                                 </div>
+                                 <div className="field col-3 md:col-3"></div>
+                             </>
+                        )}
+
                     </div>
                 </div>
-                
                 </form>
             </Card>
         </div>
