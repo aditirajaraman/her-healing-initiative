@@ -105,20 +105,22 @@ const Team = () => {
         <h1 className="display-5">TESTIMONIALS</h1>
         <hr style={{ border: '1px solid green', width: '9%' }}></hr>
       </div>
-      <div className="col-12">
+      <div className="col-12" style={{  textAlign:'center' }}>
         <p>
           “...It truly is such a joy to share the business’ profits each month with an organization on such a life-changing mission. Bringing clean, safe water to people in need around the world, how significant and essential! How often, every single day, all day, we take for granted the gift that clean water is. For these woman and children to have easy access to water that does not cause disease or further the cycle of poverty is truly life-saving. By the grace of God we have been gifted our business, and by grace we give back to others. We feel so proud and excited to have Wayfaren’s profits be even a small part of The Her Initiative’s transformative work.”
         </p>
         <p>- ALBERTO DUAN</p>
-       <i className="pi pi-star" style={{ fontSize: '2rem', padding:'5px' }}></i>
-       <i className="pi pi-star" style={{ fontSize: '2rem', padding:'5px' }}></i>
-       <i className="pi pi-star" style={{ fontSize: '2rem', padding:'5px' }}></i>
+          <i className="pi pi-star" style={{ fontSize: '2rem', padding:'5px' }}></i>
+          <i className="pi pi-star" style={{ fontSize: '2rem', padding:'5px' }}></i>
+          <i className="pi pi-star" style={{ fontSize: '2rem', padding:'5px' }}></i>
+          <i className="pi pi-star" style={{ fontSize: '2rem', padding:'5px' }}></i>
+          <i className="pi pi-star" style={{ fontSize: '2rem', padding:'5px' }}></i>
       </div>
-      <div className="col-12">
+      <div className="col-12" style={{  textAlign:'center' }}>
         <p>
           “...It truly is such a joy to share the business’ profits each month with an organization on such a life-changing mission. Bringing clean, safe water to people in need around the world, how significant and essential! How often, every single day, all day, we take for granted the gift that clean water is. For these woman and children to have easy access to water that does not cause disease or further the cycle of poverty is truly life-saving. By the grace of God we have been gifted our business, and by grace we give back to others. We feel so proud and excited to have Wayfaren’s profits be even a small part of The Her Initiative’s transformative work.”
         </p>
-        <p>- ALBERTO DUAN</p>
+        <p>- JOHN DOE</p>
       </div>
     </div>
   );
