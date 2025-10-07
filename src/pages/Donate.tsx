@@ -288,6 +288,20 @@ const Donate = () => {
                             </span>
                         {getFormErrorMessage('country')}
                         </div>
+                        <div className="field col-6 md:col-6">
+                            <span className="p-float-label">
+                               <Controller
+                                    name="phonenumber"
+                                    control={control}
+                                    rules={{ required: 'Phone Number is required.' }}
+                                    render={({ field, fieldState }) => (
+                                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                    )}
+                                />
+                                <label htmlFor="phonenumber" className={classNames({ 'p-error': errors.phonenumber })}>Phone*</label>
+                            </span>
+                            {getFormErrorMessage('phonenumber')}
+                        </div>
                         <div className="field col-12 md:col-12">
                             <span className="p-float-label">
                                 <Controller name="comments" control={control} rules={{ required: 'Comments is required.' }} render={({ field, fieldState }) => (
