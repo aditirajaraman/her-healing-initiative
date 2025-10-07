@@ -74,6 +74,17 @@ const Contact: React.FC = () => {
                             </span>
                             {getFormErrorMessage('message')}
                         </div>
+                         <div className="grid">
+                            <div className="col-3"></div>
+                            <div className="col-3">
+                                <Button type="reset" label="Cancel" className="p-button-secondary" />
+                            </div>
+                            <div className="col-3">
+                                <Button type="submit" label="Submit" className="p-button-success" />
+                            </div>
+                            <div className="col-3"></div>
+                        </div>
+
                     </form>
                 </Card>
             </div>
