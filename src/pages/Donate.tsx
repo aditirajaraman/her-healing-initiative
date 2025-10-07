@@ -158,6 +158,7 @@ const Donate = () => {
                         Choose a &nbsp;<b>one-time</b>&nbsp;amount.
                     </div>
                 )}
+
                 {/* -------------------------End: Donation Frequency--------------------- */}
 
                 <div className="p-fluid grid formgrid pt-5">
@@ -188,6 +189,7 @@ const Donate = () => {
                             </span>
                             {getFormErrorMessage('otherAmountCurrency')}
                     </div>
+
                     <div className="field col-2 md:col-2">
                         <span className="p-float-label">
                             <Controller name="otherAmount" control={control} rules={{ required: 'Other Amount is required.' }} render={({ field}) => (  
@@ -195,6 +197,107 @@ const Donate = () => {
                             )} />
                             <label htmlFor="otherAmount" className={classNames({ 'p-error': errors.otherAmount })} style={{fontSize: '15px'}}>Other Amount (Numbers Only)</label>
                         </span>
+                    </div>
+
+                    <div className="field col-6 md:col-6 pt-5">
+                    <span className="p-float-label">
+                        <Controller name="donationReason" control={control} rules={{ required: 'Donation Reason is required.' }} render={({ field}) => (  
+                            <Dropdown {...field} id={field.name} value={field.value} options={donationReasons} optionLabel="name" onChange={(e) => field.onChange(e.value)}/>
+                        )} />
+                        <label htmlFor="donationReason" className={classNames({ 'p-error': errors.donationReason })} style={{fontSize: '15px'}}>What would you like your donation to support?*</label>
+                    </span>
+                    {getFormErrorMessage('donationReason')}
+                    </div>
+                    <div className="field col-6 md:col-6"></div>
+
+                    {/* -------------------------Your Information--------------------- */}
+                    <div className="field col-12 md:col-12 pt-5">
+                        <h4>Your Information</h4>
+                    </div>
+
+                    <div className="p-fluid grid formgrid pt-5">
+                        <div className="field col-6 md:col-6">
+                            <span className="p-float-label">
+                                <Controller name="firstName" control={control} rules={{ required: 'First Name is required.' }} render={({ field, fieldState }) => (
+                                    <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                )} />
+                                <label htmlFor="firstName" className={classNames({ 'p-error': errors.firstName })}>First Name*</label>
+                            </span>
+                            {getFormErrorMessage('firstName')}
+                        </div>
+                        <div className="field col-6 md:col-6">
+                            <span className="p-float-label">
+                                <Controller name="lastName" control={control} rules={{ required: 'Last Name is required.' }} render={({ field, fieldState }) => (
+                                    <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                )} />
+                                <label htmlFor="lastName" className={classNames({ 'p-error': errors.lastName })}>Last Name*</label>
+                            </span>
+                            {getFormErrorMessage('lastName')}
+                        </div>
+                        <div className="field col-12 md:col-12">
+                            <span className="p-float-label">
+                                <Controller name="email" control={control} rules={{ required: 'Email is required.' }} render={({ field, fieldState }) => (
+                                    <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                )} />
+                                <label htmlFor="email" className={classNames({ 'p-error': errors.email })}>Email*</label>
+                            </span>
+                            {getFormErrorMessage('email')}
+                        </div>
+                        <div className="field col-12 md:col-12">
+                            <span className="p-float-label">
+                                <Controller name="address" control={control} rules={{ required: 'Address is required.' }} render={({ field, fieldState }) => (
+                                    <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                )} />
+                                <label htmlFor="email" className={classNames({ 'p-error': errors.address })}>Address*</label>
+                            </span>
+                            {getFormErrorMessage('address')}
+                        </div>
+                        <div className="field col-6 md:col-6">
+                            <span className="p-float-label">
+                                <Controller name="zip" control={control} rules={{ required: 'Zip is required.' }} render={({ field, fieldState }) => (
+                                    <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                )} />
+                                <label htmlFor="zip" className={classNames({ 'p-error': errors.zip })}>Zip*</label>
+                            </span>
+                            {getFormErrorMessage('zip')}
+                        </div>
+                        <div className="field col-6 md:col-6">
+                            <span className="p-float-label">
+                                <Controller name="city" control={control} rules={{ required: 'City is required.' }} render={({ field, fieldState }) => (
+                                    <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                )} />
+                                <label htmlFor="city" className={classNames({ 'p-error': errors.city })}>City*</label>
+                            </span>
+                            {getFormErrorMessage('city')}
+                        </div>
+                        <div className="field col-6 md:col-6">
+                            <span className="p-float-label">
+                                <Controller name="state" control={control} rules={{ required: 'state is required.' }} render={({ field}) => (  
+                                    <Dropdown {...field} id={field.name} value={field.value} options={donationReasons} optionLabel="name" onChange={(e) => field.onChange(e.value)}/>
+                                )} />
+                                <label htmlFor="state" className={classNames({ 'p-error': errors.state })} style={{fontSize: '15px'}}>State*</label>
+                            </span>
+                            {getFormErrorMessage('state')}
+                        </div>
+                         <div className="field col-6 md:col-6">
+                            <span className="p-float-label">
+                                <Controller name="country" control={control} rules={{ required: 'country is required.' }} render={({ field}) => (  
+                                    <Dropdown {...field} id={field.name} value={field.value} options={donationReasons} optionLabel="name" onChange={(e) => field.onChange(e.value)}/>
+                                )} />
+                                <label htmlFor="country" className={classNames({ 'p-error': errors.country })} style={{fontSize: '15px'}}>Country*</label>
+                            </span>
+                        {getFormErrorMessage('country')}
+                        </div>
+                        <div className="field col-12 md:col-12">
+                            <span className="p-float-label">
+                                <Controller name="comments" control={control} rules={{ required: 'Comments is required.' }} render={({ field, fieldState }) => (
+                                    <InputTextarea id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} maxLength={500} rows={6} />
+                                )} />
+                                <label htmlFor="comments" className={classNames({ 'p-error': errors.comments })}>Comments*</label>
+                            </span>
+                            {getFormErrorMessage('comments')}
+                        </div>
+
                     </div>
                 </div>
                 
