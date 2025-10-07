@@ -55,14 +55,17 @@ const Donate = () => {
         country: '',
         phonenumber:'',
         comments:'',
-        otherAmount:null
+        otherAmount:null,
+        paymentType: ''
     }
 
     /*---------------------4.3: State Management ------------------------*/
     const options = ['One-Time', 'Recurring'];
+    const paymentOptions = ['Credit Card', 'Bank Account'];
     const [currencies, setCurrencies] = useState([]);
     const [selectedCurrency, setSelectedCurrency] = useState<any>(null);
     const [donationType, setDonationType] = useState<"One-Time" | "Recurring">("Recurring");
+    const [paymentType, setPaymentType] = useState<"Credit Card" | "Bank Account">("Credit Card");
     const [selectedPaymentFrequency, setSelectedPaymentFrequency] = useState<any>(donationFrequencies[0]);
     const {control, register, formState: { errors }, handleSubmit, reset } = useForm({defaultValues});
     const [formData, setFormData] = useState({});
@@ -311,6 +314,22 @@ const Donate = () => {
                             </span>
                             {getFormErrorMessage('comments')}
                         </div>
+
+                        {/* ------------------------Payment Options-------------------- */}
+                        <div className="field col-12 md:col-12 pt-5">
+                            <h4>Payment Options</h4>
+                        </div>``
+``
+                        <div className="field col-3 md:col-3"></div>
+                        <div className="field col-6 md:col-6">
+                            <span className="p-float-label">  
+                                <Controller name="paymentType" control={control} rules={{ required: 'Payment type is required.' }} render={({ field, fieldState }) => (
+                                    <SelectButton id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} value={paymentType} onChange={(e) => setPaymentType(e.value)} options={paymentOptions}/>
+                                )} />
+                            </span>
+                            {getFormErrorMessage('paymentType')}
+                        </div> 
+                        <div className="field col-3 md:col-3"></div>
 
                     </div>
                 </div>
